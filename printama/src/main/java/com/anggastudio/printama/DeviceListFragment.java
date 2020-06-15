@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +22,7 @@ public class DeviceListFragment extends DialogFragment {
     private Printama.OnConnectPrinter onConnectPrinter;
     private Set<BluetoothDevice> bondedDevices;
     private String mPrinterName;
+    private Button saveButton;
 
     public DeviceListFragment() {
         // Required empty public constructor
@@ -49,14 +52,28 @@ public class DeviceListFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        view.findViewById(R.id.btn_save_printer).setOnClickListener(v -> savePrinter());
+        saveButton = view.findViewById(R.id.btn_save_printer);
+        saveButton.setOnClickListener(v -> savePrinter());
+        mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
+        toggleSaveButton();
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices);
+        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
         rvDeviceList.setAdapter(adapter);
-        adapter.setOnConnectPrinter(printerName -> this.mPrinterName = printerName);
+        adapter.setOnConnectPrinter(printerName -> {
+            this.mPrinterName = printerName;
+            toggleSaveButton();
+        });
+    }
+
+    private void toggleSaveButton() {
+        if (mPrinterName != null) {
+            saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
+        } else {
+            saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGray5));
+        }
     }
 
     private void savePrinter() {

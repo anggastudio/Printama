@@ -18,8 +18,13 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
     private int selectedDevicePos = -1;
     private Printama.OnConnectPrinter onConnectPrinter;
 
-    public DeviceListAdapter(ArrayList<BluetoothDevice> bondedDevices) {
+    public DeviceListAdapter(ArrayList<BluetoothDevice> bondedDevices, String mPrinterName) {
         this.bondedDevices = bondedDevices;
+        for (int i = 0; i < bondedDevices.size(); i++) {
+            if (bondedDevices.get(i).getName().equalsIgnoreCase(mPrinterName)) {
+                selectedDevicePos = i;
+            }
+        }
     }
 
     @NonNull
