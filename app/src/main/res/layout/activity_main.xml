@@ -1,31 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <Button
         android:id="@+id/btn_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan"
-        app:layout_constraintBottom_toTopOf="@+id/btn_print"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.959" />
+        android:text="Choose Printer" />
 
-    <Button
-        android:id="@+id/btn_print"
+    <TextView
+        android:id="@+id/tv_connected_to"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="print"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="30dp"
+        android:padding="10dp"
+        android:text="Connected to : " />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/btn_print_text_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Text Left" />
+
+    <Button
+        android:id="@+id/btn_print_text_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Text Center" />
+
+    <Button
+        android:id="@+id/btn_print_text_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Text Right" />
+
+    <Button
+        android:id="@+id/btn_print_image_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Image Left" />
+
+    <Button
+        android:id="@+id/btn_print_image_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Image Center" />
+
+    <Button
+        android:id="@+id/btn_print_image_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Print Image Right" />
+
+</LinearLayout>

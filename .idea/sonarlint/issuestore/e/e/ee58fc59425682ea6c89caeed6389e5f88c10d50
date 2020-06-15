@@ -1,35 +1,24 @@
 
-D
-java:S1168Õ"&Return an empty array instead of null.(¥¹ï8‰Øğ²«.
-u
-java:S3776®"RRefactor this method to reduce its Cognitive Complexity from 18 to the 15 allowed.(¦¯Üşÿÿÿÿ8‰Øğ²«.
-3
-java:S1643û"Use a StringBuilder instead.(¼ï×È
-8
-java:S1643·"Use a StringBuilder instead.(°àš²øÿÿÿÿ
-I
-java:S1168Œ"&Return an empty array instead of null.(úüÑ©úÿÿÿÿ8‰Øğ²«.
-?
-java:S1148¿"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
-D
-java:S1168Í"&Return an empty array instead of null.(¥¹ï8‰Øğ²«.
-v
-java:S1149³"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(§Ê®—
+:
+java:S1643É"Use a StringBuilder instead.(¼ï×È8 Æ‹¸«.
+F
+java:S1148¼"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
+a
+java:S2583ó"CChange this condition so that it does not always evaluate to "true"(¯ö†á8 Æ‹¸«.
 O
-java:S1068"2Remove this unused "DOT_LINE_LIMIT" private field.(¸ÄÂ¸8‰Øğ²«.
->
-java:S1148E"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
->
-java:S1148Z"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
-Z
-java:S2583õ"CChange this condition so that it does not always evaluate to "true"(¯ö†á
-k	java:S100ƒ"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ã„°¯8‰Øğ²«.
-3
-java:S1643ÿ"Use a StringBuilder instead.(¼ï×È
->
-java:S1148P"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
-T
-java:S3034“">Prevent "int" promotion by adding "& 0xff" to this expression.(¹„t
-F	java:S108è")Either remove or fill this block of code.(ï­£Ä8‰Øğ²«.
+java:S1068"2Remove this unused "DOT_LINE_LIMIT" private field.(¸ÄÂ¸8 Æ‹¸«.
+F
+java:S1148æ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
+:
+java:S1643Å"Use a StringBuilder instead.(¼ï×È8 Æ‹¸«.
+E
+java:S1148E"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
+E
+java:S1148P"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
+k	java:S100ƒ"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ã„°¯8 Æ‹¸«.
+\
+java:S1144¬">Remove this unused private "binaryListToHexStringList" method.(–Œãä8 Æ‹¸«.
 J
-java:S1068"-Remove this unused "DC2V_HEAD" private field.(úº¹8‰Øğ²«.
+java:S1068"-Remove this unused "DC2V_HEAD" private field.(úº¹8 Æ‹¸«.
+E
+java:S1148Z"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.

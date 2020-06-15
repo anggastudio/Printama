@@ -11,3 +11,13 @@ u
 Eprintama/src/main/java/com/anggastudio/printama/BluetoothPrinter.java,e\e\ee58fc59425682ea6c89caeed6389e5f88c10d50
 j
 :app/src/main/java/com/anggastudio/sample/MainActivity.java,8\1\8121e52223cf3585f0f5e17a1dfffcb479a03aa5
+<
+build.gradle,f\0\f07866736216be0ee2aba49e392191aeae700a35
+E
+printama/build.gradle,8\3\83188a7d18f9b5524e4743e63ed76eda522287be
+i
+9printama/src/main/java/com/anggastudio/printama/Pref.java,6\8\685d5589537273bae8d92ce3dd4cb7bb80f0b6d4
+w
+Gprintama/src/main/java/com/anggastudio/printama/DeviceListFragment.java,0\0\00692b19135a47f87214fa6f8a1389d76ff8bd2b
+v
+Fprintama/src/main/java/com/anggastudio/printama/DeviceListAdapter.java,c\7\c74a9a7f5a2f66f174af0ad3a02952616b0c4b59

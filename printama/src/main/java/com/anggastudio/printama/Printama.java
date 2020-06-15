@@ -2,6 +2,7 @@ package com.anggastudio.printama;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.fragment.app.FragmentActivity;
@@ -15,7 +16,8 @@ public class Printama {
     private final BluetoothPrinter btPrinter;
     private BluetoothDevice printer;
 
-    public Printama() {
+    public Printama(Context context) {
+        Pref.init(context);
         printer = getPrinter();
         btPrinter = new BluetoothPrinter(printer);
     }
@@ -29,10 +31,6 @@ public class Printama {
             }
         }
         return printer;
-    }
-
-    public void printImage(Bitmap bitmap) {
-        btPrinter.printImage(bitmap);
     }
 
     public void printText(String text) {
@@ -69,9 +67,14 @@ public class Printama {
         });
     }
 
+    public void printImage(Bitmap bitmap) {
+        btPrinter.printImage(bitmap);
+    }
+
     public void printImage(Bitmap bitmap, int width) {
         btPrinter.printImage(bitmap, width);
     }
+
 
     public static void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         Pref.init(activity);
