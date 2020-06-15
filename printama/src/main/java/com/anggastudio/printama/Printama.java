@@ -13,6 +13,8 @@ public class Printama {
     public static final int CENTER = -1;
     public static final int RIGHT = -2;
     public static final int LEFT = 0;
+    public static final int FULL_WIDTH = -1;
+    public static final int ORIGINAL_WIDTH = 0;
     private final BluetoothPrinter btPrinter;
     private BluetoothDevice printer;
 
@@ -71,8 +73,8 @@ public class Printama {
         btPrinter.printImage(bitmap);
     }
 
-    public void printImage(Bitmap bitmap, int width) {
-        btPrinter.printImage(bitmap, width);
+    public void printImage(int alignment, Bitmap bitmap, int width) {
+        btPrinter.printImage(alignment, bitmap, width);
     }
 
 
@@ -88,6 +90,10 @@ public class Printama {
         } else {
             onConnectPrinter.onConnectPrinter("failed to connect printer");
         }
+    }
+
+    public void printImage(Bitmap bitmap, int width) {
+        btPrinter.printImage(bitmap, width);
     }
 
     public interface OnConnected {

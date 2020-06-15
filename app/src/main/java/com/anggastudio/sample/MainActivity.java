@@ -20,9 +20,11 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
-//        findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printTextLeft());
-//        findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printTextLeft());
-//        findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printTextLeft());
+        findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printImageLeft());
+        findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printImageCenter());
+        findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
+        findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri());
+        findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
     }
 
     private void scan() {
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                             "This will be printed\n" +
                             "Left aligned\n" +
                             "cool isn't it?\n" +
-                    "------------------\n");
+                            "------------------\n");
             // or simply printama.printText("some text") --> will be printed left aligned as default
             printama.close();
         });
@@ -77,7 +79,43 @@ public class MainActivity extends AppCompatActivity {
         Printama printama = new Printama(this);
         printama.connect(() -> {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            printama.printImage(bitmap, 200);
+            printama.printImage(Printama.LEFT, bitmap, 200);
+            printama.close();
+        });
+    }
+
+    private void printImageCenter() {
+        Printama printama = new Printama(this);
+        printama.connect(() -> {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            printama.printImage(Printama.CENTER, bitmap, 200);
+            printama.close();
+        });
+    }
+
+    private void printImageRight() {
+        Printama printama = new Printama(this);
+        printama.connect(() -> {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            printama.printImage(Printama.RIGHT, bitmap, 200);
+            printama.close();
+        });
+    }
+
+    private void printImageOri() {
+        Printama printama = new Printama(this);
+        printama.connect(() -> {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            printama.printImage(bitmap); // original size, centered as default
+            printama.close();
+        });
+    }
+
+    private void printImageFull() {
+        Printama printama = new Printama(this);
+        printama.connect(() -> {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+            printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
         });
     }

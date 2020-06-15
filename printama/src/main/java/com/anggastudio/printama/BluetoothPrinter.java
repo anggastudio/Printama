@@ -13,10 +13,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.anggastudio.printama.Printama.CENTER;
+import static com.anggastudio.printama.Printama.FULL_WIDTH;
+import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
 
 class BluetoothPrinter {
     private static final int PRINTER_WIDTH = 400;
+    private static final int INITIAL_MARGIN_LEFT = -10;
     private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
     private static final int DOT_LINE_LIMIT = 200;
@@ -110,14 +113,21 @@ class BluetoothPrinter {
     }
 
     boolean printImage(Bitmap bitmap) {
-        return printImage(bitmap, 0);
+        return printImage(Printama.CENTER, bitmap, ORIGINAL_WIDTH); // original
     }
 
     boolean printImage(Bitmap bitmap, int width) {
+        return printImage(Printama.CENTER, bitmap, width);
+    }
+
+    boolean printImage(int alignment, Bitmap bitmap, int width) {
+        if (width == FULL_WIDTH) width = PRINTER_WIDTH;
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
-        int marginLeft = -14;
-        if (width > 0 && width < PRINTER_WIDTH) {
-            marginLeft = marginLeft + ((PRINTER_WIDTH - width) / 2);
+        int marginLeft = INITIAL_MARGIN_LEFT;
+        if (alignment == CENTER) {
+            marginLeft = marginLeft + ((PRINTER_WIDTH - scaledBitmap.getWidth()) / 2);
+        } else if (alignment == RIGHT) {
+            marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
         }
         byte[] command = generateBitmapArrayGSV_MSB(scaledBitmap, marginLeft, 0);
         int lines = (command.length - GSV_HEAD) / WIDTH;
@@ -158,8 +168,8 @@ class BluetoothPrinter {
     }
 
     private Bitmap scaledBitmap(Bitmap bitmap, int width) {
-        int desiredWidth = width == 0 || bitmap.getWidth() < PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
-        if (width > 0 && width < PRINTER_WIDTH) {
+        int desiredWidth = width == 0 || bitmap.getWidth() <= PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
+        if (width > 0 && width <= PRINTER_WIDTH) {
             desiredWidth = width;
         }
         int height;
