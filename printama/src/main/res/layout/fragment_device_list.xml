@@ -28,6 +28,15 @@
             android:paddingEnd="14dp"
             tools:listitem="@layout/device_item" />
 
+        <Button
+            android:id="@+id/btn_save_printer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="Save"
+            android:textSize="14sp" />
+
     </LinearLayout>
 
 </RelativeLayout>

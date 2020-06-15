@@ -19,6 +19,7 @@ public class DeviceListFragment extends DialogFragment {
 
     private Printama.OnConnectPrinter onConnectPrinter;
     private Set<BluetoothDevice> bondedDevices;
+    private String mPrinterName;
 
     public DeviceListFragment() {
         // Required empty public constructor
@@ -47,9 +48,21 @@ public class DeviceListFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        view.findViewById(R.id.btn_save_printer).setOnClickListener(v -> savePrinter());
+
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-        rvDeviceList.setAdapter(new DeviceListAdapter(bluetoothDevices));
+        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices);
+        rvDeviceList.setAdapter(adapter);
+        adapter.setOnConnectPrinter(printerName -> this.mPrinterName = printerName);
+    }
+
+    private void savePrinter() {
+        if (onConnectPrinter != null) {
+            onConnectPrinter.onConnectPrinter(mPrinterName);
+        }
+        dismiss();
     }
 }

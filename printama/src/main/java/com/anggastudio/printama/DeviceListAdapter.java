@@ -15,6 +15,8 @@ import java.util.ArrayList;
 class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
 
     private final ArrayList<BluetoothDevice> bondedDevices;
+    private int selectedDevicePos = -1;
+    private Printama.OnConnectPrinter onConnectPrinter;
 
     public DeviceListAdapter(ArrayList<BluetoothDevice> bondedDevices) {
         this.bondedDevices = bondedDevices;
@@ -31,11 +33,33 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         BluetoothDevice device = bondedDevices.get(position);
         holder.tvDeviceName.setText(device.getName());
+        holder.itemView.setOnClickListener(v -> {
+            selectDevice(holder, position);
+        });
+        if (position == selectedDevicePos) {
+            holder.ivIndicator.setImageResource(R.drawable.ic_check_circle);
+        } else {
+            holder.ivIndicator.setImageResource(R.drawable.ic_circle);
+        }
+    }
+
+    private void selectDevice(Holder holder, int position) {
+        selectedDevicePos = position;
+        holder.ivIndicator.setImageResource(R.drawable.ic_check_circle);
+        if (onConnectPrinter != null) {
+            BluetoothDevice device = bondedDevices.get(position);
+            onConnectPrinter.onConnectPrinter(device.getName());
+        }
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
         return bondedDevices.size();
+    }
+
+    public void setOnConnectPrinter(Printama.OnConnectPrinter onConnectPrinter) {
+        this.onConnectPrinter = onConnectPrinter;
     }
 
     class Holder extends RecyclerView.ViewHolder {
