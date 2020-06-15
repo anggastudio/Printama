@@ -14,7 +14,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.btn_scan).setOnClickListener(v -> scan());
         findViewById(R.id.btn_print).setOnClickListener(v -> print());
+    }
+
+    private void scan() {
+        Printama printama = new Printama();
+        printama.scan(this, printerName -> {
+
+        });
     }
 
     private void print() {

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class BluetoothPrinter {
+class BluetoothPrinter {
     public static final int PRINTER_WIDTH = 400;
     public static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
@@ -32,11 +32,11 @@ public class BluetoothPrinter {
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
 
-    public BluetoothPrinter(BluetoothDevice printer) {
+    BluetoothPrinter(BluetoothDevice printer) {
         this.printer = printer;
     }
 
-    public void connectPrinter(final PrinterConnectListener listener) {
+    void connectPrinter(final PrinterConnectListener listener) {
         new ConnectTask(new ConnectTask.BtConnectListener() {
             @Override
             public void onConnected(BluetoothSocket socket) {
@@ -60,7 +60,7 @@ public class BluetoothPrinter {
         return btSocket != null && btSocket.isConnected();
     }
 
-    public void finish() {
+    void finish() {
         if (btSocket != null) {
             try {
                 btOutputStream.close();
@@ -72,7 +72,7 @@ public class BluetoothPrinter {
         }
     }
 
-    public boolean printText(String text) {
+    boolean printText(String text) {
         try {
             btOutputStream.write(encodeNonAscii(text).getBytes());
             return true;
@@ -82,7 +82,7 @@ public class BluetoothPrinter {
         }
     }
 
-    public boolean printUnicode(byte[] data) {
+    private boolean printUnicode(byte[] data) {
         try {
             btOutputStream.write(data);
             return true;
@@ -96,7 +96,7 @@ public class BluetoothPrinter {
         return printText("________________________________");
     }
 
-    public boolean addNewLine() {
+    private boolean addNewLine() {
         return printUnicode(NEW_LINE);
     }
 
@@ -109,11 +109,11 @@ public class BluetoothPrinter {
         return success;
     }
 
-    public boolean printImage(Bitmap bitmap) {
+    boolean printImage(Bitmap bitmap) {
         return printImage(bitmap, 0);
     }
 
-    public boolean printImage(Bitmap bitmap, int width) {
+    boolean printImage(Bitmap bitmap, int width) {
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
         int marginLeft = -14;
         if (width > 0 && width < PRINTER_WIDTH) {
@@ -230,6 +230,7 @@ public class BluetoothPrinter {
             try {
                 socket = device.createRfcommSocketToServiceRecord(uuid);
             } catch (IOException e) {
+                e.printStackTrace();
             }
             try {
                 socket.connect();
@@ -299,58 +300,6 @@ public class BluetoothPrinter {
                 .replace('Ž', 'Z');
     }
 
-    public static byte[] decodeBitmap(Bitmap bmp) {
-        int bmpWidth = bmp.getWidth();
-        int bmpHeight = bmp.getHeight();
-
-        List<String> list = new ArrayList<>();
-        StringBuffer sb;
-        int zeroCount = bmpWidth % 8;
-        String zeroStr = "";
-        if (zeroCount > 0) {
-            for (int i = 0; i < (8 - zeroCount); i++) zeroStr = zeroStr + "0";
-        }
-
-        for (int i = 0; i < bmpHeight; i++) {
-            sb = new StringBuffer();
-            for (int j = 0; j < bmpWidth; j++) {
-                int color = bmp.getPixel(j, i);
-                int r = (color >> 16) & 0xff;
-                int g = (color >> 8) & 0xff;
-                int b = color & 0xff;
-                if (r > 160 && g > 160 && b > 160) sb.append("0");
-                else sb.append("1");
-            }
-            if (zeroCount > 0) sb.append(zeroStr);
-            list.add(sb.toString());
-        }
-
-        List<String> bmpHexList = binaryListToHexStringList(list);
-        String commandHexString = "1D763000";
-        String widthHexString = Integer
-                .toHexString(bmpWidth % 8 == 0 ? bmpWidth / 8 : (bmpWidth / 8 + 1));
-        if (widthHexString.length() > 2) {
-            return null;
-        } else if (widthHexString.length() == 1) {
-            widthHexString = "0" + widthHexString;
-        }
-        widthHexString = widthHexString + "00";
-
-        String heightHexString = Integer.toHexString(bmpHeight);
-        if (heightHexString.length() > 2) {
-            return null;
-        } else if (heightHexString.length() == 1) {
-            heightHexString = "0" + heightHexString;
-        }
-        heightHexString = heightHexString + "00";
-
-        List<String> commandList = new ArrayList<>();
-        commandList.add(commandHexString + widthHexString + heightHexString);
-        commandList.addAll(bmpHexList);
-
-        return hexList2Byte(commandList);
-    }
-
     private static List<String> binaryListToHexStringList(List<String> list) {
         List<String> hexList = new ArrayList<>();
         for (String binaryStr : list) {
@@ -382,53 +331,14 @@ public class BluetoothPrinter {
             if (b4.equals(binaryArray[i]))
                 hex += hexStr.substring(i, i + 1);
         }
-
         return hex;
     }
 
-    private static byte[] hexList2Byte(List<String> list) {
-        List<byte[]> commandList = new ArrayList<>();
-        for (String hexStr : list) commandList.add(hexStringToBytes(hexStr));
-        return sysCopy(commandList);
-    }
-
-    private static byte[] hexStringToBytes(String hexString) {
-        if (hexString == null || hexString.equals("")) return null;
-        hexString = hexString.toUpperCase();
-        int length = hexString.length() / 2;
-        char[] hexChars = hexString.toCharArray();
-        byte[] d = new byte[length];
-        for (int i = 0; i < length; i++) {
-            int pos = i * 2;
-            d[i] = (byte) (charToByte(hexChars[pos]) << 4 | charToByte(hexChars[pos + 1]));
-        }
-        return d;
-    }
-
-    private static byte[] sysCopy(List<byte[]> srcArrays) {
-        int len = 0;
-        for (byte[] srcArray : srcArrays) {
-            len += srcArray.length;
-        }
-        byte[] destArray = new byte[len];
-        int destLen = 0;
-        for (byte[] srcArray : srcArrays) {
-            System.arraycopy(srcArray, 0, destArray, destLen, srcArray.length);
-            destLen += srcArray.length;
-        }
-
-        return destArray;
-    }
-
-    private static byte charToByte(char c) {
-        return (byte) "0123456789ABCDEF".indexOf(c);
-    }
-
-    public BluetoothSocket getSocket() {
+    BluetoothSocket getSocket() {
         return btSocket;
     }
 
-    public BluetoothDevice getDevice() {
+    BluetoothDevice getDevice() {
         return printer;
     }
 }

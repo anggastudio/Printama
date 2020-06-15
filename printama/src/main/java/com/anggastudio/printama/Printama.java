@@ -4,6 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.graphics.Bitmap;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 public class Printama {
 
     private final BluetoothPrinter btPrinter;
@@ -62,11 +65,28 @@ public class Printama {
         btPrinter.printImage(bitmap, width);
     }
 
+    public void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
+        BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            DeviceListFragment fragment = DeviceListFragment.newInstance();
+            fragment.setDeviceList(defaultAdapter.getBondedDevices());
+            fragment.setOnConnectPrinter(onConnectPrinter);
+            fragment.show(fm, "fragment_add_edit_table");
+        } else {
+            onConnectPrinter.onConnectPrinter("failed to connect printer");
+        }
+    }
+
     public interface OnConnected {
         void onConnected();
     }
 
     public interface OnFailed {
         void onFailed(String message);
+    }
+
+    public interface OnConnectPrinter {
+        void onConnectPrinter(String printerName);
     }
 }
