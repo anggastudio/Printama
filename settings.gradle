@@ -1,0 +1,3 @@
+rootProject.name='Printama'
+include ':app'
+include ':printama'
