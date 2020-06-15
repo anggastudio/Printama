@@ -60,6 +60,7 @@ public class DeviceListFragment extends DialogFragment {
     }
 
     private void savePrinter() {
+        Pref.setString(Pref.SAVED_DEVICE, mPrinterName);
         if (onConnectPrinter != null) {
             onConnectPrinter.onConnectPrinter(mPrinterName);
         }

@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.anggastudio.printama.Printama.CENTER;
+import static com.anggastudio.printama.Printama.RIGHT;
+
 class BluetoothPrinter {
-    public static final int PRINTER_WIDTH = 400;
-    public static final int BIT_WIDTH = 384;
+    private static final int PRINTER_WIDTH = 400;
+    private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
     private static final int DOT_LINE_LIMIT = 200;
     private static final int DC2V_HEAD = 4;
     private static final int GSV_HEAD = 8;
-    public static final int ALIGN_CENTER = 100;
-    public static final int ALIGN_RIGHT = 101;
-    public static final int ALIGN_LEFT = 102;
 
     private static final byte[] NEW_LINE = {10};
     private static final byte[] ESC_ALIGN_CENTER = new byte[]{0x1b, 'a', 0x01};
@@ -171,13 +171,10 @@ class BluetoothPrinter {
     public void setAlign(int alignType) {
         byte[] d;
         switch (alignType) {
-            case ALIGN_CENTER:
+            case CENTER:
                 d = ESC_ALIGN_CENTER;
                 break;
-            case ALIGN_LEFT:
-                d = ESC_ALIGN_LEFT;
-                break;
-            case ALIGN_RIGHT:
+            case RIGHT:
                 d = ESC_ALIGN_RIGHT;
                 break;
             default:

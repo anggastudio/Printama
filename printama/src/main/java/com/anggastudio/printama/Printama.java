@@ -9,6 +9,9 @@ import androidx.fragment.app.FragmentManager;
 
 public class Printama {
 
+    public static final int CENTER = -1;
+    public static final int RIGHT = -2;
+    public static final int LEFT = 0;
     private final BluetoothPrinter btPrinter;
     private BluetoothDevice printer;
 
@@ -21,7 +24,7 @@ public class Printama {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
         for (BluetoothDevice device : defaultAdapter.getBondedDevices()) {
-            if (device.getName().equalsIgnoreCase("MPT-II")) {
+            if (device.getName().equalsIgnoreCase(Pref.getString(Pref.SAVED_DEVICE))) {
                 printer = device;
             }
         }
@@ -33,6 +36,11 @@ public class Printama {
     }
 
     public void printText(String text) {
+        printText(LEFT, text);
+    }
+
+    public void printText(int align, String text) {
+        btPrinter.setAlign(align);
         btPrinter.printText(text);
     }
 
@@ -65,7 +73,8 @@ public class Printama {
         btPrinter.printImage(bitmap, width);
     }
 
-    public void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
+    public static void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
+        Pref.init(activity);
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
             FragmentManager fm = activity.getSupportFragmentManager();

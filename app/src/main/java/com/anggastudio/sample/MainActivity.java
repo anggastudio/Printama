@@ -3,6 +3,7 @@ package com.anggastudio.sample;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,16 +20,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scan() {
-        Printama printama = new Printama();
-        printama.scan(this, printerName -> {
-
+        Printama.scan(this, printerName -> {
+            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
         });
     }
 
     private void print() {
         Printama printama = new Printama();
         printama.connect(() -> {
-            printama.printText("-------------\n" +
+            printama.printText(Printama.CENTER, "-------------\n" +
                     "Coming soon\n" +
                     "another anggastudio\n" +
                     "android library\n" +
