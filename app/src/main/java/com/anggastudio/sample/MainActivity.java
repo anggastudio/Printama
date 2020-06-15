@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
         printama.connect(() -> {
             printama.printText("-------------\n" +
                     "Coming soon\n" +
-                    "another anggastudio android library\n" +
+                    "another anggastudio\n" +
+                    "android library\n" +
                     "for bluetooth thermal printer\n" +
                     "------------------\n");
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
