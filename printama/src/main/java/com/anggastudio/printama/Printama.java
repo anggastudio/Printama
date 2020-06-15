@@ -15,13 +15,13 @@ public class Printama {
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
-    private final BluetoothPrinter btPrinter;
+    private final PrinterUtil btPrinter;
     private BluetoothDevice printer;
 
     public Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
-        btPrinter = new BluetoothPrinter(printer);
+        btPrinter = new PrinterUtil(printer);
     }
 
     public static BluetoothDevice getPrinter() {
@@ -54,7 +54,7 @@ public class Printama {
 
     public void connect(final OnConnected onConnected, final OnFailed onFailed) {
 
-        btPrinter.connectPrinter(new BluetoothPrinter.PrinterConnectListener() {
+        btPrinter.connectPrinter(new PrinterUtil.PrinterConnectListener() {
 
             @Override
             public void onConnected() {

@@ -17,14 +17,12 @@ import static com.anggastudio.printama.Printama.FULL_WIDTH;
 import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
 
-class BluetoothPrinter {
+class PrinterUtil {
     private static final int PRINTER_WIDTH = 400;
-    private static final int INITIAL_MARGIN_LEFT = -10;
+    private static final int INITIAL_MARGIN_LEFT = -12;
     private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
-    private static final int DOT_LINE_LIMIT = 200;
-    private static final int DC2V_HEAD = 4;
-    private static final int GSV_HEAD = 8;
+    private static final int HEAD = 8;
 
     private static final byte[] NEW_LINE = {10};
     private static final byte[] ESC_ALIGN_CENTER = new byte[]{0x1b, 'a', 0x01};
@@ -35,7 +33,7 @@ class BluetoothPrinter {
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
 
-    BluetoothPrinter(BluetoothDevice printer) {
+    PrinterUtil(BluetoothDevice printer) {
         this.printer = printer;
     }
 
@@ -129,19 +127,19 @@ class BluetoothPrinter {
         } else if (alignment == RIGHT) {
             marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
         }
-        byte[] command = generateBitmapArrayGSV_MSB(scaledBitmap, marginLeft, 0);
-        int lines = (command.length - GSV_HEAD) / WIDTH;
+        byte[] command = autoGrayScale(scaledBitmap, marginLeft, 0);
+        int lines = (command.length - HEAD) / WIDTH;
         System.arraycopy(new byte[]{
                 0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
                 (byte) ((lines >> 8) & 0xff)
-        }, 0, command, 0, GSV_HEAD);
+        }, 0, command, 0, HEAD);
         return printUnicode(command);
     }
 
-    private static byte[] generateBitmapArrayGSV_MSB(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
+    private static byte[] autoGrayScale(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
         byte[] result = null;
         int n = bm.getHeight() + bitMarginTop;
-        int offset = GSV_HEAD;
+        int offset = HEAD;
         result = new byte[n * WIDTH + offset];
         for (int y = 0; y < bm.getHeight(); y++) {
             for (int x = 0; x < bm.getWidth(); x++) {
