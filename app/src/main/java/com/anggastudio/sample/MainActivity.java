@@ -39,9 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void printTextLeft() {
         printama = new Printama(this);
-        if (printama.isConnected()) {
-
-        }
         printama.connect(() -> {
             printama.printText(Printama.LEFT,
                     "-------------\n" +

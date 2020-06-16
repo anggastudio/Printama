@@ -1,8 +1,45 @@
 # Printama
-android library for bluetooth thermal printer
+Android library for bluetooth thermal printer.
 
 ## Usage
-Documentation is in progress. Just take a look at sample project as an example.
+Currently still in Alpha. Make sure to use java 8+ configuration.
+Documentation is in progress. Just take a look at sample project as an
+example.
+
+But here for an insight:
+
+**Show dialog to choose bonded device** bind your device initially from
+the bluetooth config:
+```java
+Printama.scan(this, printerName -> {
+    ...
+});
+```
+
+**Print Text**
+```java
+Printama printama = new Printama(this);
+printama.connect(() -> {
+    printama.printText(Printama.CENTER,
+            "-------------\n" +
+            "This will be printed\n" +
+            "Center aligned\n" +
+            "cool isn't it?\n" +
+            "------------------\n");
+    printama.close();
+});
+```
+
+**Print Bitmap / Image**
+```java
+Printama printama = new Printama(this);
+printama.connect(() -> {
+    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+    printama.printImage(bitmap); // original size, centered as default
+    printama.close();
+});
+```
+
 
 ## Feature
 * Dialog to choose bonded bluetooth device.
