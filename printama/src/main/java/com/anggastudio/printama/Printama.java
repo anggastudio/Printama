@@ -103,7 +103,7 @@ public class Printama {
             DeviceListFragment fragment = DeviceListFragment.newInstance();
             fragment.setDeviceList(defaultAdapter.getBondedDevices());
             fragment.setOnConnectPrinter(onConnectPrinter);
-            fragment.show(fm, "fragment_add_edit_table");
+            fragment.show(fm, "DeviceListFragment");
         } else {
             onConnectPrinter.onConnectPrinter("failed to connect printer");
         }
