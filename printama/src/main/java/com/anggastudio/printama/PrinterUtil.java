@@ -93,25 +93,29 @@ class PrinterUtil {
         }
     }
 
-    public boolean printLine() {
+    public boolean printDashedLine() {
         return printText("________________________________");
     }
 
-    private boolean addNewLine() {
+    public boolean printDoubleDashedLine() {
+        return printText("================================");
+    }
+
+    public boolean addNewLine() {
         return printUnicode(NEW_LINE);
     }
 
-    public int addNewLines(int count) {
+    public int addNewLine(int count) {
         int success = 0;
         for (int i = 0; i < count; i++) {
             if (addNewLine()) success++;
         }
-
         return success;
     }
 
     boolean printImage(Bitmap bitmap) {
-        return printImage(Printama.CENTER, bitmap, ORIGINAL_WIDTH); // original
+        int width = bitmap.getWidth() > PRINTER_WIDTH ? FULL_WIDTH : ORIGINAL_WIDTH;
+        return printImage(Printama.CENTER, bitmap, width);
     }
 
     boolean printImage(Bitmap bitmap, int width) {

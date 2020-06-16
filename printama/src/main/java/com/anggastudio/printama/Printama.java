@@ -15,13 +15,13 @@ public class Printama {
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
-    private final PrinterUtil btPrinter;
+    private final PrinterUtil util;
     private BluetoothDevice printer;
 
     public Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
-        btPrinter = new PrinterUtil(printer);
+        util = new PrinterUtil(printer);
     }
 
     public static BluetoothDevice getPrinter() {
@@ -40,12 +40,12 @@ public class Printama {
     }
 
     public void printText(int align, String text) {
-        btPrinter.setAlign(align);
-        btPrinter.printText(text);
+        util.setAlign(align);
+        util.printText(text);
     }
 
     public void close() {
-        btPrinter.finish();
+        util.finish();
     }
 
     public void connect(final OnConnected onConnected) {
@@ -54,7 +54,7 @@ public class Printama {
 
     public void connect(final OnConnected onConnected, final OnFailed onFailed) {
 
-        btPrinter.connectPrinter(new PrinterUtil.PrinterConnectListener() {
+        util.connectPrinter(new PrinterUtil.PrinterConnectListener() {
 
             @Override
             public void onConnected() {
@@ -70,11 +70,11 @@ public class Printama {
     }
 
     public void printImage(Bitmap bitmap) {
-        btPrinter.printImage(bitmap);
+        util.printImage(bitmap);
     }
 
     public void printImage(int alignment, Bitmap bitmap, int width) {
-        btPrinter.printImage(alignment, bitmap, width);
+        util.printImage(alignment, bitmap, width);
     }
 
 
@@ -93,7 +93,23 @@ public class Printama {
     }
 
     public void printImage(Bitmap bitmap, int width) {
-        btPrinter.printImage(bitmap, width);
+        util.printImage(bitmap, width);
+    }
+
+    public void printDashedLine() {
+        util.printDashedLine();
+    }
+
+    public void printDoubleDashedLine() {
+        util.printDoubleDashedLine();
+    }
+
+    public void addNewLine() {
+        util.addNewLine();
+    }
+
+    public void addNewLine(int count) {
+        util.addNewLine(count);
     }
 
     public interface OnConnected {
