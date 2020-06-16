@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -40,12 +41,38 @@ public class Printama {
     }
 
     public void printText(int align, String text) {
-        util.setAlign(align);
-        util.printText(text);
+        printText(align, text, null, null);
+    }
+
+    public void printText(int align, String text, OnConnected onConnected, OnFailed onFailed) {
+        if (util.isConnected()) {
+            util.setAlign(align);
+            util.printText(text);
+        } else {
+            util.connectPrinter(() -> {
+                util.setAlign(align);
+                util.printText(text);
+                if (onConnected != null) onConnected.onConnected();
+            }, () -> {
+                if (onFailed != null) onFailed.onFailed("failed");
+            });
+        }
+    }
+
+    public void setLineSpacing(int lineSpacing) {
+        util.setLineSpacing(lineSpacing);
+    }
+
+    public void setBold(boolean bold) {
+        util.setBold(bold);
+    }
+
+    public void feedPaper() {
+        util.feedPaper();
     }
 
     public void close() {
-        util.finish();
+        new Handler().postDelayed(util::finish, 1000);
     }
 
     public void connect(final OnConnected onConnected) {
@@ -53,19 +80,10 @@ public class Printama {
     }
 
     public void connect(final OnConnected onConnected, final OnFailed onFailed) {
-
-        util.connectPrinter(new PrinterUtil.PrinterConnectListener() {
-
-            @Override
-            public void onConnected() {
-                if (onConnected != null) onConnected.onConnected();
-            }
-
-            @Override
-            public void onFailed() {
-                if (onFailed != null) onFailed.onFailed("Failed to connect printer");
-            }
-
+        util.connectPrinter(() -> {
+            if (onConnected != null) onConnected.onConnected();
+        }, () -> {
+            if (onFailed != null) onFailed.onFailed("Failed to connect printer");
         });
     }
 
@@ -76,7 +94,6 @@ public class Printama {
     public void printImage(int alignment, Bitmap bitmap, int width) {
         util.printImage(alignment, bitmap, width);
     }
-
 
     public static void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         Pref.init(activity);
@@ -110,6 +127,10 @@ public class Printama {
 
     public void addNewLine(int count) {
         util.addNewLine(count);
+    }
+
+    public boolean isConnected() {
+        return util.isConnected();
     }
 
     public interface OnConnected {

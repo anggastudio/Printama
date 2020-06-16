@@ -29,35 +29,41 @@ class PrinterUtil {
     private static final byte[] ESC_ALIGN_RIGHT = new byte[]{0x1b, 'a', 0x02};
     private static final byte[] ESC_ALIGN_LEFT = new byte[]{0x1b, 'a', 0x00};
 
+    private static final String HEX_STR = "0123456789ABCDEF";
+    private static final String[] BINARY_ARRAY = {"0000", "0001", "0010", "0011",
+            "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
+            "1100", "1101", "1110", "1111"};
+
     private BluetoothDevice printer;
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
+
 
     PrinterUtil(BluetoothDevice printer) {
         this.printer = printer;
     }
 
-    void connectPrinter(final PrinterConnectListener listener) {
-        new ConnectTask(new ConnectTask.BtConnectListener() {
+    void connectPrinter(final PrinterConnected successListener, PrinterConnectFailed failedListener) {
+        new ConnectAsyncTask(new ConnectAsyncTask.ConnectionListener() {
             @Override
             public void onConnected(BluetoothSocket socket) {
                 btSocket = socket;
                 try {
                     btOutputStream = socket.getOutputStream();
-                    listener.onConnected();
+                    successListener.onConnected();
                 } catch (IOException e) {
-                    listener.onFailed();
+                    failedListener.onFailed();
                 }
             }
 
             @Override
             public void onFailed() {
-                listener.onFailed();
+                failedListener.onFailed();
             }
         }).execute(printer);
     }
 
-    public boolean isConnected() {
+    boolean isConnected() {
         return btSocket != null && btSocket.isConnected();
     }
 
@@ -93,19 +99,19 @@ class PrinterUtil {
         }
     }
 
-    public boolean printDashedLine() {
+    boolean printDashedLine() {
         return printText("________________________________");
     }
 
-    public boolean printDoubleDashedLine() {
+    boolean printDoubleDashedLine() {
         return printText("================================");
     }
 
-    public boolean addNewLine() {
+    boolean addNewLine() {
         return printUnicode(NEW_LINE);
     }
 
-    public int addNewLine(int count) {
+    int addNewLine(int count) {
         int success = 0;
         for (int i = 0; i < count; i++) {
             if (addNewLine()) success++;
@@ -131,7 +137,7 @@ class PrinterUtil {
         } else if (alignment == RIGHT) {
             marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
         }
-        byte[] command = autoGrayScale(scaledBitmap, marginLeft, 0);
+        byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
         int lines = (command.length - HEAD) / WIDTH;
         System.arraycopy(new byte[]{
                 0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
@@ -180,7 +186,7 @@ class PrinterUtil {
         return Bitmap.createScaledBitmap(bitmap, desiredWidth, height, true);
     }
 
-    public void setAlign(int alignType) {
+    void setAlign(int alignType) {
         byte[] d;
         switch (alignType) {
             case CENTER:
@@ -193,7 +199,6 @@ class PrinterUtil {
                 d = ESC_ALIGN_LEFT;
                 break;
         }
-
         try {
             btOutputStream.write(d);
         } catch (IOException e) {
@@ -201,27 +206,28 @@ class PrinterUtil {
         }
     }
 
-    public void setLineSpacing(int lineSpacing) {
+    void setLineSpacing(int lineSpacing) {
         byte[] cmd = new byte[]{0x1B, 0x33, (byte) lineSpacing};
         printUnicode(cmd);
     }
 
-    public void setBold(boolean bold) {
+    void setBold(boolean bold) {
         byte[] cmd = new byte[]{0x1B, 0x45, bold ? (byte) 1 : 0};
         printUnicode(cmd);
     }
 
-    public void feedPaper() {
+    void feedPaper() {
         addNewLine();
         addNewLine();
         addNewLine();
         addNewLine();
     }
 
-    private static class ConnectTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {
-        private BtConnectListener listener;
+    private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {
+        private static final String COMM_SOCKET_METHOD = "createRfcommSocket";
+        private ConnectionListener listener;
 
-        private ConnectTask(BtConnectListener listener) {
+        private ConnectAsyncTask(ConnectionListener listener) {
             this.listener = listener;
         }
 
@@ -238,19 +244,13 @@ class PrinterUtil {
             boolean connected = true;
             try {
                 socket = device.createRfcommSocketToServiceRecord(uuid);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
+                socket.connect();
+                socket = (BluetoothSocket) device.getClass().getMethod(COMM_SOCKET_METHOD, new Class[]{int.class}).invoke(device, 1);
                 socket.connect();
             } catch (IOException e) {
-                try {
-                    socket = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[]{int.class})
-                            .invoke(device, 1);
-                    socket.connect();
-                } catch (Exception e2) {
-                    connected = false;
-                }
+                e.printStackTrace();
+            } catch (Exception e2) {
+                connected = false;
             }
             return connected ? socket : null;
         }
@@ -263,16 +263,18 @@ class PrinterUtil {
             }
         }
 
-        private interface BtConnectListener {
+        private interface ConnectionListener {
             void onConnected(BluetoothSocket socket);
 
             void onFailed();
         }
     }
 
-    public interface PrinterConnectListener {
+    public interface PrinterConnected {
         void onConnected();
+    }
 
+    public interface PrinterConnectFailed {
         void onFailed();
     }
 
@@ -323,22 +325,17 @@ class PrinterUtil {
         return hexList;
     }
 
-    private static String hexStr = "0123456789ABCDEF";
-    private static String[] binaryArray = {"0000", "0001", "0010", "0011",
-            "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
-            "1100", "1101", "1110", "1111"};
-
     private static String strToHexString(String binaryStr) {
         String hex = "";
         String f4 = binaryStr.substring(0, 4);
         String b4 = binaryStr.substring(4, 8);
-        for (int i = 0; i < binaryArray.length; i++) {
-            if (f4.equals(binaryArray[i]))
-                hex += hexStr.substring(i, i + 1);
+        for (int i = 0; i < BINARY_ARRAY.length; i++) {
+            if (f4.equals(BINARY_ARRAY[i]))
+                hex += HEX_STR.substring(i, i + 1);
         }
-        for (int i = 0; i < binaryArray.length; i++) {
-            if (b4.equals(binaryArray[i]))
-                hex += hexStr.substring(i, i + 1);
+        for (int i = 0; i < BINARY_ARRAY.length; i++) {
+            if (b4.equals(BINARY_ARRAY[i]))
+                hex += HEX_STR.substring(i, i + 1);
         }
         return hex;
     }

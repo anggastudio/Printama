@@ -12,6 +12,8 @@ import com.anggastudio.printama.Printama;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Printama printama;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printTextLeft() {
-        Printama printama = new Printama(this);
+        printama = new Printama(this);
+        if (printama.isConnected()) {
+
+        }
         printama.connect(() -> {
             printama.printText(Printama.LEFT,
                     "-------------\n" +
