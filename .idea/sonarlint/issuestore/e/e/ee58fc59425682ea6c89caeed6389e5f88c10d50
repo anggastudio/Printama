@@ -1,24 +1,0 @@
-
-:
-java:S1643É"Use a StringBuilder instead.(¼ï×È8 Æ‹¸«.
-F
-java:S1148¼"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
-a
-java:S2583ó"CChange this condition so that it does not always evaluate to "true"(¯ö†á8 Æ‹¸«.
-O
-java:S1068"2Remove this unused "DOT_LINE_LIMIT" private field.(¸ÄÂ¸8 Æ‹¸«.
-F
-java:S1148æ"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
-:
-java:S1643Å"Use a StringBuilder instead.(¼ï×È8 Æ‹¸«.
-E
-java:S1148E"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
-E
-java:S1148P"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
-k	java:S100ƒ"NRename this method name to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ã„°¯8 Æ‹¸«.
-\
-java:S1144¬">Remove this unused private "binaryListToHexStringList" method.(–Œãä8 Æ‹¸«.
-J
-java:S1068"-Remove this unused "DC2V_HEAD" private field.(úº¹8 Æ‹¸«.
-E
-java:S1148Z"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ8 Æ‹¸«.
