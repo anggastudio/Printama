@@ -25,7 +25,7 @@ What license?
 
 ## Download
 
-Minimal Android SDK Version 16
+Minimum Android SDK Version 16
 
 #### Gradle
 **Step 1.** Add it in your root build.gradle at the end of repositories:
@@ -41,7 +41,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-  implementation 'com.github.anggastudio:Printama:0.8.0'
+  implementation 'com.github.anggastudio:Printama:0.8.1'
 }
 ```
 #### Maven
@@ -60,7 +60,7 @@ dependencies {
 <dependency>
   <groupId>com.github.anggastudio</groupId>
   <artifactId>Printama</artifactId>
-  <version>0.8.0</version>
+  <version>0.8.1</version>
 </dependency>
 ```
 

@@ -19,3 +19,7 @@ w
 Gprintama/src/main/java/com/anggastudio/printama/DeviceListFragment.java,0\0\00692b19135a47f87214fa6f8a1389d76ff8bd2b
 v
 Fprintama/src/main/java/com/anggastudio/printama/DeviceListAdapter.java,c\7\c74a9a7f5a2f66f174af0ad3a02952616b0c4b59
+p
+@printama/src/main/java/com/anggastudio/printama/PrinterUtil.java,a\4\a42f25f840043ddeaa96ae4573c2ed335ed7db84
+9
+	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
