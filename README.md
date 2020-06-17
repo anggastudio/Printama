@@ -86,3 +86,14 @@ dependencies {
 ## License
 
 [Apache License 2.0](LICENSE)
+
+
+## Thanks To:
+
+- [imrankst1221](https://github.com/imrankst1221/Thermal-Printer-in-Android)
+- [MFori](https://github.com/MFori/Android-Bluetooth-Printer)
+- WP
+
+## Contributor:
+
+- oops there is no contributor yet
