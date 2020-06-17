@@ -1,7 +1,7 @@
 # Printama
 Android library for bluetooth thermal printer.
 
-![Sample 4](images/struk_belanja.jpeg)
+![Sample 1](images/struk_belanja.jpeg)
 
 ## Usage
 Currently still in Alpha. Make sure to use java 8+ configuration.
@@ -60,7 +60,7 @@ You can do :
 
 ## License
 
-What license? 
+Apache License 2.0 ![Liscene](LICENSE.ls)
 
 ## Download
 
