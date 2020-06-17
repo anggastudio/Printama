@@ -52,15 +52,11 @@ printama.connect(() -> {
 
 ## Contributing
 
-You can do :
+You can simply :
 * a pull request, or
-* raise a an issue ticket, or
+* raise an issue ticket, or
 * request additional feature by raise a ticket.
 
-
-## License
-
-Apache License 2.0 ![Liscene](LICENSE.ls)
 
 ## Download
 
@@ -83,23 +79,10 @@ dependencies {
   implementation 'com.github.anggastudio:Printama:0.8.1'
 }
 ```
-#### Maven
-**Step 1.**
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
-```
+#### Other like Maven, SBT, Leiningen
+**just visit the jitpack page**
+[Printama Jitpack](https://jitpack.io/#anggastudio/Printama)
 
-**Step 2.** Add the dependency
-```xml
-<dependency>
-  <groupId>com.github.anggastudio</groupId>
-  <artifactId>Printama</artifactId>
-  <version>0.8.1</version>
-</dependency>
-```
+## License
 
+[Apache License 2.0](LICENSE)
