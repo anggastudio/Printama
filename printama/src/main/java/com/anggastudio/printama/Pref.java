@@ -19,7 +19,7 @@ class Pref {
         return sharedPreferences.getString(key, "");
     }
 
-    void setString(String key, String value) {
+    static void setString(String key, String value) {
         if (sharedPreferences == null) return;
         if (value == null) value = "";
         SharedPreferences.Editor editor = sharedPreferences.edit();

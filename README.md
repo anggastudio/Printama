@@ -20,8 +20,7 @@ Printama.scan(this, printerName -> {
 
 **Print Text**
 ```java
-Printama printama = new Printama(this);
-printama.connect(() -> {
+Printama.with(context).connect(printama -> {
     printama.printText(Printama.CENTER,
             "-------------\n" +
             "This will be printed\n" +
@@ -34,8 +33,7 @@ printama.connect(() -> {
 
 **Print Bitmap / Image**
 ```java
-Printama printama = new Printama(this);
-printama.connect(() -> {
+Printama.with(context).connect(printama -> {
     Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
     printama.printImage(bitmap); // original size, centered as default
     printama.close();

@@ -1,18 +1,22 @@
 package com.anggastudio.sample;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.anggastudio.printama.Printama;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Printama printama;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printTextLeft() {
-        printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             printama.printText(Printama.LEFT,
                     "-------------\n" +
                             "This will be printed\n" +
@@ -52,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printTextCenter() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             printama.printText(Printama.CENTER,
                     "-------------\n" +
                             "This will be printed\n" +
@@ -65,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printTextRight() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             printama.printText(Printama.RIGHT,
                     "-------------\n" +
                             "This will be printed\n" +
@@ -78,26 +79,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageLeft() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Printama.with(this).connect(printama -> {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
             printama.printImage(Printama.LEFT, bitmap, 200);
             printama.close();
         });
     }
 
     private void printImageCenter() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            printama.printImage(Printama.CENTER, bitmap, 200);
+        Printama.with(this).connect(printama -> {
+            Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.drawable.ic_launcher_background);
+            boolean print = printama.printImage(Printama.CENTER, bitmap, 200);
+            if (!print) {
+                Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+            }
             printama.close();
         });
     }
 
     private void printImageRight() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(Printama.RIGHT, bitmap, 200);
             printama.close();
@@ -105,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageOri() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(bitmap); // original size, centered as default
             printama.close();
@@ -114,11 +114,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageFull() {
-        Printama printama = new Printama(this);
-        printama.connect(() -> {
+        Printama.with(this).connect(printama -> {
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
         });
+    }
+
+    public static Bitmap getBitmapFromVector(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 }
