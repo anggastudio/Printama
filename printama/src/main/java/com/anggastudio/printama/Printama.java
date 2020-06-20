@@ -29,9 +29,10 @@ public class Printama {
     public void printTest() {
         printama.connect(printama -> {
             printama.printText(Printama.CENTER,
-                    "-------------\n" +
+                    "------------------\n" +
                             "Print Test\n" +
                             "------------------\n");
+            printama.feedPaper();
             printama.close();
         });
 
