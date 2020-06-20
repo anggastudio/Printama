@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.btn_scan).setOnClickListener(v -> showPrinterList());
+        findViewById(R.id.btn_choose_printer).setOnClickListener(v -> showPrinterList());
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
@@ -36,9 +37,17 @@ public class MainActivity extends AppCompatActivity {
     private void showPrinterList() {
         Printama.showPrinterList(this, printerName -> {
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
-            TextView connectedTo = findViewById(R.id.tv_connected_to);
+            TextView connectedTo = findViewById(R.id.tv_printer_info);
             connectedTo.setText("Connected to : " + printerName);
+            if (!printerName.contains("failed")) {
+                findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
+                findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+            }
         });
+    }
+
+    private void testPrinter() {
+        Printama.with(this).printTest();
     }
 
     private void printTextLeft() {

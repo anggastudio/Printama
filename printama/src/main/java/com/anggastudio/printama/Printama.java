@@ -16,6 +16,7 @@ public class Printama {
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
+    private static Printama printama;
     private final PrinterUtil util;
     private BluetoothDevice printer;
 
@@ -23,6 +24,16 @@ public class Printama {
         Pref.init(context);
         printer = getPrinter();
         util = new PrinterUtil(printer);
+    }
+
+    public void printTest() {
+        printama.connect(printama -> {
+            printama.printText(Printama.LEFT,
+                    "-------------\n" +
+                            "Print Test\n" +
+                            "------------------\n");
+            printama.close();
+        });
     }
 
     public interface Callback {
@@ -36,7 +47,8 @@ public class Printama {
     }
 
     public static Printama with(Context context) {
-        return new Printama(context);
+        printama = new Printama(context);
+        return printama;
     }
 
     public static BluetoothDevice getPrinter() {
