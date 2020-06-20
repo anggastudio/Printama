@@ -36,10 +36,6 @@ public class Printama {
         });
     }
 
-    public interface Callback {
-        void printama(Printama printama);
-    }
-
     public static Printama with(Context context, Callback callback) {
         Printama printama = new Printama(context);
         callback.printama(printama);
@@ -170,5 +166,9 @@ public class Printama {
 
     public interface OnConnectPrinter {
         void onConnectPrinter(String printerName);
+    }
+
+    public interface Callback {
+        void printama(Printama printama);
     }
 }
