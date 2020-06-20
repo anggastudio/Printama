@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,6 +19,8 @@ import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
 
 class PrinterUtil {
+    private static final String TAG = "PRINTAMA";
+
     private static final int PRINTER_WIDTH = 400;
     private static final int INITIAL_MARGIN_LEFT = -12;
     private static final int BIT_WIDTH = 384;
@@ -89,6 +92,16 @@ class PrinterUtil {
         }
     }
 
+    boolean printEndPaper() {
+        try {
+            btOutputStream.write(FEED_PAPER_AND_CUT);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private boolean printUnicode(byte[] data) {
         try {
             btOutputStream.write(data);
@@ -120,8 +133,13 @@ class PrinterUtil {
     }
 
     boolean printImage(Bitmap bitmap) {
-        int width = bitmap.getWidth() > PRINTER_WIDTH ? FULL_WIDTH : ORIGINAL_WIDTH;
-        return printImage(Printama.CENTER, bitmap, width);
+        try {
+            int width = bitmap.getWidth() > PRINTER_WIDTH ? FULL_WIDTH : ORIGINAL_WIDTH;
+            return printImage(Printama.CENTER, bitmap, width);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Maybe resource is vector or mipmap?");
+            return false;
+        }
     }
 
     boolean printImage(Bitmap bitmap, int width) {
@@ -131,19 +149,23 @@ class PrinterUtil {
     boolean printImage(int alignment, Bitmap bitmap, int width) {
         if (width == FULL_WIDTH) width = PRINTER_WIDTH;
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
-        int marginLeft = INITIAL_MARGIN_LEFT;
-        if (alignment == CENTER) {
-            marginLeft = marginLeft + ((PRINTER_WIDTH - scaledBitmap.getWidth()) / 2);
-        } else if (alignment == RIGHT) {
-            marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
+        if (scaledBitmap != null) {
+            int marginLeft = INITIAL_MARGIN_LEFT;
+            if (alignment == CENTER) {
+                marginLeft = marginLeft + ((PRINTER_WIDTH - scaledBitmap.getWidth()) / 2);
+            } else if (alignment == RIGHT) {
+                marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
+            }
+            byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
+            int lines = (command.length - HEAD) / WIDTH;
+            System.arraycopy(new byte[]{
+                    0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
+                    (byte) ((lines >> 8) & 0xff)
+            }, 0, command, 0, HEAD);
+            return printUnicode(command);
+        } else {
+            return false;
         }
-        byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
-        int lines = (command.length - HEAD) / WIDTH;
-        System.arraycopy(new byte[]{
-                0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
-                (byte) ((lines >> 8) & 0xff)
-        }, 0, command, 0, HEAD);
-        return printUnicode(command);
     }
 
     private static byte[] autoGrayScale(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
@@ -176,14 +198,19 @@ class PrinterUtil {
     }
 
     private Bitmap scaledBitmap(Bitmap bitmap, int width) {
-        int desiredWidth = width == 0 || bitmap.getWidth() <= PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
-        if (width > 0 && width <= PRINTER_WIDTH) {
-            desiredWidth = width;
+        try {
+            int desiredWidth = width == 0 || bitmap.getWidth() <= PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
+            if (width > 0 && width <= PRINTER_WIDTH) {
+                desiredWidth = width;
+            }
+            int height;
+            float scale = (float) desiredWidth / (float) bitmap.getWidth();
+            height = (int) (bitmap.getHeight() * scale);
+            return Bitmap.createScaledBitmap(bitmap, desiredWidth, height, true);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "Maybe resource is vector or mipmap?");
+            return null;
         }
-        int height;
-        float scale = (float) desiredWidth / (float) bitmap.getWidth();
-        height = (int) (bitmap.getHeight() * scale);
-        return Bitmap.createScaledBitmap(bitmap, desiredWidth, height, true);
     }
 
     void setAlign(int alignType) {
@@ -244,8 +271,6 @@ class PrinterUtil {
             boolean connected = true;
             try {
                 socket = device.createRfcommSocketToServiceRecord(uuid);
-                socket.connect();
-                socket = (BluetoothSocket) device.getClass().getMethod(COMM_SOCKET_METHOD, new Class[]{int.class}).invoke(device, 1);
                 socket.connect();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -310,6 +335,8 @@ class PrinterUtil {
                 .replace('Ý', 'Y')
                 .replace('Ž', 'Z');
     }
+
+    private static byte[] FEED_PAPER_AND_CUT = {0x1D, 0x56, 66, 0x00};
 
     private static List<String> binaryListToHexStringList(List<String> list) {
         List<String> hexList = new ArrayList<>();
