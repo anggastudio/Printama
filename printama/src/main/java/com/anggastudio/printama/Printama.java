@@ -28,12 +28,13 @@ public class Printama {
 
     public void printTest() {
         printama.connect(printama -> {
-            printama.printText(Printama.LEFT,
+            printama.printText(Printama.CENTER,
                     "-------------\n" +
                             "Print Test\n" +
                             "------------------\n");
             printama.close();
         });
+
     }
 
     public static Printama with(Context context, Callback callback) {
@@ -63,23 +64,8 @@ public class Printama {
     }
 
     public void printText(int align, String text) {
-        printText(align, text, null, null);
-    }
-
-    public void printText(int align, String text, OnConnected onConnected, OnFailed onFailed) {
-        if (util.isConnected()) {
-            util.setAlign(align);
-            util.printText(text);
-            util.printEndPaper();
-        } else {
-            util.connectPrinter(() -> {
-                util.setAlign(align);
-                util.printText(text);
-                if (onConnected != null) onConnected.onConnected(this);
-            }, () -> {
-                if (onFailed != null) onFailed.onFailed("failed");
-            });
-        }
+        util.setAlign(align);
+        util.printText(text);
     }
 
     public void setLineSpacing(int lineSpacing) {
