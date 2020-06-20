@@ -1,19 +1,0 @@
-
->
-java:S1148["#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
-3
-java:S1643Õ"Use a StringBuilder instead.(¼ï×È
-3
-java:S1643Ñ"Use a StringBuilder instead.(¼ï×È
-U
-java:S1144¸">Remove this unused private "binaryListToHexStringList" method.(–Œãä
->
-java:S1148F"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
->
-java:S1148Q"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
-?
-java:S1148È"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
-Z
-java:S2583ÿ"CChange this condition so that it does not always evaluate to "true"(¯ö†á
-?
-java:S1148ò"#Use a logger to log this exception.(€ÉÔ…ýÿÿÿÿ
