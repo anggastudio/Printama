@@ -94,4 +94,5 @@ dependencies {
 
 ## Contributor:
 
-- oops there is no contributor yet
+- [utsmannn](https://github.com/utsmannn)
+- you (maybe)
