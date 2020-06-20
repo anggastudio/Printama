@@ -47,86 +47,98 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testPrinter() {
-        Printama.with(this).printTest();
+        Printama.with(this, Printama::printTest);
     }
 
     private void printTextLeft() {
-        Printama.with(this).connect(printama -> {
-            printama.printText(Printama.LEFT,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Left aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
-            // or simply printama.printText("some text") --> will be printed left aligned as default
-            printama.close();
-        });
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Left aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
+        Printama.with(this, printama ->
+                        printama.printText(Printama.LEFT, text)
+                // or simply printama.printText("some text")
+                // --> will be printed left aligned as default
+        );
     }
 
     private void printTextCenter() {
-        Printama.with(this).connect(printama -> {
-            printama.printText(Printama.CENTER,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Center aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
-            printama.close();
-        });
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Center aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
+        Printama.with(this, printama ->
+                printama.printText(Printama.CENTER, text)
+        );
     }
 
     private void printTextRight() {
-        Printama.with(this).connect(printama -> {
-            printama.printText(Printama.RIGHT,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Right aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
-            printama.close();
-        });
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Right aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
+        Printama.with(this, printama ->
+                printama.printText(Printama.RIGHT, text)
+        );
     }
 
     private void printImageLeft() {
-        Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Printama.with(this, printama -> {
             printama.printImage(Printama.LEFT, bitmap, 200);
-            printama.close();
         });
     }
 
     private void printImageCenter() {
-        Printama.with(this).connect(printama -> {
-            Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.drawable.ic_launcher_background);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Printama.with(this, printama -> {
             boolean print = printama.printImage(Printama.CENTER, bitmap, 200);
             if (!print) {
                 Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
             }
-            printama.close();
         });
     }
 
     private void printImageRight() {
-        Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            printama.printImage(Printama.RIGHT, bitmap, 200);
-            printama.close();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Printama.with(this, printama -> {
+            boolean print = printama.printImage(Printama.RIGHT, bitmap, 200);
+            if (!print) {
+                Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void printImageOri() {
-        Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            printama.printImage(bitmap); // original size, centered as default
-            printama.close();
+        Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.mipmap.ic_launcher);
+        Printama.with(this, printama -> {
+            boolean print = printama.printImage(bitmap); // original size, centered as default
+            if (!print) {
+                Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void printImageFull() {
-        Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
-            printama.printImage(bitmap, Printama.FULL_WIDTH);
-            printama.close();
+        Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.mipmap.ic_launcher);
+        Printama.with(this, printama -> {
+            boolean print = printama.printImage(bitmap, Printama.FULL_WIDTH); // original size, centered as default
+            if (!print) {
+                Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void printImageCat() {
+        Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.drawable.cat);
+        Printama.with(this, printama -> {
+            boolean print = printama.printImage(bitmap, Printama.FULL_WIDTH); // original size, centered as default
+            if (!print) {
+                Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

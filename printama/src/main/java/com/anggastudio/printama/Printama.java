@@ -1,5 +1,6 @@
 package com.anggastudio.printama;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -20,33 +21,31 @@ public class Printama {
     private final PrinterUtil util;
     private BluetoothDevice printer;
 
-    public Printama(Context context) {
+    private Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
         util = new PrinterUtil(printer);
     }
 
-    public void printTest() {
-        printama.connect(printama -> {
-            printama.printText(Printama.CENTER,
-                    "------------------\n" +
-                            "Print Test\n" +
-                            "------------------\n");
-            printama.feedPaper();
-            printama.close();
+    public static void with(Activity activity, Callback onReady) {
+        with(activity, onReady, null);
+    }
+
+    public static void with(Activity activity, Callback onReady, OnFailed onFailed) {
+        printama = new Printama(activity);
+        printama.connect(() -> {
+            activity.runOnUiThread(() -> onReady.printama(printama));
+        }, message -> {
+            if (onFailed != null) onFailed.onFailed(message);
         });
-
     }
 
-    public static Printama with(Context context, Callback callback) {
-        Printama printama = new Printama(context);
-        callback.printama(printama);
-        return printama;
-    }
-
-    public static Printama with(Context context) {
-        printama = new Printama(context);
-        return printama;
+    public void printTest() {
+        String text = "------------------\n" +
+                "Print Test\n" +
+                "------------------\n";
+        printama.printText(Printama.CENTER, text);
+        printama.feedPaper();
     }
 
     public static BluetoothDevice getPrinter() {
@@ -85,13 +84,13 @@ public class Printama {
         new Handler().postDelayed(util::finish, 2000);
     }
 
-    public void connect(final OnConnected onConnected) {
+    private void connect(final OnConnected onConnected) {
         connect(onConnected, null);
     }
 
-    public void connect(final OnConnected onConnected, final OnFailed onFailed) {
+    private void connect(final OnConnected onConnected, final OnFailed onFailed) {
         util.connectPrinter(() -> {
-            if (onConnected != null) onConnected.onConnected(this);
+            if (onConnected != null) onConnected.onConnected();
         }, () -> {
             if (onFailed != null) onFailed.onFailed("Failed to connect printer");
         });
@@ -119,8 +118,8 @@ public class Printama {
         }
     }
 
-    public void printImage(Bitmap bitmap, int width) {
-        util.printImage(bitmap, width);
+    public boolean printImage(Bitmap bitmap, int width) {
+        return util.printImage(bitmap, width);
     }
 
     public void printDashedLine() {
@@ -144,7 +143,7 @@ public class Printama {
     }
 
     public interface OnConnected {
-        void onConnected(Printama printama);
+        void onConnected();
     }
 
     public interface OnFailed {
