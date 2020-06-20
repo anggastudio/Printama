@@ -3,16 +3,9 @@ package com.anggastudio.printama;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -94,7 +87,7 @@ public class Printama {
     }
 
     public void close() {
-        new Handler().postDelayed(util::finish, 1000);
+        new Handler().postDelayed(util::finish, 2000);
     }
 
     public void connect(final OnConnected onConnected) {
@@ -117,7 +110,7 @@ public class Printama {
         return util.printImage(alignment, bitmap, width);
     }
 
-    public static void scan(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
+    public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         Pref.init(activity);
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {

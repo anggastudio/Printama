@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.btn_scan).setOnClickListener(v -> scan());
+        findViewById(R.id.btn_scan).setOnClickListener(v -> showPrinterList());
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
     }
 
-    private void scan() {
-        Printama.scan(this, printerName -> {
+    private void showPrinterList() {
+        Printama.showPrinterList(this, printerName -> {
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
             TextView connectedTo = findViewById(R.id.tv_connected_to);
             connectedTo.setText("Connected to : " + printerName);
