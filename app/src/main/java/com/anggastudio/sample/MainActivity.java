@@ -1,5 +1,6 @@
 package com.anggastudio.sample;
 
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
         findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri());
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
+
+        getSavedPrinter();
+    }
+
+    private void getSavedPrinter() {
+        BluetoothDevice connectedPrinter = Printama.with(this).getConnectedPrinter();
+        if (connectedPrinter != null) {
+            TextView connectedTo = findViewById(R.id.tv_printer_info);
+            connectedTo.setText("Connected to : " + connectedPrinter.getName());
+        }
     }
 
     private void showPrinterList() {

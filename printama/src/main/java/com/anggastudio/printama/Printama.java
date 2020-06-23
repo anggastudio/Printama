@@ -49,7 +49,7 @@ public class Printama {
         return printama;
     }
 
-    public static BluetoothDevice getPrinter() {
+    private static BluetoothDevice getPrinter() {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
         for (BluetoothDevice device : defaultAdapter.getBondedDevices()) {
@@ -141,6 +141,10 @@ public class Printama {
 
     public boolean isConnected() {
         return util.isConnected();
+    }
+
+    public BluetoothDevice getConnectedPrinter() {
+        return getPrinter();
     }
 
     public interface OnConnected {
