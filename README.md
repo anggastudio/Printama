@@ -3,11 +3,11 @@ Android library for bluetooth thermal printer.
 
 ![Struk Belanja](images/struk_belanja.jpeg)
 ![Print Text Image](images/print_text_image.jpeg)
-![Print Image Full Width](images/struk_belanja.jpeg)
-![Rose Photo](images/struk_belanja.jpeg)
-![Printed Rose](images/struk_belanja.jpeg)
-![Layout View](images/struk_belanja.jpeg)
-![Printed Layout View](images/struk_belanja.jpeg)
+![Print Image Full Width](images/print_image_full.jpeg)
+![Rose Photo](images/rose.jpeg)
+![Printed Rose](images/rose_print.jpeg)
+![Layout View](images/layout.jpeg)
+![Printed Layout View](images/print_layout.jpeg)
 
 ## Usage
 Currently still in Alpha. Make sure to use java 8+ configuration.
