@@ -1,7 +1,13 @@
 # Printama
 Android library for bluetooth thermal printer.
 
-![Sample 1](images/struk_belanja.jpeg)
+![Struk Belanja](images/struk_belanja.jpeg)
+![Print Text Image](images/print_text_image.jpeg)
+![Print Image Full Width](images/print_image_full.jpeg)
+![Rose Photo](images/rose.jpeg)
+![Printed Rose](images/rose_print.jpeg)
+![Layout View](images/layout.jpeg)
+![Printed Layout View](images/print_layout.jpeg)
 
 ## Usage
 Currently still in Alpha. Make sure to use java 8+ configuration.
