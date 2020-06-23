@@ -4,8 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -35,7 +40,6 @@ public class Printama {
             printama.feedPaper();
             printama.close();
         });
-
     }
 
     public static Printama with(Context context, Callback callback) {
@@ -147,6 +151,26 @@ public class Printama {
         return getPrinter();
     }
 
+    public static Bitmap getBitmapFromVector(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        return getBitmapFromVector(drawable);
+    }
+
+    public static Bitmap getBitmapFromVector(Drawable drawable) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = drawable != null ? (DrawableCompat.wrap(drawable)).mutate() : null;
+        }
+        if (drawable != null) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        }
+        return null;
+    }
+
     public interface OnConnected {
         void onConnected(Printama printama);
     }
@@ -162,4 +186,6 @@ public class Printama {
     public interface Callback {
         void printama(Printama printama);
     }
+
+
 }

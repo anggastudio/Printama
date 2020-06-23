@@ -1,20 +1,14 @@
 package com.anggastudio.sample;
 
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.anggastudio.printama.Printama;
 
@@ -33,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
         findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri());
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
+        findViewById(R.id.btn_print_background).setOnClickListener(v -> printImageBackground());
+        findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
 
         getSavedPrinter();
     }
@@ -141,19 +137,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static Bitmap getBitmapFromVector(Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = drawable != null ? (DrawableCompat.wrap(drawable)).mutate() : null;
-        }
-        if (drawable != null) {
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        }
-        return null;
+    private void printImageBackground() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher_background);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, Printama.ORIGINAL_WIDTH);
+            printama.close();
+        });
+    }
+
+    private void printImagePhoto() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, Printama.FULL_WIDTH);
+            printama.close();
+        });
     }
 }
