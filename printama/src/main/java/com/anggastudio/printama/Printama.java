@@ -119,8 +119,8 @@ public class Printama {
         }
     }
 
-    public void printImage(Bitmap bitmap, int width) {
-        util.printImage(bitmap, width);
+    public boolean printImage(Bitmap bitmap, int width) {
+        return util.printImage(bitmap, width);
     }
 
     public void printDashedLine() {

@@ -51,53 +51,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printTextLeft() {
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Left aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.LEFT,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Left aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
+            printama.printText(Printama.LEFT, text);
             // or simply printama.printText("some text") --> will be printed left aligned as default
             printama.close();
         });
     }
 
     private void printTextCenter() {
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Center aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.CENTER,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Center aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
+            printama.printText(Printama.CENTER, text);
             printama.close();
         });
     }
 
     private void printTextRight() {
+        String text = "-------------\n" +
+                "This will be printed\n" +
+                "Right aligned\n" +
+                "cool isn't it?\n" +
+                "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.RIGHT,
-                    "-------------\n" +
-                            "This will be printed\n" +
-                            "Right aligned\n" +
-                            "cool isn't it?\n" +
-                            "------------------\n");
+            printama.printText(Printama.RIGHT, text);
             printama.close();
         });
     }
 
     private void printImageLeft() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
             printama.printImage(Printama.LEFT, bitmap, 200);
             printama.close();
         });
     }
 
     private void printImageCenter() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            Bitmap bitmap = getBitmapFromVector(MainActivity.this, R.drawable.ic_launcher_background);
             boolean print = printama.printImage(Printama.CENTER, bitmap, 200);
             if (!print) {
                 Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
@@ -107,24 +107,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageRight() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(Printama.RIGHT, bitmap, 200);
             printama.close();
         });
     }
 
     private void printImageOri() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(bitmap); // original size, centered as default
             printama.close();
         });
     }
 
     private void printImageFull() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
         });
@@ -133,15 +133,16 @@ public class MainActivity extends AppCompatActivity {
     public static Bitmap getBitmapFromVector(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
+            drawable = drawable != null ? (DrawableCompat.wrap(drawable)).mutate() : null;
         }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
+        if (drawable != null) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            return bitmap;
+        }
+        return null;
     }
 }
