@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
         findViewById(R.id.btn_print_background).setOnClickListener(v -> printImageBackground());
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
+        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
 
         getSavedPrinter();
     }
@@ -149,6 +150,14 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
+            printama.close();
+        });
+    }
+
+    private void printView() {
+        View view = findViewById(R.id.root_view);
+        Printama.with(this).connect(printama -> {
+            printama.printFromView(view);
             printama.close();
         });
     }

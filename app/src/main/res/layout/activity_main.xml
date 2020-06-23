@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center|top"
@@ -59,7 +60,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:background="@color/colorPrimary"
                     android:gravity="center"
                     android:padding="8dp"
                     android:src="@drawable/ic_settings" />
@@ -108,8 +108,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
             android:gravity="start"
             android:text="Print Text Left"
+            android:textColor="@color/colorWhite"
             android:textSize="14sp" />
 
         <Button
@@ -117,7 +119,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
             android:text="Print Text Center"
+            android:textColor="@color/colorWhite"
             android:textSize="14sp" />
 
         <Button
@@ -125,8 +129,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
             android:gravity="end"
-            android:text="Print Text Right" />
+            android:text="Print Text Right"
+            android:textColor="@color/colorWhite" />
 
     </LinearLayout>
 
@@ -142,23 +148,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
             android:gravity="start"
-            android:text="Print Image Left" />
+            android:text="Print Image Left"
+            android:textColor="@color/colorWhite" />
 
         <Button
             android:id="@+id/btn_print_image_center"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Print Image Center" />
+            android:backgroundTint="@color/colorAccent"
+            android:text="Print Image Center"
+            android:textColor="@color/colorWhite" />
 
         <Button
             android:id="@+id/btn_print_image_right"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
             android:gravity="end"
-            android:text="Print Image Right" />
+            android:text="Print Image Right"
+            android:textColor="@color/colorWhite" />
 
     </LinearLayout>
 
@@ -168,24 +180,41 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Print Image Full Width" />
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Image Full Width"
+        android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btn_print_image_ori"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Print Image Original Width" />
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Image Original Width"
+        android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btn_print_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Print Image Background" />
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Image Background"
+        android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btn_print_image_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Print Image Photo" />
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Image Photo"
+        android:textColor="@color/colorWhite" />
+
+    <Button
+        android:id="@+id/btn_print_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print This Layout"
+        android:textColor="@color/colorWhite" />
 
 </LinearLayout>

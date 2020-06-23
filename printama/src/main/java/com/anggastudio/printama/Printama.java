@@ -5,14 +5,23 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.view.View;
+import android.view.ViewTreeObserver;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Printama {
 
@@ -169,6 +178,38 @@ public class Printama {
             return bitmap;
         }
         return null;
+    }
+
+    public void printFromView(View view) {
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        View finalView = view;
+        AtomicInteger viewWidth = new AtomicInteger(view.getMeasuredWidth());
+        AtomicInteger viewHeight = new AtomicInteger(view.getMeasuredHeight());
+        vto.addOnGlobalLayoutListener(() -> {
+            viewWidth.set(finalView.getMeasuredWidth());
+            viewHeight.set(finalView.getMeasuredHeight());
+        });
+        new Handler().postDelayed(() -> loadBitmapAndPrint(view, viewWidth.get(), viewHeight.get()), 500);
+    }
+
+    private void loadBitmapAndPrint(View view, int viewWidth, int viewHeight) {
+        Bitmap b = loadBitmapFromView(view, viewWidth, viewHeight);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(() -> printama.printImage(b));
+    }
+
+    public Bitmap loadBitmapFromView(View view, int viewWidth, int viewHeight) {
+        Bitmap bitmap = Bitmap.createBitmap(viewWidth, viewHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+
+        ColorMatrix ma = new ColorMatrix();
+        ma.setSaturation(0);
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(ma));
+        canvas.drawBitmap(bitmap, 0, 0, paint);
+
+        return bitmap;
     }
 
     public interface OnConnected {
