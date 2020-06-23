@@ -101,6 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
@@ -109,10 +110,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
-            android:gravity="start"
+            android:gravity="start|center"
             android:text="Print Text Left"
+            android:textAllCaps="false"
             android:textColor="@color/colorWhite"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_print_text_center"
@@ -121,8 +123,9 @@
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
             android:text="Print Text Center"
+            android:textAllCaps="false"
             android:textColor="@color/colorWhite"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_print_text_right"
@@ -130,9 +133,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
-            android:gravity="end"
+            android:gravity="end|center"
             android:text="Print Text Right"
-            android:textColor="@color/colorWhite" />
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -141,6 +146,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <Button
@@ -149,9 +155,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
-            android:gravity="start"
+            android:gravity="start|center"
             android:text="Print Image Left"
-            android:textColor="@color/colorWhite" />
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_print_image_center"
@@ -160,7 +168,9 @@
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
             android:text="Print Image Center"
-            android:textColor="@color/colorWhite" />
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btn_print_image_right"
@@ -168,9 +178,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/colorAccent"
-            android:gravity="end"
+            android:gravity="end|center"
             android:text="Print Image Right"
-            android:textColor="@color/colorWhite" />
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -182,7 +194,9 @@
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/colorAccent"
         android:text="Print Image Full Width"
-        android:textColor="@color/colorWhite" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btn_print_image_ori"
@@ -190,7 +204,9 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorAccent"
         android:text="Print Image Original Width"
-        android:textColor="@color/colorWhite" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btn_print_background"
@@ -199,7 +215,9 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/colorAccent"
         android:text="Print Image Background"
-        android:textColor="@color/colorWhite" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btn_print_image_photo"
@@ -207,7 +225,9 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorAccent"
         android:text="Print Image Photo"
-        android:textColor="@color/colorWhite" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/btn_print_layout"
@@ -215,6 +235,8 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorAccent"
         android:text="Print This Layout"
-        android:textColor="@color/colorWhite" />
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
 </LinearLayout>
