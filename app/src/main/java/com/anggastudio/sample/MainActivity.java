@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImagePhoto() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rose);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
