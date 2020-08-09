@@ -65,6 +65,11 @@ public class Printama {
     private static BluetoothDevice getPrinter() {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
+
+        if (defaultAdapter == null) {
+            return null;
+        }
+
         for (BluetoothDevice device : defaultAdapter.getBondedDevices()) {
             if (device.getName().equalsIgnoreCase(Pref.getString(Pref.SAVED_DEVICE))) {
                 printer = device;
