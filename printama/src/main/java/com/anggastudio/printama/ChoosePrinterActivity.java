@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class ChoosePrinterActivity extends AppCompatActivity {
+public class ChoosePrinterActivity extends Activity {
 
     private Set<BluetoothDevice> bondedDevices;
     private String mPrinterName;
@@ -37,8 +36,8 @@ public class ChoosePrinterActivity extends AppCompatActivity {
     }
 
     private void hideToolbar() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
+        if (getActionBar() != null) {
+            getActionBar().hide();
         }
     }
 
