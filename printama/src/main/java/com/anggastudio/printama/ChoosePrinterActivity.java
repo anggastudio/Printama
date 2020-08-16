@@ -30,26 +30,39 @@ public class ChoosePrinterActivity extends AppCompatActivity {
         if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
             bondedDevices = defaultAdapter.getBondedDevices();
         } else {
-            Intent intent = new Intent();
-            intent.putExtra("printama", "failed to connect printer");
-            setResult(Activity.RESULT_OK, intent);
-            finish();
+            finishWithError();
         }
+    }
 
-        saveButton = findViewById(R.id.btn_save_printer);
-        saveButton.setOnClickListener(v -> savePrinter());
-        mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
-        toggleSaveButton();
+    private void finishWithError() {
+        Intent intent = new Intent();
+        intent.putExtra("printama", "failed to connect printer");
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
 
-        RecyclerView rvDeviceList = findViewById(R.id.rv_device_list);
-        rvDeviceList.setLayoutManager(new LinearLayoutManager(this));
-        ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
-        rvDeviceList.setAdapter(adapter);
-        adapter.setOnConnectPrinter(printerName -> {
-            this.mPrinterName = printerName;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (bondedDevices == null) {
+            finishWithError();
+        } else {
+            saveButton = findViewById(R.id.btn_save_printer);
+            saveButton.setOnClickListener(v -> savePrinter());
+            mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
             toggleSaveButton();
-        });
+
+            RecyclerView rvDeviceList = findViewById(R.id.rv_device_list);
+            rvDeviceList.setLayoutManager(new LinearLayoutManager(this));
+            ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
+            DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
+            rvDeviceList.setAdapter(adapter);
+            adapter.setOnConnectPrinter(printerName -> {
+                this.mPrinterName = printerName;
+                toggleSaveButton();
+            });
+        }
     }
 
     private void toggleSaveButton() {
