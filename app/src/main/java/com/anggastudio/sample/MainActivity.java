@@ -1,6 +1,7 @@
 package com.anggastudio.sample;
 
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.anggastudio.printama.Printama;
@@ -18,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        findViewById(R.id.btn_printer_settings).setOnClickListener(v -> showPrinterList());
+        findViewById(R.id.btn_printer_settings).setOnClickListener(v -> showPrinterListActivity());
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
@@ -52,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
             }
         });
+    }
+
+    private void showPrinterListActivity() {
+        Printama.showPrinterList(this);
     }
 
     private void testPrinter() {
@@ -160,5 +166,20 @@ public class MainActivity extends AppCompatActivity {
             printama.printFromView(view);
             printama.close();
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (RESULT_OK == resultCode && 1010 == requestCode && data != null) {
+            String printerName = data.getStringExtra("printama");
+            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
+            TextView connectedTo = findViewById(R.id.tv_printer_info);
+            connectedTo.setText("Connected to : " + printerName);
+            if (!printerName.contains("failed")) {
+                findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
+                findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+            }
+        }
     }
 }

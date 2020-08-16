@@ -1,7 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.anggastudio.printama" >
+    package="com.anggastudio.printama">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <application>
+        <activity android:name=".ChoosePrinterActivity"></activity>
+    </application>
 
 </manifest>

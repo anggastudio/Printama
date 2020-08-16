@@ -1,8 +1,10 @@
 package com.anggastudio.printama;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -135,6 +137,12 @@ public class Printama {
         } else {
             onConnectPrinter.onConnectPrinter("failed to connect printer");
         }
+    }
+
+    public static void showPrinterList(Activity activity) {
+        Pref.init(activity);
+        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
+        activity.startActivityForResult(intent, 1010);
     }
 
     public boolean printImage(Bitmap bitmap, int width) {
