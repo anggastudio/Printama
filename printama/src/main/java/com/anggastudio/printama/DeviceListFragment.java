@@ -23,6 +23,7 @@ public class DeviceListFragment extends DialogFragment {
     private Set<BluetoothDevice> bondedDevices;
     private String mPrinterName;
     private Button saveButton;
+    private Button testButton;
 
     public DeviceListFragment() {
         // Required empty public constructor
@@ -52,10 +53,12 @@ public class DeviceListFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        testButton = view.findViewById(R.id.btn_test_printer);
+        testButton.setOnClickListener(v -> testPrinter());
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
         mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
-        toggleSaveButton();
+        toggleButtons();
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -64,14 +67,20 @@ public class DeviceListFragment extends DialogFragment {
         rvDeviceList.setAdapter(adapter);
         adapter.setOnConnectPrinter(printerName -> {
             this.mPrinterName = printerName;
-            toggleSaveButton();
+            toggleButtons();
         });
     }
 
-    private void toggleSaveButton() {
+    private void testPrinter() {
+        Printama.with(getActivity(), mPrinterName).printTest();
+    }
+
+    private void toggleButtons() {
         if (mPrinterName != null) {
+            testButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
             saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
         } else {
+            testButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGray5));
             saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGray5));
         }
     }

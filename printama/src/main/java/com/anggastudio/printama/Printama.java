@@ -33,12 +33,18 @@ public class Printama {
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
     private static Printama printama;
-    private final PrinterUtil util;
+    private PrinterUtil util;
     private BluetoothDevice printer;
 
     public Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
+        util = new PrinterUtil(printer);
+    }
+
+    public Printama(Context context, String printerName) {
+        Pref.init(context);
+        printer = getPrinter(printerName);
         util = new PrinterUtil(printer);
     }
 
@@ -64,16 +70,21 @@ public class Printama {
         return printama;
     }
 
+    static Printama with(Context context, String printerName) {
+        printama = new Printama(context, printerName);
+        return printama;
+    }
+
     private static BluetoothDevice getPrinter() {
+        return getPrinter(Pref.getString(Pref.SAVED_DEVICE));
+    }
+
+    private static BluetoothDevice getPrinter(String printerName) {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
-
-        if (defaultAdapter == null) {
-            return null;
-        }
-
+        if (defaultAdapter == null) return null;
         for (BluetoothDevice device : defaultAdapter.getBondedDevices()) {
-            if (device.getName().equalsIgnoreCase(Pref.getString(Pref.SAVED_DEVICE))) {
+            if (device.getName().equalsIgnoreCase(printerName)) {
                 printer = device;
             }
         }

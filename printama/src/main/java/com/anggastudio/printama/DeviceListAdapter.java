@@ -67,7 +67,7 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
         this.onConnectPrinter = onConnectPrinter;
     }
 
-    class Holder extends RecyclerView.ViewHolder {
+    static class Holder extends RecyclerView.ViewHolder {
 
         TextView tvDeviceName;
         ImageView ivIndicator;

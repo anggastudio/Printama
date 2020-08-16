@@ -20,10 +20,12 @@ public class ChoosePrinterActivity extends AppCompatActivity {
     private Set<BluetoothDevice> bondedDevices;
     private String mPrinterName;
     private Button saveButton;
+    private Button testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hideToolbar();
         setContentView(R.layout.activity_choose_printer);
 
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -31,6 +33,12 @@ public class ChoosePrinterActivity extends AppCompatActivity {
             bondedDevices = defaultAdapter.getBondedDevices();
         } else {
             finishWithError();
+        }
+    }
+
+    private void hideToolbar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
         }
     }
 
@@ -48,10 +56,12 @@ public class ChoosePrinterActivity extends AppCompatActivity {
         if (bondedDevices == null) {
             finishWithError();
         } else {
+            testButton = findViewById(R.id.btn_test_printer);
+            testButton.setOnClickListener(v -> testPrinter());
             saveButton = findViewById(R.id.btn_save_printer);
             saveButton.setOnClickListener(v -> savePrinter());
             mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
-            toggleSaveButton();
+            toggleButtons();
 
             RecyclerView rvDeviceList = findViewById(R.id.rv_device_list);
             rvDeviceList.setLayoutManager(new LinearLayoutManager(this));
@@ -60,15 +70,21 @@ public class ChoosePrinterActivity extends AppCompatActivity {
             rvDeviceList.setAdapter(adapter);
             adapter.setOnConnectPrinter(printerName -> {
                 this.mPrinterName = printerName;
-                toggleSaveButton();
+                toggleButtons();
             });
         }
     }
 
-    private void toggleSaveButton() {
+    private void testPrinter() {
+        Printama.with(this, mPrinterName).printTest();
+    }
+
+    private void toggleButtons() {
         if (mPrinterName != null) {
+            testButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
             saveButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
         } else {
+            testButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGray5));
             saveButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGray5));
         }
     }
