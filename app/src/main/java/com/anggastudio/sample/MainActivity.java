@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RESULT_OK == resultCode && 1010 == requestCode && data != null) {
+        if (RESULT_OK == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
             String printerName = data.getStringExtra("printama");
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
             TextView connectedTo = findViewById(R.id.tv_printer_info);

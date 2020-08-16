@@ -32,6 +32,7 @@ public class Printama {
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
+    public static final int GET_PRINTER_CODE = 122333;
     private static Printama printama;
     private PrinterUtil util;
     private BluetoothDevice printer;
@@ -153,7 +154,7 @@ public class Printama {
     public static void showPrinterList(Activity activity) {
         Pref.init(activity);
         Intent intent = new Intent(activity, ChoosePrinterActivity.class);
-        activity.startActivityForResult(intent, 1010);
+        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
     public boolean printImage(Bitmap bitmap, int width) {
