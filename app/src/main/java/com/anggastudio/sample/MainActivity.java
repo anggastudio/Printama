@@ -171,15 +171,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RESULT_OK == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
-            String printerName = data.getStringExtra("printama");
-            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            connectedTo.setText("Connected to : " + printerName);
-            if (!printerName.contains("failed")) {
-                findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-                findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
-            }
+        String printerName = Printama.getPrinterResult(resultCode, requestCode, data);
+        showResult(printerName);
+    }
+
+    private void showResult(String printerName) {
+        Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
+        TextView connectedTo = findViewById(R.id.tv_printer_info);
+        connectedTo.setText("Connected to : " + printerName);
+        if (!printerName.contains("failed")) {
+            findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
+            findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
         }
     }
 }

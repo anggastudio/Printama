@@ -32,7 +32,7 @@ public class Printama {
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
-    public static final int GET_PRINTER_CODE = 122333;
+    public static final int GET_PRINTER_CODE = 921;
     private static Printama printama;
     private PrinterUtil util;
     private BluetoothDevice printer;
@@ -235,6 +235,14 @@ public class Printama {
         canvas.drawBitmap(bitmap, 0, 0, paint);
 
         return bitmap;
+    }
+
+    public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
+        String printerName = "failed to get printer";
+        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
+            printerName = data.getStringExtra("printama");
+        }
+        return printerName;
     }
 
     public interface OnConnected {
