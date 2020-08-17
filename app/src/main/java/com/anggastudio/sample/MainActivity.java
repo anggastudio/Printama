@@ -13,6 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.anggastudio.printama.Printama;
+import com.anggastudio.sample.mock.Mock;
+import com.anggastudio.sample.model.BitMapModel;
+import com.anggastudio.sample.model.PrintBody;
+import com.anggastudio.sample.model.PrintFooter;
+import com.anggastudio.sample.model.PrintHeader;
+import com.anggastudio.sample.model.PrintModel;
+import com.anggastudio.sample.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -164,6 +171,49 @@ public class MainActivity extends AppCompatActivity {
         View view = findViewById(R.id.root_view);
         Printama.with(this).connect(printama -> {
             printama.printFromView(view);
+            printama.close();
+        });
+    }
+
+    private void printQrReceipt() {
+        PrintModel printModel = Mock.getPrintModelMock();
+        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
+        PrintHeader header = printModel.getPrintHeader();
+        PrintBody body = printModel.getPrintBody();
+        PrintFooter footer = printModel.getPrintFooter();
+        String date = "DATE: " + body.getDate();
+        String time = "PRINT TIME " + body.getTime();
+        String invoice = "INVOICE: " + body.getInvoice();
+        String midwareTimestamp = "CREATE TIME: " + body.getTimeStamp();
+
+        Printama.with(this).connect(printama -> {
+            printama.printImage(logo);
+            printama.printText(header.getMerchantName().toUpperCase());
+            printama.printText(header.getMerchantAddress1().toUpperCase());
+            printama.printText(header.getMerchantAddress2().toUpperCase());
+            printama.printText("MERC" + header.getMerchantId().toUpperCase());
+
+            printama.printDoubleDashedLine();
+            // body
+            printama.printText(date + "   " + time);
+            printama.printText(invoice + "   " + midwareTimestamp);
+            printama.printDashedLine();
+            printama.printText(Printama.CENTER, "TAGIHAN");
+            printama.printDashedLine();
+            printama.printText(Printama.CENTER, "Scan kode QR untuk membayar");
+
+            printama.addNewLine();
+            printama.printQR(body.getQrCode());
+            printama.addNewLine();
+            printama.printText("TOTAL         " + body.getTotalPayment());
+            printama.addNewLine();
+            // footer
+            printama.printText(footer.getPaymentBy());
+            if (footer.getIssuer() != null) printama.printText(footer.getIssuer());
+            printama.printText(footer.getPowered());
+            if (footer.getEnvironment() != null) printama.printText(footer.getEnvironment());
+            printama.addNewLine(4);
+
             printama.close();
         });
     }

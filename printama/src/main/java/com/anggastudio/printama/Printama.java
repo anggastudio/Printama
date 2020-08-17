@@ -245,6 +245,10 @@ public class Printama {
         return printerName;
     }
 
+    public void printQR(String qrCode) {
+
+    }
+
     public interface OnConnected {
         void onConnected(Printama printama);
     }
