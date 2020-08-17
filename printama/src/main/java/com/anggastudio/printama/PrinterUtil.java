@@ -83,6 +83,7 @@ class PrinterUtil {
     }
 
     boolean printText(String text) {
+        text = text + "\n";
         try {
             btOutputStream.write(encodeNonAscii(text).getBytes());
             return true;
@@ -110,6 +111,10 @@ class PrinterUtil {
             e.printStackTrace();
             return false;
         }
+    }
+
+    boolean printLine() {
+        return printText("--------------------------------");
     }
 
     boolean printDashedLine() {

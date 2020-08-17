@@ -163,6 +163,10 @@ public class Printama {
         activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
+    public void printLine() {
+        util.printLine();
+    }
+
     public void printDashedLine() {
         util.printDashedLine();
     }

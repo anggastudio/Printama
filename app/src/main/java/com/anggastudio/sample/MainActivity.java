@@ -185,31 +185,29 @@ public class MainActivity extends AppCompatActivity {
         String midwareTimestamp = "CREATE TIME: " + body.getTimeStamp();
 
         Printama.with(this).connect(printama -> {
-            printama.printImage(logo);
-            printama.printText(header.getMerchantName().toUpperCase());
-            printama.printText(header.getMerchantAddress1().toUpperCase());
-            printama.printText(header.getMerchantAddress2().toUpperCase());
-            printama.printText("MERC" + header.getMerchantId().toUpperCase());
+            printama.printImage(logo, 300);
+            printama.addNewLine(1);
+            printama.printText(Printama.CENTER, header.getMerchantName().toUpperCase());
+            printama.printText(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
+            printama.printText(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
+            printama.printText(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
 
             printama.printDoubleDashedLine();
             // body
             printama.printText(date + "   " + time);
             printama.printText(invoice + "   " + midwareTimestamp);
-            printama.printDashedLine();
+            printama.printLine();
             printama.printText(Printama.CENTER, "TAGIHAN");
-            printama.printDashedLine();
+            printama.printLine();
             printama.printText(Printama.CENTER, "Scan kode QR untuk membayar");
-
-            printama.addNewLine();
             printama.printQR(body.getQrCode(), 300);
-            printama.addNewLine();
-            printama.printText("TOTAL         " + body.getTotalPayment());
-            printama.addNewLine();
+            printama.printText(Printama.CENTER, "TOTAL         " + body.getTotalPayment());
             // footer
-            printama.printText(footer.getPaymentBy());
-            if (footer.getIssuer() != null) printama.printText(footer.getIssuer());
-            printama.printText(footer.getPowered());
-            if (footer.getEnvironment() != null) printama.printText(footer.getEnvironment());
+            printama.printText(Printama.CENTER, footer.getPaymentBy());
+            if (footer.getIssuer() != null) printama.printText(Printama.CENTER, footer.getIssuer());
+            printama.printText(Printama.CENTER, footer.getPowered());
+            if (footer.getEnvironment() != null)
+                printama.printText(Printama.CENTER, footer.getEnvironment());
             printama.addNewLine(4);
 
             printama.close();
