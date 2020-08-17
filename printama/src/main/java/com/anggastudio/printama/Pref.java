@@ -2,9 +2,13 @@ package com.anggastudio.printama;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 class Pref {
+
+    private Pref(){
+
+    }
 
     static final String SAVED_DEVICE = "bonded_device";
     private static SharedPreferences sharedPreferences;

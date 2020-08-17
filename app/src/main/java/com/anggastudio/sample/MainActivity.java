@@ -14,12 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.anggastudio.printama.Printama;
 import com.anggastudio.sample.mock.Mock;
-import com.anggastudio.sample.model.BitMapModel;
 import com.anggastudio.sample.model.PrintBody;
 import com.anggastudio.sample.model.PrintFooter;
 import com.anggastudio.sample.model.PrintHeader;
 import com.anggastudio.sample.model.PrintModel;
-import com.anggastudio.sample.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
         findViewById(R.id.btn_print_background).setOnClickListener(v -> printImageBackground());
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
-        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
+        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printQrReceipt());
 
         getSavedPrinter();
     }
@@ -203,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             printama.printText(Printama.CENTER, "Scan kode QR untuk membayar");
 
             printama.addNewLine();
-            printama.printQR(body.getQrCode());
+            printama.printQR(body.getQrCode(), 300);
             printama.addNewLine();
             printama.printText("TOTAL         " + body.getTotalPayment());
             printama.addNewLine();

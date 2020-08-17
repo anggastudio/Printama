@@ -208,35 +208,46 @@
         android:textColor="@color/colorWhite"
         android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/btn_print_background"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Image Background"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
+        android:gravity="center"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_print_image_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Image Photo"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
+        <Button
+            android:id="@+id/btn_print_background"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Print Image Background"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
 
-    <Button
-        android:id="@+id/btn_print_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print This Layout"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
+        <Button
+            android:id="@+id/btn_print_image_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Print Image Photo"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_print_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Print This Layout"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

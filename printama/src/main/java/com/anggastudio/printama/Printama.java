@@ -21,6 +21,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import net.glxn.qrgen.android.QRCode;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -137,6 +139,10 @@ public class Printama {
         return util.printImage(alignment, bitmap, width);
     }
 
+    public boolean printImage(Bitmap bitmap, int width) {
+        return util.printImage(bitmap, width);
+    }
+
     public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         Pref.init(activity);
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -155,10 +161,6 @@ public class Printama {
         Pref.init(activity);
         Intent intent = new Intent(activity, ChoosePrinterActivity.class);
         activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
-    }
-
-    public boolean printImage(Bitmap bitmap, int width) {
-        return util.printImage(bitmap, width);
     }
 
     public void printDashedLine() {
@@ -245,8 +247,19 @@ public class Printama {
         return printerName;
     }
 
-    public void printQR(String qrCode) {
+    public void printQR(int align, String qrCode, int width) {
+        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
+        printImage(align, myBitmap, width);
+    }
 
+    public void printQR(String qrCode) {
+        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
+        printImage(myBitmap);
+    }
+
+    public void printQR(String qrCode, int width) {
+        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
+        printImage(myBitmap, width);
     }
 
     public interface OnConnected {
