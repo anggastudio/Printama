@@ -21,8 +21,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import net.glxn.qrgen.android.QRCode;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -251,19 +249,12 @@ public class Printama {
         return printerName;
     }
 
-    public void printQR(int align, String qrCode, int width) {
-        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
-        printImage(align, myBitmap, width);
+    public void setSmallFont() {
+        util.setSmallFont();
     }
 
-    public void printQR(String qrCode) {
-        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
-        printImage(myBitmap);
-    }
-
-    public void printQR(String qrCode, int width) {
-        Bitmap myBitmap = QRCode.from(qrCode).bitmap();
-        printImage(myBitmap, width);
+    public void cancelSmallFont() {
+        util.cancelSmallFont();
     }
 
     public interface OnConnected {

@@ -93,6 +93,16 @@ class PrinterUtil {
         }
     }
 
+    void setSmallFont() {
+        byte[] smallFontCmd = {(byte) 0x1B, (byte) 0x21, (byte) 0x01};
+        printUnicode(smallFontCmd, 0, smallFontCmd.length);
+    }
+
+    void cancelSmallFont() {
+        byte[] cancelSmallFontCmd = {(byte) 0x1B, (byte) 0x21, (byte) 0x00};
+        printUnicode(cancelSmallFontCmd);
+    }
+
     boolean printEndPaper() {
         try {
             btOutputStream.write(FEED_PAPER_AND_CUT);
@@ -106,6 +116,16 @@ class PrinterUtil {
     private boolean printUnicode(byte[] data) {
         try {
             btOutputStream.write(data);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean printUnicode(byte[] data, int arg1, int arg2) {
+        try {
+            btOutputStream.write(data, arg1, arg2);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
