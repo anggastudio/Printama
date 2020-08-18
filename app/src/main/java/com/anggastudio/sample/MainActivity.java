@@ -18,7 +18,6 @@ import com.anggastudio.sample.model.PrintBody;
 import com.anggastudio.sample.model.PrintFooter;
 import com.anggastudio.sample.model.PrintHeader;
 import com.anggastudio.sample.model.PrintModel;
-import com.anggastudio.sample.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
+        findViewById(R.id.btn_print_text_style).setOnClickListener(v -> printTextStyles());
         findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printImageLeft());
         findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printImageCenter());
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
@@ -103,6 +103,30 @@ public class MainActivity extends AppCompatActivity {
                 "------------------\n";
         Printama.with(this).connect(printama -> {
             printama.printText(Printama.RIGHT, text);
+            printama.close();
+        });
+    }
+
+    private void printTextStyles() {
+        Printama.with(this).connect(printama -> {
+            printama.normalText();
+            printama.printText("normal");
+            printama.setSmall();
+            printama.printText("small");
+            printama.setBold();
+            printama.printText("bold");
+            printama.setUnderline();
+            printama.printText("underline");
+            printama.setTall();
+            printama.printText("tall");
+            printama.setWide();
+            printama.printText("wide");
+            printama.setBig();
+            printama.printText("big");
+            printama.setBigBold();
+            printama.printText("big bold");
+            printama.normalText();
+            printama.feedPaper();
             printama.close();
         });
     }
@@ -188,14 +212,11 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
 //            printama.printImage(logo, 300);
 //            printama.addNewLine(1);
-            printama.cancelSmallFont();
+            printama.normalText();
             printama.printText(Printama.CENTER, header.getMerchantName().toUpperCase());
-            printama.setBold(true);
-            printama.printText(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
-            printama.setBold(false);
-            printama.printText(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
-            printama.setSmallFont();
-            printama.printText(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
+//            printama.printText(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
+//            printama.printText(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
+//            printama.printText(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
 //            printama.cancelSmallFont();
 
 //            printama.printDoubleDashedLine();
@@ -208,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
 //            printama.printText(Printama.CENTER, "TAGIHAN");
 //            printama.printLine();
 //            printama.printText(Printama.CENTER, "Scan kode QR untuk membayar");
-            printama.printImage(Util.getQrCode(body.getQrCode()), 300);
+//            printama.printImage(Util.getQrCode(body.getQrCode()), 300);
 //            printama.printText(Printama.CENTER, "TOTAL         " + body.getTotalPayment());
 //            // footer
 //            printama.printText(Printama.CENTER, footer.getPaymentBy());
@@ -219,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
 //            printama.addNewLine(4);
 
             printama.close();
-        });
+        }, this::showToast);
     }
 
     @Override
@@ -230,12 +251,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showResult(String printerName) {
-        Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
+        showToast(printerName);
         TextView connectedTo = findViewById(R.id.tv_printer_info);
         connectedTo.setText("Connected to : " + printerName);
         if (!printerName.contains("failed")) {
             findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
             findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
         }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

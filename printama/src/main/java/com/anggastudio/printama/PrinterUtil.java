@@ -9,8 +9,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static com.anggastudio.printama.Printama.CENTER;
@@ -27,20 +25,22 @@ class PrinterUtil {
     private static final int WIDTH = 48;
     private static final int HEAD = 8;
 
+    // printer commands
     private static final byte[] NEW_LINE = {10};
-    private static final byte[] ESC_ALIGN_CENTER = new byte[]{0x1b, 'a', 0x01};
-    private static final byte[] ESC_ALIGN_RIGHT = new byte[]{0x1b, 'a', 0x02};
-    private static final byte[] ESC_ALIGN_LEFT = new byte[]{0x1b, 'a', 0x00};
-
-    private static final String HEX_STR = "0123456789ABCDEF";
-    private static final String[] BINARY_ARRAY = {"0000", "0001", "0010", "0011",
-            "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011",
-            "1100", "1101", "1110", "1111"};
+    private static final byte[] ESC_ALIGN_CENTER = {0x1b, 'a', 0x01};
+    private static final byte[] ESC_ALIGN_RIGHT = {0x1b, 'a', 0x02};
+    private static final byte[] ESC_ALIGN_LEFT = {0x1b, 'a', 0x00};
+    private static final byte[] FEED_PAPER_AND_CUT = {0x1D, 0x56, 66, 0x00};
+    private static final byte[] NORMAL = {27, 33, 0};
+    private static final byte BOLD = ((byte) (0x8 | NORMAL[2]));
+    private static final byte TALL = ((byte) (0x10 | NORMAL[2]));
+    private static final byte WIDE = ((byte) (0x20 | NORMAL[2]));
+    private static final byte UNDERLINE = ((byte) (0x80 | NORMAL[2]));
+    private static final byte SMALL = ((byte) (0x1 | NORMAL[2]));
 
     private BluetoothDevice printer;
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
-
 
     PrinterUtil(BluetoothDevice printer) {
         this.printer = printer;
@@ -82,37 +82,6 @@ class PrinterUtil {
         }
     }
 
-    boolean printText(String text) {
-        text = text + "\n";
-        try {
-            btOutputStream.write(encodeNonAscii(text).getBytes());
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    void setSmallFont() {
-        byte[] smallFontCmd = {(byte) 0x1B, (byte) 0x21, (byte) 0x01};
-        printUnicode(smallFontCmd, 0, smallFontCmd.length);
-    }
-
-    void cancelSmallFont() {
-        byte[] cancelSmallFontCmd = {(byte) 0x1B, (byte) 0x21, (byte) 0x00};
-        printUnicode(cancelSmallFontCmd);
-    }
-
-    boolean printEndPaper() {
-        try {
-            btOutputStream.write(FEED_PAPER_AND_CUT);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     private boolean printUnicode(byte[] data) {
         try {
             btOutputStream.write(data);
@@ -123,9 +92,15 @@ class PrinterUtil {
         }
     }
 
-    private boolean printUnicode(byte[] data, int arg1, int arg2) {
+    //----------------------------------------------------------------------------------------------
+    // PRINT TEXT
+    //----------------------------------------------------------------------------------------------
+
+    boolean printText(String text) {
+        text = text + "\n";
         try {
-            btOutputStream.write(data, arg1, arg2);
+            String s = StrUtil.encodeNonAscii(text);
+            btOutputStream.write(s.getBytes());
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -133,16 +108,57 @@ class PrinterUtil {
         }
     }
 
-    boolean printLine() {
-        return printText("--------------------------------");
+    void normalText() {
+        printUnicode(NORMAL);
     }
 
-    boolean printDashedLine() {
-        return printText("________________________________");
+    void setBold() {
+        byte[] format = {27, 33, 0};
+        format[2] = BOLD;
+        printUnicode(format);
     }
 
-    boolean printDoubleDashedLine() {
-        return printText("================================");
+    void setSmall() {
+        byte[] format = {27, 33, 0};
+        format[2] = SMALL;
+        printUnicode(format);
+    }
+
+    void setUnderline() {
+        byte[] format = {27, 33, 0};
+        format[2] = UNDERLINE;
+        printUnicode(format);
+    }
+
+    void setBigBold() {
+        byte[] format = {27, 33, 0};
+        format[2] = BOLD;
+        format[2] = TALL;
+        format[2] = WIDE;
+        printUnicode(format);
+    }
+
+    void setTall() {
+        byte[] format = {27, 33, 0};
+        format[2] = TALL;
+        printUnicode(format);
+    }
+
+    void setWide() {
+        byte[] format = {27, 33, 0};
+        format[2] = WIDE;
+        printUnicode(format);
+    }
+
+    void setBig() {
+        byte[] format = {27, 33, 0};
+        format[2] = TALL;
+        format[2] = WIDE;
+        printUnicode(format);
+    }
+
+    void printEndPaper() {
+        printUnicode(FEED_PAPER_AND_CUT);
     }
 
     boolean addNewLine() {
@@ -156,6 +172,35 @@ class PrinterUtil {
         }
         return success;
     }
+
+    void setAlign(int alignType) {
+        byte[] d;
+        switch (alignType) {
+            case CENTER:
+                d = ESC_ALIGN_CENTER;
+                break;
+            case RIGHT:
+                d = ESC_ALIGN_RIGHT;
+                break;
+            default:
+                d = ESC_ALIGN_LEFT;
+                break;
+        }
+        try {
+            btOutputStream.write(d);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setLineSpacing(int lineSpacing) {
+        byte[] cmd = new byte[]{0x1B, 0x33, (byte) lineSpacing};
+        printUnicode(cmd);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINT IMAGE
+    //----------------------------------------------------------------------------------------------
 
     boolean printImage(Bitmap bitmap) {
         try {
@@ -194,7 +239,7 @@ class PrinterUtil {
     }
 
     private static byte[] autoGrayScale(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
-        byte[] result = null;
+        byte[] result;
         int n = bm.getHeight() + bitMarginTop;
         int offset = HEAD;
         result = new byte[n * WIDTH + offset];
@@ -238,36 +283,6 @@ class PrinterUtil {
         }
     }
 
-    void setAlign(int alignType) {
-        byte[] d;
-        switch (alignType) {
-            case CENTER:
-                d = ESC_ALIGN_CENTER;
-                break;
-            case RIGHT:
-                d = ESC_ALIGN_RIGHT;
-                break;
-            default:
-                d = ESC_ALIGN_LEFT;
-                break;
-        }
-        try {
-            btOutputStream.write(d);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void setLineSpacing(int lineSpacing) {
-        byte[] cmd = new byte[]{0x1B, 0x33, (byte) lineSpacing};
-        printUnicode(cmd);
-    }
-
-    void setBold(boolean bold) {
-        byte[] cmd = new byte[]{0x1B, 0x45, bold ? (byte) 1 : 0};
-        printUnicode(cmd);
-    }
-
     void feedPaper() {
         addNewLine();
         addNewLine();
@@ -276,7 +291,6 @@ class PrinterUtil {
     }
 
     private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {
-        private static final String COMM_SOCKET_METHOD = "createRfcommSocket";
         private ConnectionListener listener;
 
         private ConnectAsyncTask(ConnectionListener listener) {
@@ -328,75 +342,4 @@ class PrinterUtil {
         void onFailed();
     }
 
-    private static String encodeNonAscii(String text) {
-        return text.replace('á', 'a')
-                .replace('č', 'c')
-                .replace('ď', 'd')
-                .replace('é', 'e')
-                .replace('ě', 'e')
-                .replace('í', 'i')
-                .replace('ň', 'n')
-                .replace('ó', 'o')
-                .replace('ř', 'r')
-                .replace('š', 's')
-                .replace('ť', 't')
-                .replace('ú', 'u')
-                .replace('ů', 'u')
-                .replace('ý', 'y')
-                .replace('ž', 'z')
-                .replace('Á', 'A')
-                .replace('Č', 'C')
-                .replace('Ď', 'D')
-                .replace('É', 'E')
-                .replace('Ě', 'E')
-                .replace('Í', 'I')
-                .replace('Ň', 'N')
-                .replace('Ó', 'O')
-                .replace('Ř', 'R')
-                .replace('Š', 'S')
-                .replace('Ť', 'T')
-                .replace('Ú', 'U')
-                .replace('Ů', 'U')
-                .replace('Ý', 'Y')
-                .replace('Ž', 'Z');
-    }
-
-    private static byte[] FEED_PAPER_AND_CUT = {0x1D, 0x56, 66, 0x00};
-
-    private static List<String> binaryListToHexStringList(List<String> list) {
-        List<String> hexList = new ArrayList<>();
-        for (String binaryStr : list) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < binaryStr.length(); i += 8) {
-                String str = binaryStr.substring(i, i + 8);
-                String hexString = strToHexString(str);
-                sb.append(hexString);
-            }
-            hexList.add(sb.toString());
-        }
-        return hexList;
-    }
-
-    private static String strToHexString(String binaryStr) {
-        String hex = "";
-        String f4 = binaryStr.substring(0, 4);
-        String b4 = binaryStr.substring(4, 8);
-        for (int i = 0; i < BINARY_ARRAY.length; i++) {
-            if (f4.equals(BINARY_ARRAY[i]))
-                hex += HEX_STR.substring(i, i + 1);
-        }
-        for (int i = 0; i < BINARY_ARRAY.length; i++) {
-            if (b4.equals(BINARY_ARRAY[i]))
-                hex += HEX_STR.substring(i, i + 1);
-        }
-        return hex;
-    }
-
-    BluetoothSocket getSocket() {
-        return btSocket;
-    }
-
-    BluetoothDevice getDevice() {
-        return printer;
-    }
 }

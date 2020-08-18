@@ -99,7 +99,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:gravity="center"
         android:orientation="horizontal">
@@ -140,6 +140,18 @@
             android:textSize="12sp" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_print_text_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Many Text Style"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -190,8 +202,8 @@
         android:id="@+id/btn_print_image_full"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:backgroundTint="@color/colorAccent"
         android:text="Print Image Full Width"
         android:textAllCaps="false"
@@ -211,7 +223,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:orientation="horizontal">
 

@@ -51,10 +51,10 @@ public class Printama {
 
     public void printTest() {
         printama.connect(printama -> {
-            printama.printText(Printama.CENTER,
-                    "------------------\n" +
-                            "Print Test\n" +
-                            "------------------\n");
+            printama.normalText();
+            printama.printText(Printama.CENTER, "------------------\n");
+            printama.printText(Printama.CENTER, "Print Test\n");
+            printama.printText(Printama.CENTER, "------------------\n");
             printama.feedPaper();
             printama.close();
         });
@@ -103,10 +103,6 @@ public class Printama {
 
     public void setLineSpacing(int lineSpacing) {
         util.setLineSpacing(lineSpacing);
-    }
-
-    public void setBold(boolean bold) {
-        util.setBold(bold);
     }
 
     public void feedPaper() {
@@ -161,16 +157,16 @@ public class Printama {
         activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
-    public void printLine() {
-        util.printLine();
+    public void printDashedLine() {
+        util.printText("--------------------------------");
     }
 
-    public void printDashedLine() {
-        util.printDashedLine();
+    public void printLine() {
+        util.printText("________________________________");
     }
 
     public void printDoubleDashedLine() {
-        util.printDoubleDashedLine();
+        util.printText("================================");
     }
 
     public void addNewLine() {
@@ -249,12 +245,40 @@ public class Printama {
         return printerName;
     }
 
-    public void setSmallFont() {
-        util.setSmallFont();
+    //----------------------------------------------------------------------------------------------
+    // TEXT FORMAT
+    //----------------------------------------------------------------------------------------------
+
+    public void normalText() {
+        util.normalText();
     }
 
-    public void cancelSmallFont() {
-        util.cancelSmallFont();
+    public void setBold() {
+        util.setBold();
+    }
+
+    public void setSmall() {
+        util.setSmall();
+    }
+
+    public void setUnderline() {
+        util.setUnderline();
+    }
+
+    public void setTall() {
+        util.setTall();
+    }
+
+    public void setWide() {
+        util.setWide();
+    }
+
+    public void setBig() {
+        util.setBig();
+    }
+
+    public void setBigBold() {
+        util.setBigBold();
     }
 
     public interface OnConnected {
