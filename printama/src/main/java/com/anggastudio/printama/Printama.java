@@ -52,9 +52,9 @@ public class Printama {
     public void printTest() {
         printama.connect(printama -> {
             printama.normalText();
-            printama.printText(Printama.CENTER, "------------------\n");
-            printama.printText(Printama.CENTER, "Print Test\n");
-            printama.printText(Printama.CENTER, "------------------\n");
+            printama.printTextln(Printama.CENTER, "------------------");
+            printama.printTextln(Printama.CENTER, "Print Test");
+            printama.printTextln(Printama.CENTER, "------------------");
             printama.feedPaper();
             printama.close();
         });
@@ -101,6 +101,16 @@ public class Printama {
         util.printText(text);
     }
 
+    public void printTextln(int align, String text) {
+        util.setAlign(align);
+        printTextln(text);
+    }
+
+    public void printTextln(String text) {
+        text = text + "\n";
+        util.printText(text);
+    }
+
     public void setLineSpacing(int lineSpacing) {
         util.setLineSpacing(lineSpacing);
     }
@@ -110,6 +120,7 @@ public class Printama {
     }
 
     public void close() {
+        normalText();
         new Handler().postDelayed(util::finish, 2000);
     }
 

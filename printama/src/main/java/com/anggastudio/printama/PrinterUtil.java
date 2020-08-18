@@ -97,7 +97,6 @@ class PrinterUtil {
     //----------------------------------------------------------------------------------------------
 
     boolean printText(String text) {
-        text = text + "\n";
         try {
             String s = StrUtil.encodeNonAscii(text);
             btOutputStream.write(s.getBytes());

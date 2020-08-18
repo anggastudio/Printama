@@ -110,25 +110,48 @@ public class MainActivity extends AppCompatActivity {
     private void printTextStyles() {
         Printama.with(this).connect(printama -> {
             printama.normalText();
-            printama.printText("normal");
+            printama.printText("normal________");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("small_________");
             printama.setSmall();
-            printama.printText("small");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("bold__________");
             printama.setBold();
-            printama.printText("bold");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("underline_____");
             printama.setUnderline();
-            printama.printText("underline");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("tall__________");
             printama.setTall();
-            printama.printText("tall");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("wide__________");
             printama.setWide();
-            printama.printText("wide");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("big___________");
             printama.setBig();
-            printama.printText("big");
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("big bold______");
             printama.setBigBold();
-            printama.printText("big bold");
+            printama.printTextln("TEXT");
+
             printama.normalText();
             printama.feedPaper();
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageLeft() {
@@ -136,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(Printama.LEFT, bitmap, 200);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageCenter() {
@@ -147,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
             }
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageRight() {
@@ -155,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(Printama.RIGHT, bitmap, 200);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageOri() {
@@ -163,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap); // original size, centered as default
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageFull() {
@@ -171,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImageBackground() {
@@ -179,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.ORIGINAL_WIDTH);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printImagePhoto() {
@@ -187,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printView() {
@@ -195,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printFromView(view);
             printama.close();
-        });
+        }, this::showToast);
     }
 
     private void printQrReceipt() {
