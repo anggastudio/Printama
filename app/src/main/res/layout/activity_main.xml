@@ -260,6 +260,17 @@
             android:textColor="@color/colorWhite"
             android:textSize="12sp" />
 
+        <Button
+            android:id="@+id/btn_print_receipt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorAccent"
+            android:text="Print Receipt"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </LinearLayout>

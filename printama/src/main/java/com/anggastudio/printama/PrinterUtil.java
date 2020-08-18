@@ -31,12 +31,17 @@ class PrinterUtil {
     private static final byte[] ESC_ALIGN_RIGHT = {0x1b, 'a', 0x02};
     private static final byte[] ESC_ALIGN_LEFT = {0x1b, 'a', 0x00};
     private static final byte[] FEED_PAPER_AND_CUT = {0x1D, 0x56, 66, 0x00};
-    private static final byte[] NORMAL = {27, 33, 0};
-    private static final byte BOLD = ((byte) (0x8 | NORMAL[2]));
-    private static final byte TALL = ((byte) (0x10 | NORMAL[2]));
-    private static final byte WIDE = ((byte) (0x20 | NORMAL[2]));
-    private static final byte UNDERLINE = ((byte) (0x80 | NORMAL[2]));
-    private static final byte SMALL = ((byte) (0x1 | NORMAL[2]));
+
+    private static final byte[] NORMAL = new byte[]{0x1B, 0x21, 0x00};
+    private static final byte[] BOLD = new byte[]{0x1B, 0x21, 0x08};
+    private static final byte[] WIDE = new byte[]{0x1B, 0x21, 0x20};
+    private static final byte[] TALL = new byte[]{0x1B, 0x21, 0x10};
+    private static final byte[] UNDERLINE = new byte[]{0x1B, 0x21, (byte) 0x80};
+    private static final byte[] DELETE_LINE = new byte[]{0x1B, 0x21, (byte) 0x40};
+    private static final byte[] WIDE_BOLD = new byte[]{0x1B, 0x21, 0x20 | 0x08};
+    private static final byte[] TALL_BOLD = new byte[]{0x1B, 0x21, 0x10 | 0x08};
+    private static final byte[] WIDE_TALL = new byte[]{0x1B, 0x21, 0x20 | 0x10};
+    private static final byte[] WIDE_TALL_BOLD = new byte[]{0x1B, 0x21, 0x20 | 0x10 | 0x08};
 
     private BluetoothDevice printer;
     private BluetoothSocket btSocket = null;
@@ -112,48 +117,39 @@ class PrinterUtil {
     }
 
     void setBold() {
-        byte[] format = {27, 33, 0};
-        format[2] = BOLD;
-        printUnicode(format);
-    }
-
-    void setSmall() {
-        byte[] format = {27, 33, 0};
-        format[2] = SMALL;
-        printUnicode(format);
+        printUnicode(BOLD);
     }
 
     void setUnderline() {
-        byte[] format = {27, 33, 0};
-        format[2] = UNDERLINE;
-        printUnicode(format);
+        printUnicode(UNDERLINE);
     }
 
-    void setBigBold() {
-        byte[] format = {27, 33, 0};
-        format[2] = BOLD;
-        format[2] = TALL;
-        format[2] = WIDE;
-        printUnicode(format);
+    void setDeleteLine() {
+        printUnicode(DELETE_LINE);
     }
 
     void setTall() {
-        byte[] format = {27, 33, 0};
-        format[2] = TALL;
-        printUnicode(format);
+        printUnicode(TALL);
     }
 
     void setWide() {
-        byte[] format = {27, 33, 0};
-        format[2] = WIDE;
-        printUnicode(format);
+        printUnicode(WIDE);
     }
 
-    void setBig() {
-        byte[] format = {27, 33, 0};
-        format[2] = TALL;
-        format[2] = WIDE;
-        printUnicode(format);
+    void setWideBold() {
+        printUnicode(WIDE_BOLD);
+    }
+
+    void setTallBold() {
+        printUnicode(TALL_BOLD);
+    }
+
+    void setWideTall() {
+        printUnicode(WIDE_TALL);
+    }
+
+    void setWideTallBold() {
+        printUnicode(WIDE_TALL_BOLD);
     }
 
     void printEndPaper() {

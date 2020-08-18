@@ -268,12 +268,12 @@ public class Printama {
         util.setBold();
     }
 
-    public void setSmall() {
-        util.setSmall();
-    }
-
     public void setUnderline() {
         util.setUnderline();
+    }
+
+    public void setDeleteLine() {
+        util.setDeleteLine();
     }
 
     public void setTall() {
@@ -284,12 +284,20 @@ public class Printama {
         util.setWide();
     }
 
-    public void setBig() {
-        util.setBig();
+    public void setWideBold() {
+        util.setWideBold();
     }
 
-    public void setBigBold() {
-        util.setBigBold();
+    public void setTallBold() {
+        util.setTallBold();
+    }
+
+    public void setWideTall() {
+        util.setWideTall();
+    }
+
+    public void setWideTallBold() {
+        util.setWideTallBold();
     }
 
     public interface OnConnected {

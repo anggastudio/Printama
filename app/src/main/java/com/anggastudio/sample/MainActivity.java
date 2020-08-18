@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.anggastudio.sample.model.PrintBody;
 import com.anggastudio.sample.model.PrintFooter;
 import com.anggastudio.sample.model.PrintHeader;
 import com.anggastudio.sample.model.PrintModel;
+import com.anggastudio.sample.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
         findViewById(R.id.btn_print_background).setOnClickListener(v -> printImageBackground());
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
-        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printQrReceipt());
+        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
+        findViewById(R.id.btn_print_receipt).setOnClickListener(v -> printQrReceipt());
 
         getSavedPrinter();
     }
@@ -110,42 +113,52 @@ public class MainActivity extends AppCompatActivity {
     private void printTextStyles() {
         Printama.with(this).connect(printama -> {
             printama.normalText();
-            printama.printText("normal________");
+            printama.printText("normal_____________");
             printama.printTextln("TEXT");
 
             printama.normalText();
-            printama.printText("small_________");
-            printama.setSmall();
-            printama.printTextln("TEXT");
-
-            printama.normalText();
-            printama.printText("bold__________");
+            printama.printText("bold_______________");
             printama.setBold();
             printama.printTextln("TEXT");
 
             printama.normalText();
-            printama.printText("underline_____");
-            printama.setUnderline();
-            printama.printTextln("TEXT");
-
-            printama.normalText();
-            printama.printText("tall__________");
+            printama.printText("tall_______________");
             printama.setTall();
             printama.printTextln("TEXT");
 
             printama.normalText();
-            printama.printText("wide__________");
+            printama.printText("tall bold__________");
+            printama.setTallBold();
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("wide_______________");
             printama.setWide();
             printama.printTextln("TEXT");
 
             printama.normalText();
-            printama.printText("big___________");
-            printama.setBig();
+            printama.printText("wide bold__________");
+            printama.setWideBold();
             printama.printTextln("TEXT");
 
             printama.normalText();
-            printama.printText("big bold______");
-            printama.setBigBold();
+            printama.printText("wide tall__________");
+            printama.setWideTall();
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("wide tall bold_____");
+            printama.setWideTallBold();
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("underline__________");
+            printama.setUnderline();
+            printama.printTextln("TEXT");
+
+            printama.normalText();
+            printama.printText("delete line________");
+            printama.setDeleteLine();
             printama.printTextln("TEXT");
 
             printama.normalText();
@@ -217,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         View view = findViewById(R.id.root_view);
         Printama.with(this).connect(printama -> {
             printama.printFromView(view);
-            printama.close();
+            new Handler().postDelayed(printama::close, 2000);
         }, this::showToast);
     }
 
@@ -233,34 +246,33 @@ public class MainActivity extends AppCompatActivity {
         String midwareTimestamp = "CREATE TIME: " + body.getTimeStamp();
 
         Printama.with(this).connect(printama -> {
-//            printama.printImage(logo, 300);
-//            printama.addNewLine(1);
+            printama.printImage(logo, 300);
+            printama.addNewLine(1);
             printama.normalText();
-            printama.printText(Printama.CENTER, header.getMerchantName().toUpperCase());
-//            printama.printText(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
-//            printama.printText(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
-//            printama.printText(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
-//            printama.cancelSmallFont();
+            printama.printTextln(Printama.CENTER, header.getMerchantName().toUpperCase());
+            printama.printTextln(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
+            printama.printTextln(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
+            printama.printTextln(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
+            printama.printDoubleDashedLine();
 
-//            printama.printDoubleDashedLine();
-//            // body
-//            printama.setSmallFont();
-//            printama.printText(date + "   " + time);
-//            printama.printText(invoice + "   " + midwareTimestamp);
-//            printama.cancelSmallFont();
-//            printama.printLine();
-//            printama.printText(Printama.CENTER, "TAGIHAN");
-//            printama.printLine();
-//            printama.printText(Printama.CENTER, "Scan kode QR untuk membayar");
-//            printama.printImage(Util.getQrCode(body.getQrCode()), 300);
-//            printama.printText(Printama.CENTER, "TOTAL         " + body.getTotalPayment());
-//            // footer
-//            printama.printText(Printama.CENTER, footer.getPaymentBy());
-//            if (footer.getIssuer() != null) printama.printText(Printama.CENTER, footer.getIssuer());
-//            printama.printText(Printama.CENTER, footer.getPowered());
-//            if (footer.getEnvironment() != null)
-//                printama.printText(Printama.CENTER, footer.getEnvironment());
-//            printama.addNewLine(4);
+            // body
+            printama.printTextln(date);
+            printama.printTextln(invoice);
+
+            printama.printDashedLine();
+            printama.printTextln(Printama.CENTER, "TAGIHAN");
+            printama.printDashedLine();
+            printama.printTextln(Printama.CENTER, "Scan kode QR untuk membayar");
+            printama.printImage(Util.getQrCode(body.getQrCode()), 300);
+            printama.printTextln(Printama.CENTER, "TOTAL         " + body.getTotalPayment());
+
+            // footer
+            printama.printTextln(Printama.CENTER, footer.getPaymentBy());
+            if (footer.getIssuer() != null) printama.printText(Printama.CENTER, footer.getIssuer());
+            printama.printTextln(Printama.CENTER, footer.getPowered());
+            if (footer.getEnvironment() != null)
+                printama.printTextln(Printama.CENTER, footer.getEnvironment());
+            printama.addNewLine(4);
 
             printama.close();
         }, this::showToast);
