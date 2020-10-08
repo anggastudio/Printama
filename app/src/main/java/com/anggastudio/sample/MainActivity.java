@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPrinterList() {
-        Printama.showPrinterList(this, printerName -> {
+        Printama.showPrinterList(this, R.color.colorBlue, printerName -> {
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
             TextView connectedTo = findViewById(R.id.tv_printer_info);
             String text = "Connected to : " + printerName;
@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPrinterListActivity() {
+        // only use this when your project is not androidX
         Printama.showPrinterList(this);
     }
 

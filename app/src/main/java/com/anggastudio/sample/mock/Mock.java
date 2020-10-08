@@ -7,8 +7,13 @@ import com.anggastudio.sample.model.PrintModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Mock {
+
+    private Mock() {
+
+    }
 
     public static PrintModel getPrintModelMock() {
         PrintBody printBody = new PrintBody();
@@ -21,7 +26,9 @@ public class Mock {
         Date date = new Date();
         date.setTime(System.currentTimeMillis());
 
-        printBody.setTimeStamp(new SimpleDateFormat("HH:mm:ss").format(date));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        String format = simpleDateFormat.format(date);
+        printBody.setTimeStamp(format);
 
         PrintFooter printFooter = new PrintFooter();
         printFooter.setInitial("INI BUKAN BUKTI PEMBAYARAN SAH");
@@ -31,7 +38,7 @@ public class Mock {
 
         PrintHeader printHeader = new PrintHeader();
 
-        //set print heeader
+        //set print header
         printHeader.setMerchantAddress1("Jalan Mawar No 7");
         printHeader.setMerchantAddress2("Cibinong Bogor");
         printHeader.setMerchantName("Kedai Juragan Bebek");

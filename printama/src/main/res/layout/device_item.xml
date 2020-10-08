@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
+    android:layout_marginStart="2dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginEnd="2dp"
+    android:background="@color/colorWhite"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
@@ -13,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="10dp"
+        android:textColor="@color/colorBlack"
         tools:text="device name" />
 
     <ImageView

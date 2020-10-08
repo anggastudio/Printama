@@ -24,6 +24,8 @@ public class DeviceListFragment extends DialogFragment {
     private String mPrinterName;
     private Button saveButton;
     private Button testButton;
+    private int inactiveColor;
+    private int activeColor;
 
     public DeviceListFragment() {
         // Required empty public constructor
@@ -58,7 +60,6 @@ public class DeviceListFragment extends DialogFragment {
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
         mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
-        toggleButtons();
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -71,17 +72,38 @@ public class DeviceListFragment extends DialogFragment {
         });
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setColor();
+        toggleButtons();
+    }
+
+    private void setColor() {
+        if (getContext() != null) {
+            if (this.activeColor == 0) {
+                this.activeColor = ContextCompat.getColor(getContext(), R.color.colorGreen);
+            }
+            if (this.inactiveColor == 0) {
+                this.inactiveColor = ContextCompat.getColor(getContext(), R.color.colorGray5);
+            }
+        }
+
+    }
+
     private void testPrinter() {
         Printama.with(getActivity(), mPrinterName).printTest();
     }
 
     private void toggleButtons() {
-        if (mPrinterName != null) {
-            testButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
-            saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
-        } else {
-            testButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGray5));
-            saveButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGray5));
+        if (getContext() != null) {
+            if (mPrinterName != null) {
+                testButton.setBackgroundColor(activeColor);
+                saveButton.setBackgroundColor(activeColor);
+            } else {
+                testButton.setBackgroundColor(inactiveColor);
+                saveButton.setBackgroundColor(inactiveColor);
+            }
         }
     }
 
@@ -91,5 +113,14 @@ public class DeviceListFragment extends DialogFragment {
             onConnectPrinter.onConnectPrinter(mPrinterName);
         }
         dismiss();
+    }
+
+    public void setColorTheme(int activeColor, int inactiveColor) {
+        if (activeColor != 0) {
+            this.activeColor = activeColor;
+        }
+        if (inactiveColor != 0) {
+            this.inactiveColor = inactiveColor;
+        }
     }
 }

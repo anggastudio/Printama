@@ -13,7 +13,6 @@ public class BitMapModel implements Parcelable {
     public BitMapModel() {
     }
 
-
     protected BitMapModel(Parcel in) {
         bitmapName = in.readString();
         bitmapImageBase64 = in.readString();

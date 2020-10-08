@@ -18,7 +18,7 @@ public class Util {
     }
 
     public static Bitmap getQrCode(String qrCode) {
-        // please see the dependencies to create QRCode
+        // please see the dependency to create QRCode
         // it's not included in Printama
         return QRCode.from(qrCode).bitmap();
     }

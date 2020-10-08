@@ -92,6 +92,37 @@ public class Printama {
         return printer;
     }
 
+    public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
+        showPrinterList(activity, 0, 0, onConnectPrinter);
+    }
+
+    public static void showPrinterList(FragmentActivity activity, int activeColor, OnConnectPrinter onConnectPrinter) {
+        showPrinterList(activity, activeColor, 0, onConnectPrinter);
+    }
+
+    public static void showPrinterList(FragmentActivity activity, int activeColor, int inactiveColor, OnConnectPrinter onConnectPrinter) {
+        Pref.init(activity);
+        BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
+        int activeColorResource = activeColor == 0 ? activeColor : ContextCompat.getColor(activity, activeColor);
+        int inactiveColorResource = inactiveColor == 0 ? inactiveColor : ContextCompat.getColor(activity, inactiveColor);
+        if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            DeviceListFragment fragment = DeviceListFragment.newInstance();
+            fragment.setDeviceList(defaultAdapter.getBondedDevices());
+            fragment.setOnConnectPrinter(onConnectPrinter);
+            fragment.setColorTheme(activeColorResource, inactiveColorResource);
+            fragment.show(fm, "DeviceListFragment");
+        } else {
+            onConnectPrinter.onConnectPrinter("failed to connect printer");
+        }
+    }
+
+    public static void showPrinterList(Activity activity) {
+        Pref.init(activity);
+        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
+        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
+    }
+
     public void printText(String text) {
         printText(LEFT, text);
     }
@@ -146,26 +177,6 @@ public class Printama {
 
     public boolean printImage(Bitmap bitmap, int width) {
         return util.printImage(bitmap, width);
-    }
-
-    public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
-        Pref.init(activity);
-        BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
-            FragmentManager fm = activity.getSupportFragmentManager();
-            DeviceListFragment fragment = DeviceListFragment.newInstance();
-            fragment.setDeviceList(defaultAdapter.getBondedDevices());
-            fragment.setOnConnectPrinter(onConnectPrinter);
-            fragment.show(fm, "DeviceListFragment");
-        } else {
-            onConnectPrinter.onConnectPrinter("failed to connect printer");
-        }
-    }
-
-    public static void showPrinterList(Activity activity) {
-        Pref.init(activity);
-        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
-        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
     public void printDashedLine() {

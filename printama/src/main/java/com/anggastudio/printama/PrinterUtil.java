@@ -295,7 +295,7 @@ class PrinterUtil {
         @Override
         protected BluetoothSocket doInBackground(BluetoothDevice... bluetoothDevices) {
             BluetoothDevice device = bluetoothDevices[0];
-            UUID uuid = null;
+            UUID uuid;
             if (device != null) {
                 uuid = device.getUuids()[0].getUuid();
             } else {

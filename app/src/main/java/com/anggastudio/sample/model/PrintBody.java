@@ -12,9 +12,6 @@ public class PrintBody {
     String batchNum;
     String timeStamp;
 
-    public PrintBody() {
-    }
-
     public String getInvoice() {
         return invoice;
     }
