@@ -1,7 +1,5 @@
 package com.anggastudio.sample.model;
 
-import android.graphics.Bitmap;
-
 public class PrintBody {
     String invoice;
     String date;

@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         BluetoothDevice connectedPrinter = Printama.with(this).getConnectedPrinter();
         if (connectedPrinter != null) {
             TextView connectedTo = findViewById(R.id.tv_printer_info);
-            connectedTo.setText("Connected to : " + connectedPrinter.getName());
+            String text = "Connected to : " + connectedPrinter.getName();
+            connectedTo.setText(text);
         }
     }
 
@@ -57,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
         Printama.showPrinterList(this, printerName -> {
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
             TextView connectedTo = findViewById(R.id.tv_printer_info);
-            connectedTo.setText("Connected to : " + printerName);
+            String text = "Connected to : " + printerName;
+            connectedTo.setText(text);
             if (!printerName.contains("failed")) {
                 findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
                 findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
@@ -81,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 "------------------\n";
         Printama.with(this).connect(printama -> {
             printama.printText(Printama.LEFT, text);
-            // or simply printama.printText("some text") --> will be printed left aligned as default
+            // or simply
+            // printama.printText("some text") --> will be printed left aligned as default
             printama.close();
         });
     }
@@ -241,9 +244,7 @@ public class MainActivity extends AppCompatActivity {
         PrintBody body = printModel.getPrintBody();
         PrintFooter footer = printModel.getPrintFooter();
         String date = "DATE: " + body.getDate();
-        String time = "PRINT TIME " + body.getTime();
         String invoice = "INVOICE: " + body.getInvoice();
-        String midwareTimestamp = "CREATE TIME: " + body.getTimeStamp();
 
         Printama.with(this).connect(printama -> {
             printama.printImage(logo, 300);
@@ -288,7 +289,8 @@ public class MainActivity extends AppCompatActivity {
     private void showResult(String printerName) {
         showToast(printerName);
         TextView connectedTo = findViewById(R.id.tv_printer_info);
-        connectedTo.setText("Connected to : " + printerName);
+        String text = "Connected to : " + printerName;
+        connectedTo.setText(text);
         if (!printerName.contains("failed")) {
             findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
             findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());

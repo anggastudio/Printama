@@ -16,6 +16,7 @@ public class PrintFooter {
     public void setInitial(String initial) {
         this.initial = initial;
     }
+
     public String getPaymentBy() {
         return paymentBy;
     }
