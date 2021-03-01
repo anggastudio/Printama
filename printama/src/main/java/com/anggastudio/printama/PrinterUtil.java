@@ -112,7 +112,7 @@ class PrinterUtil {
         }
     }
 
-    void normalText() {
+    void setNormalText() {
         printUnicode(NORMAL);
     }
 

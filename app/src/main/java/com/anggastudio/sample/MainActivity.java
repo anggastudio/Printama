@@ -116,56 +116,41 @@ public class MainActivity extends AppCompatActivity {
 
     private void printTextStyles() {
         Printama.with(this).connect(printama -> {
-            printama.normalText();
+            printama.setNormalText();
             printama.printText("normal_____________");
             printama.printTextln("TEXT");
 
-            printama.normalText();
-            printama.printText("bold_______________");
-            printama.setBold();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("bold_______________");
+            printama.printTextlnBold("TEXT");
 
-            printama.normalText();
-            printama.printText("tall_______________");
-            printama.setTall();
-            printama.printTextln("TEXT");
+            printama.setNormalText();
+            printama.printTextNormal("tall_______________");
+            printama.printTextlnTall("TEXT");
 
-            printama.normalText();
-            printama.printText("tall bold__________");
-            printama.setTallBold();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("tall bold__________");
+            printama.printTextlnTallBold("TEXT");
 
-            printama.normalText();
-            printama.printText("wide_______________");
-            printama.setWide();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("wide_______________");
+            printama.printTextlnWide("TEXT");
 
-            printama.normalText();
-            printama.printText("wide bold__________");
-            printama.setWideBold();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("wide bold__________");
+            printama.printTextlnWideBold("TEXT");
 
-            printama.normalText();
-            printama.printText("wide tall__________");
-            printama.setWideTall();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("wide tall__________");
+            printama.printTextlnWideTall("TEXT");
 
-            printama.normalText();
-            printama.printText("wide tall bold_____");
-            printama.setWideTallBold();
-            printama.printTextln("TEXT");
+            printama.printTextNormal("wide tall bold_____");
+            printama.printTextlnWideTallBold("TEXT");
 
-            printama.normalText();
-            printama.printText("underline__________");
+            printama.printTextNormal("underline__________");
             printama.setUnderline();
             printama.printTextln("TEXT");
 
-            printama.normalText();
-            printama.printText("delete line________");
+            printama.printTextNormal("delete line________");
             printama.setDeleteLine();
             printama.printTextln("TEXT");
 
-            printama.normalText();
+            printama.setNormalText();
             printama.feedPaper();
             printama.close();
         }, this::showToast);
@@ -250,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(logo, 300);
             printama.addNewLine(1);
-            printama.normalText();
+            printama.setNormalText();
             printama.printTextln(Printama.CENTER, header.getMerchantName().toUpperCase());
             printama.printTextln(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
             printama.printTextln(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
@@ -301,4 +286,5 @@ public class MainActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
 }

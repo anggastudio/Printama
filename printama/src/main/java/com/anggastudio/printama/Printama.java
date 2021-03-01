@@ -37,6 +37,10 @@ public class Printama {
     private PrinterUtil util;
     private BluetoothDevice printer;
 
+    //----------------------------------------------------------------------------------------------
+    // CONSTRUCTOR
+    //----------------------------------------------------------------------------------------------
+
     public Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
@@ -47,17 +51,6 @@ public class Printama {
         Pref.init(context);
         printer = getPrinter(printerName);
         util = new PrinterUtil(printer);
-    }
-
-    public void printTest() {
-        printama.connect(printama -> {
-            printama.normalText();
-            printama.printTextln(Printama.CENTER, "------------------");
-            printama.printTextln(Printama.CENTER, "Print Test");
-            printama.printTextln(Printama.CENTER, "------------------");
-            printama.feedPaper();
-            printama.close();
-        });
     }
 
     public static Printama with(Context context, Callback callback) {
@@ -92,6 +85,50 @@ public class Printama {
         return printer;
     }
 
+    public BluetoothDevice getConnectedPrinter() {
+        return getPrinter();
+    }
+
+    public void connect(final OnConnected onConnected) {
+        connect(onConnected, null);
+    }
+
+    public void connect(final OnConnected onConnected, final OnFailed onFailed) {
+        util.connectPrinter(() -> {
+            if (onConnected != null) onConnected.onConnected(this);
+        }, () -> {
+            if (onFailed != null) onFailed.onFailed("Failed to connect printer");
+        });
+    }
+
+    public boolean isConnected() {
+        return util.isConnected();
+    }
+
+    public void close() {
+        setNormalText();
+        new Handler().postDelayed(util::finish, 2000);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINT TEST
+    //----------------------------------------------------------------------------------------------
+
+    public void printTest() {
+        printama.connect(printama -> {
+            printama.setNormalText();
+            printama.printTextln(Printama.CENTER, "------------------");
+            printama.printTextln(Printama.CENTER, "Print Test");
+            printama.printTextln(Printama.CENTER, "------------------");
+            printama.feedPaper();
+            printama.close();
+        });
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINTER LIST OVERLAY
+    //----------------------------------------------------------------------------------------------
+
     public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         showPrinterList(activity, 0, 0, onConnectPrinter);
     }
@@ -123,24 +160,17 @@ public class Printama {
         activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
-    public void printText(String text) {
-        printText(LEFT, text);
+    public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
+        String printerName = "failed to get printer";
+        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
+            printerName = data.getStringExtra("printama");
+        }
+        return printerName;
     }
 
-    public void printText(int align, String text) {
-        util.setAlign(align);
-        util.printText(text);
-    }
-
-    public void printTextln(int align, String text) {
-        util.setAlign(align);
-        printTextln(text);
-    }
-
-    public void printTextln(String text) {
-        text = text + "\n";
-        util.printText(text);
-    }
+    //----------------------------------------------------------------------------------------------
+    // PRINTER COMMANDS
+    //----------------------------------------------------------------------------------------------
 
     public void setLineSpacing(int lineSpacing) {
         util.setLineSpacing(lineSpacing);
@@ -150,34 +180,6 @@ public class Printama {
         util.feedPaper();
     }
 
-    public void close() {
-        normalText();
-        new Handler().postDelayed(util::finish, 2000);
-    }
-
-    public void connect(final OnConnected onConnected) {
-        connect(onConnected, null);
-    }
-
-    public void connect(final OnConnected onConnected, final OnFailed onFailed) {
-        util.connectPrinter(() -> {
-            if (onConnected != null) onConnected.onConnected(this);
-        }, () -> {
-            if (onFailed != null) onFailed.onFailed("Failed to connect printer");
-        });
-    }
-
-    public boolean printImage(Bitmap bitmap) {
-        return util.printImage(bitmap);
-    }
-
-    public boolean printImage(int alignment, Bitmap bitmap, int width) {
-        return util.printImage(alignment, bitmap, width);
-    }
-
-    public boolean printImage(Bitmap bitmap, int width) {
-        return util.printImage(bitmap, width);
-    }
 
     public void printDashedLine() {
         util.printText("--------------------------------");
@@ -199,12 +201,20 @@ public class Printama {
         util.addNewLine(count);
     }
 
-    public boolean isConnected() {
-        return util.isConnected();
+    //----------------------------------------------------------------------------------------------
+    // PRINT IMAGE BITMAP
+    //----------------------------------------------------------------------------------------------
+
+    public boolean printImage(Bitmap bitmap) {
+        return util.printImage(bitmap);
     }
 
-    public BluetoothDevice getConnectedPrinter() {
-        return getPrinter();
+    public boolean printImage(int alignment, Bitmap bitmap, int width) {
+        return util.printImage(alignment, bitmap, width);
+    }
+
+    public boolean printImage(Bitmap bitmap, int width) {
+        return util.printImage(bitmap, width);
     }
 
     public static Bitmap getBitmapFromVector(Context context, int drawableId) {
@@ -229,7 +239,7 @@ public class Printama {
 
     public void printFromView(View view) {
         ViewTreeObserver vto = view.getViewTreeObserver();
-        View finalView = view;
+        View finalView = view; // needs to create new variable
         AtomicInteger viewWidth = new AtomicInteger(view.getMeasuredWidth());
         AtomicInteger viewHeight = new AtomicInteger(view.getMeasuredHeight());
         vto.addOnGlobalLayoutListener(() -> {
@@ -259,20 +269,260 @@ public class Printama {
         return bitmap;
     }
 
-    public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
-        String printerName = "failed to get printer";
-        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
-            printerName = data.getStringExtra("printama");
-        }
-        return printerName;
+    //----------------------------------------------------------------------------------------------
+    // PRINT TEXT
+    //----------------------------------------------------------------------------------------------
+
+    public void printText(String text) {
+        printText(LEFT, text);
+    }
+
+    public void printText(int align, String text) {
+        util.setAlign(align);
+        util.printText(text);
+    }
+
+    public void printTextln(int align, String text) {
+        util.setAlign(align);
+        printTextln(text);
+    }
+
+    public void printTextln(String text) {
+        text = text + "\n";
+        util.printText(text);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINT TEXT WITH FORMATTING
+    //----------------------------------------------------------------------------------------------
+
+    // Normal
+    public void printTextNormal(String text) {
+        setNormalText();
+        printText(LEFT, text);
+    }
+
+    public void printTextNormal(int align, String text) {
+        setNormalText();
+        ;
+        util.setAlign(align);
+        util.printText(text);
+    }
+
+    public void printTextlnNormal(int align, String text) {
+        setNormalText();
+        util.setAlign(align);
+        printTextln(text);
+    }
+
+    public void printTextlnNormal(String text) {
+        setNormalText();
+        text = text + "\n";
+        util.printText(text);
+    }
+
+    // Bold
+    public void printTextBold(String text) {
+        setBold();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextBold(int align, String text) {
+        setBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnBold(int align, String text) {
+        setBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnBold(String text) {
+        setBold();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // Tall
+    public void printTextTall(String text) {
+        setTall();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextTall(int align, String text) {
+        setTall();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnTall(int align, String text) {
+        setTall();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnTall(String text) {
+        setTall();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // TallBold
+    public void printTextTallBold(String text) {
+        setTallBold();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextTallBold(int align, String text) {
+        setTallBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnTallBold(int align, String text) {
+        setTallBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnTallBold(String text) {
+        setTallBold();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // Wide
+    public void printTextWide(String text) {
+        setWide();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextWide(int align, String text) {
+        setWide();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnWide(int align, String text) {
+        setWide();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWide(String text) {
+        setWide();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // WideBold
+    public void printTextWideBold(String text) {
+        setWideBold();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextWideBold(int align, String text) {
+        setWideBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideBold(int align, String text) {
+        setWideBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideBold(String text) {
+        setWideBold();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // WideTall
+    public void printTextWideTall(String text) {
+        setWideTall();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextWideTall(int align, String text) {
+        setWideTall();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTall(int align, String text) {
+        setWideTall();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTall(String text) {
+        setWideTall();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
+    }
+
+    // WideTallBold
+    public void printTextWideTallBold(String text) {
+        setWideTallBold();
+        printText(LEFT, text);
+        setNormalText();
+    }
+
+    public void printTextWideTallBold(int align, String text) {
+        setWideTallBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTallBold(int align, String text) {
+        setWideTallBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTallBold(String text) {
+        setWideTallBold();
+        text = text + "\n";
+        util.printText(text);
+        setNormalText();
     }
 
     //----------------------------------------------------------------------------------------------
     // TEXT FORMAT
     //----------------------------------------------------------------------------------------------
 
-    public void normalText() {
-        util.normalText();
+    public void setNormalText() {
+        util.setNormalText();
     }
 
     public void setBold() {
@@ -310,6 +560,10 @@ public class Printama {
     public void setWideTallBold() {
         util.setWideTallBold();
     }
+
+    //----------------------------------------------------------------------------------------------
+    // INTERFACES
+    //----------------------------------------------------------------------------------------------
 
     public interface OnConnected {
         void onConnected(Printama printama);
