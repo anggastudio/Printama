@@ -6,7 +6,6 @@
   <img src="https://images.unsplash.com/photo-1605978505713-4fa239312995?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"/>
 </p>
 
-
 <p align="center">
   <a href="#"><img alt="bintray" src="https://img.shields.io/jitpack/v/github/anggastudio/Printama"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
@@ -17,8 +16,7 @@
   <p align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</p>
 </p>
 
-
-## Screenshot
+## Screenshots
 |Payment Receipt|Print Text and Images|
 |---|---|
 |![](images/struk_belanja.jpeg)|![](images/print_text_image.jpeg)|
@@ -39,11 +37,20 @@ example.
 
 But here for an insight:
 
-**Show dialog to choose bonded device** bind your device initially from
+**Show dialog to choose bonded device (printer list)** bind your device initially from
 the bluetooth config:
 ```java
 Printama.showPrinterList(this, printerName -> {
     ...
+});
+```
+
+**Show dialog to choose bonded device (Custom Color)** 
+```java
+Printama.showPrinterList(this, R.color.colorBlue, printerName -> {
+    if (connectedPrinter != null) {
+      ...
+    }
 });
 ```
 
@@ -76,6 +83,66 @@ Printama.with(context).connect(printama -> {
 ```java
 Printama.with(context).connect(printama -> {
     printama.printText(Printama.RIGHT, text);
+    printama.close();
+});
+```
+
+**Print Text JUSTIFY aligned**
+```java
+Printama.with(this).connect(printama -> {
+    printama.printTextJustify("text1", "text2");
+    printama.printTextJustify("text1", "text2", "text3");
+    printama.printTextJustify("text1", "text2", "text3", "text4");
+
+    printama.printTextJustifyBold("text1", "text2");
+    printama.printTextJustifyBold("text1", "text2", "text3");
+    printama.printTextJustifyBold("text1", "text2", "text3", "text4");
+
+    printama.setNormalText();
+    printama.feedPaper();
+    printama.close();
+});
+```
+
+**Print Text with format**
+```java
+Printama.with(this).connect(printama -> {
+    printama.setNormalText();
+    printama.printText("normal");
+    printama.printTextln("TEXT");
+
+    printama.printTextNormal("bold_______________");
+    printama.printTextlnBold("TEXT");
+
+    printama.setNormalText();
+    printama.printTextNormal("tall_______________");
+    printama.printTextlnTall("TEXT");
+
+    printama.printTextNormal("tall bold__________");
+    printama.printTextlnTallBold("TEXT");
+
+    printama.printTextNormal("wide_______________");
+    printama.printTextlnWide("TEXT");
+
+    printama.printTextNormal("wide bold__________");
+    printama.printTextlnWideBold("TEXT");
+
+    printama.printTextNormal("wide tall__________");
+    printama.printTextlnWideTall("TEXT");
+
+    printama.printTextNormal("wide tall bold_____");
+    printama.printTextlnWideTallBold("TEXT");
+
+    printama.printTextNormal("underline__________");
+    printama.setUnderline();
+    printama.printTextln("TEXT");
+
+    printama.printTextNormal("delete line________");
+    printama.setDeleteLine();
+    printama.printTextln("TEXT");
+
+    printama.setNormalText();
+    printama.feedPaper();
     printama.close();
 });
 ```
@@ -146,7 +213,8 @@ Printama.with(this).connect(printama -> {
 
 ## Feature
 * Dialog to choose bonded bluetooth device list.
-* Print Text with Custom Alignment.
+* Print Text with LEFT, CENTER, or RIGHT Alignment.
+* Print Text with JUSTIFY Alignment.
 * Print auto grayscale Bitmap with Custom width and Alignment.
 * Print photo (grayscaled)
 * Print your android screen or layout by passing the root view
