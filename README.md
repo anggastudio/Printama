@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="#"><img alt="bintray" src="https://img.shields.io/jitpack/v/github/anggastudio/Printama"></a>
+  <a href="#"><img src="https://img.shields.io/jitpack/v/github/anggastudio/Printama"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
   <a href="https://github.com/anggastudio/Printama/pulls"><img alt="Pull request" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"></a>
-  <a href="https://github.com/anggastudio"><img alt="Fcm docs" src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
-  <a href="https://twitter.com/angga_studio"><img alt="Instagram" src="https://img.shields.io/twitter/follow/angga_studio"></a>
+  <a href="https://github.com/anggastudio/Printama/graphs/contributors"><img src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
+  <a href="https://twitter.com/angga_studio"><img alt="Twitter" src="https://img.shields.io/twitter/follow/angga_studio"></a>
   <a href="https://github.com/anggastudio"><img alt="Github" src="https://img.shields.io/github/followers/anggastudio?label=follow&style=social"></a>
   <p align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</p>
 </p>
@@ -202,6 +202,7 @@ Printama.with(this).connect(printama -> {
 ```
 
 **Print Layout View**
+
 using print layout view, you can design your receipt on your layout xml or dsl, and pass the root view as parameter
 ```java
 View view = findViewById(R.id.root_view);
@@ -246,9 +247,11 @@ allprojects {
 ```
 
 **Step 2.** Add the dependency
+
+version: <img src="https://img.shields.io/jitpack/v/github/anggastudio/Printama">
 ```gradle
 dependencies {
-  implementation 'com.github.anggastudio:Printama:0.9.4'
+  implementation 'com.github.anggastudio:Printama:<version>'
 ```
 #### Other like Maven, SBT, Leiningen
 **just visit the jitpack page**
@@ -263,9 +266,6 @@ dependencies {
 
 - [imrankst1221](https://github.com/imrankst1221/Thermal-Printer-in-Android)
 - [MFori](https://github.com/MFori/Android-Bluetooth-Printer)
+- <a href="https://github.com/anggastudio/Printama/graphs/contributors"><img src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
 - WP
 
-## Contributor:
-
-- [utsmannn](https://github.com/utsmannn)
-- you (maybe)
