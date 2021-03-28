@@ -1,13 +1,36 @@
-# Printama
-Android library for bluetooth thermal printer.
+<p align="center">
+  <h1 align="center">Printama</h1>
+</p>
 
-![Struk Belanja](images/struk_belanja.jpeg)
-![Print Text Image](images/print_text_image.jpeg)
-![Print Image Full Width](images/print_image_full.jpeg)
-![Rose Photo](images/rose.jpeg)
-![Printed Rose](images/rose_print.jpeg)
-![Layout View](images/layout.jpeg)
-![Printed Layout View](images/print_layout.jpeg)
+<p align="center">
+  <img src="https://images.unsplash.com/photo-1605978505713-4fa239312995?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"/>
+</p>
+
+
+<p align="center">
+  <a href="#"><img alt="bintray" src="https://img.shields.io/jitpack/v/github/anggastudio/Printama"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
+  <a href="https://github.com/anggastudio/Printama/pulls"><img alt="Pull request" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat"></a>
+  <a href="https://github.com/anggastudio"><img alt="Fcm docs" src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
+  <a href="https://twitter.com/angga_studio"><img alt="Instagram" src="https://img.shields.io/twitter/follow/angga_studio"></a>
+  <a href="https://github.com/anggastudio"><img alt="Github" src="https://img.shields.io/github/followers/anggastudio?label=follow&style=social"></a>
+  <p align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</p>
+</p>
+
+
+## Screenshot
+|Payment Receipt|Print Text and Images|
+|---|---|
+|![](images/struk_belanja.jpeg)|![](images/print_text_image.jpeg)|
+
+|Photo|Photo Print Result|
+|---|---|
+|![](images/rose.jpeg)|![](images/rose_print.jpeg)|
+
+|Screen Layout|Screen Layout Print Result|
+|---|---|
+|![](images/layout.jpeg)|![](images/print_layout.jpeg)|
+
 
 ## Usage
 Currently still in Alpha. Make sure to use java 8+ configuration.
