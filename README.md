@@ -248,8 +248,7 @@ allprojects {
 **Step 2.** Add the dependency
 ```gradle
 dependencies {
-  implementation 'com.github.anggastudio:Printama:0.9.1'
-}
+  implementation 'com.github.anggastudio:Printama:0.9.4'
 ```
 #### Other like Maven, SBT, Leiningen
 **just visit the jitpack page**
