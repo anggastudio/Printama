@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
         findViewById(R.id.btn_print_text_style).setOnClickListener(v -> printTextStyles());
+        findViewById(R.id.btn_print_text_style_2).setOnClickListener(v -> printTextStyles2());
         findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printImageLeft());
         findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printImageCenter());
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
@@ -114,10 +115,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void printTextStyles2() {
+        Printama.with(this).connect(printama -> {
+
+            printama.printTextJustify("text1", "text2");
+            printama.printTextJustify("text1", "text2", "text3");
+            printama.printTextJustify("text1", "text2", "text3", "text4");
+
+            printama.printTextJustifyBold("text1", "text2");
+            printama.printTextJustifyBold("text1", "text2", "text3");
+            printama.printTextJustifyBold("text1", "text2", "text3", "text4");
+
+            printama.setNormalText();
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
     private void printTextStyles() {
         Printama.with(this).connect(printama -> {
             printama.setNormalText();
-            printama.printText("normal_____________");
+            printama.printText("normal");
             printama.printTextln("TEXT");
 
             printama.printTextNormal("bold_______________");

@@ -153,6 +153,18 @@
         android:textColor="@color/colorWhite"
         android:textSize="12sp" />
 
+    <Button
+        android:id="@+id/btn_print_text_style_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:backgroundTint="@color/colorAccent"
+        android:text="Print Text Justify Alignment"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

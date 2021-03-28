@@ -33,6 +33,10 @@ public class Printama {
     public static final int FULL_WIDTH = -1;
     public static final int ORIGINAL_WIDTH = 0;
     public static final int GET_PRINTER_CODE = 921;
+
+    private static final int MAX_CHAR = 32;
+    private static final int MAX_CHAR_WIDE = MAX_CHAR / 2;
+
     private static Printama printama;
     private PrinterUtil util;
     private BluetoothDevice printer;
@@ -290,6 +294,97 @@ public class Printama {
     public void printTextln(String text) {
         text = text + "\n";
         util.printText(text);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINT TEXT JUSTIFY ALIGNMENT
+    //----------------------------------------------------------------------------------------------
+
+    public void printTextJustify(String text1, String text2) {
+        String justifiedText = getJustifiedText(text1, text2);
+        printText(justifiedText);
+    }
+
+    public void printTextJustify(String text1, String text2, String text3) {
+        String justifiedText = getJustifiedText(text1, text2, text3);
+        printText(justifiedText);
+    }
+
+    public void printTextJustify(String text1, String text2, String text3, String text4) {
+        String justifiedText = getJustifiedText(text1, text2, text3, text4);
+        printText(justifiedText);
+    }
+
+    public void printTextJustifyBold(String text1, String text2) {
+        String justifiedText = getJustifiedText(text1, text2);
+        printTextBold(justifiedText);
+    }
+
+    public void printTextJustifyBold(String text1, String text2, String text3) {
+        String justifiedText = getJustifiedText(text1, text2, text3);
+        printTextBold(justifiedText);
+    }
+
+    public void printTextJustifyBold(String text1, String text2, String text3, String text4) {
+        String justifiedText = getJustifiedText(text1, text2, text3, text4);
+        printTextBold(justifiedText);
+    }
+
+    private String getJustifiedText(String text1, String text2) {
+        String justifiedText = "";
+        justifiedText = text1 + getSpaces(text1, text2) + text2;
+        return justifiedText;
+    }
+
+    private String getJustifiedText(String text1, String text2, String text3) {
+        String justifiedText = "";
+        String text12 = text1 + getSpaces(text1, text2, text3) + text2;
+        justifiedText = text12 + getSpaces(text12, text3) + text3;
+        return justifiedText;
+    }
+
+    private String getJustifiedText(String text1, String text2, String text3, String text4) {
+        String justifiedText = "";
+        String text12 = text1 + getSpaces(text1, text2, text3, text4) + text2;
+        String text123 = text12 + getSpaces(text12, text3, text4) + text3;
+        justifiedText = text123 + getSpaces(text123, text4) + text4;
+        return justifiedText;
+    }
+
+    private String getSpaces(String text1, String text2) {
+        int text1Length = text1.length();
+        int text2Length = text2.length();
+        int spacesCount = MAX_CHAR - text1Length - text2Length;
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < spacesCount; i++) {
+            spaces.append(" ");
+        }
+        return spaces.toString();
+    }
+
+    private String getSpaces(String text1, String text2, String text3) {
+        int text1Length = text1.length();
+        int text2Length = text2.length();
+        int text3Length = text3.length();
+        int spacesCount = (MAX_CHAR - text1Length - text2Length - text3Length) / 2;
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < spacesCount; i++) {
+            spaces.append(" ");
+        }
+        return spaces.toString();
+    }
+
+    private String getSpaces(String text1, String text2, String text3, String text4) {
+        int text1Length = text1.length();
+        int text2Length = text2.length();
+        int text3Length = text3.length();
+        int text4Length = text4.length();
+        int spacesCount = (MAX_CHAR - text1Length - text2Length - text3Length - text4Length) / 3;
+        StringBuilder spaces = new StringBuilder();
+        for (int i = 0; i < spacesCount; i++) {
+            spaces.append(" ");
+        }
+        return spaces.toString();
     }
 
     //----------------------------------------------------------------------------------------------
