@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
         findViewById(R.id.btn_print_text_style).setOnClickListener(v -> printTextStyles());
-        findViewById(R.id.btn_print_text_style_2).setOnClickListener(v -> printTextStyles2());
+        findViewById(R.id.btn_print_text_justify).setOnClickListener(v -> printTextJustified());
         findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printImageLeft());
         findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printImageCenter());
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void printTextStyles2() {
+    private void printTextJustified() {
         Printama.with(this).connect(printama -> {
 
             printama.printTextJustify("text1", "text2");
