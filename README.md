@@ -107,39 +107,43 @@ Printama.with(this).connect(printama -> {
 **Print Text with format**
 ```java
 Printama.with(this).connect(printama -> {
-    printama.setNormalText();
-    printama.printText("normal");
-    printama.printTextln("TEXT");
-
-    printama.printTextNormal("bold_______________");
-    printama.printTextlnBold("TEXT");
+    printama.setSmallText();
+    printama.printText("small___________");
+    printama.printTextln("TEXTtext");
 
     printama.setNormalText();
-    printama.printTextNormal("tall_______________");
-    printama.printTextlnTall("TEXT");
+    printama.printText("normal__________");
+    printama.printTextln("TEXTtext");
 
-    printama.printTextNormal("tall bold__________");
-    printama.printTextlnTallBold("TEXT");
+    printama.printTextNormal("bold____________");
+    printama.printTextlnBold("TEXTtext");
 
-    printama.printTextNormal("wide_______________");
-    printama.printTextlnWide("TEXT");
+    printama.setNormalText();
+    printama.printTextNormal("tall____________");
+    printama.printTextlnTall("TEXTtext");
 
-    printama.printTextNormal("wide bold__________");
-    printama.printTextlnWideBold("TEXT");
+    printama.printTextNormal("tall bold_______");
+    printama.printTextlnTallBold("TEXTtext");
 
-    printama.printTextNormal("wide tall__________");
-    printama.printTextlnWideTall("TEXT");
+    printama.printTextNormal("wide____________");
+    printama.printTextlnWide("TEXTtext");
 
-    printama.printTextNormal("wide tall bold_____");
-    printama.printTextlnWideTallBold("TEXT");
+    printama.printTextNormal("wide bold_______");
+    printama.printTextlnWideBold("TEXTtext");
 
-    printama.printTextNormal("underline__________");
+    printama.printTextNormal("wide tall_______");
+    printama.printTextlnWideTall("TEXTtext");
+
+    printama.printTextNormal("wide tall bold__");
+    printama.printTextlnWideTallBold("TEXTtext");
+
+    printama.printTextNormal("underline_______");
     printama.setUnderline();
-    printama.printTextln("TEXT");
+    printama.printTextln("TEXTtext");
 
-    printama.printTextNormal("delete line________");
+    printama.printTextNormal("delete line_____");
     printama.setDeleteLine();
-    printama.printTextln("TEXT");
+    printama.printTextln("TEXTtext");
 
     printama.setNormalText();
     printama.feedPaper();
