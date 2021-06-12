@@ -620,6 +620,10 @@ public class Printama {
         util.setNormalText();
     }
 
+    public void setSmallText() {
+        util.setSmallText();
+    }
+
     public void setBold() {
         util.setBold();
     }
