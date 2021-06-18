@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,6 +21,10 @@ import com.anggastudio.sample.model.PrintFooter;
 import com.anggastudio.sample.model.PrintHeader;
 import com.anggastudio.sample.model.PrintModel;
 import com.anggastudio.sample.util.Util;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
         findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
         findViewById(R.id.btn_print_receipt).setOnClickListener(v -> printQrReceipt());
+        findViewById(R.id.btn_print_receipt2).setOnClickListener(v -> printQrReceipt2());
 
         getSavedPrinter();
     }
@@ -283,6 +289,44 @@ public class MainActivity extends AppCompatActivity {
                 printama.printTextln(Printama.CENTER, footer.getEnvironment());
             printama.addNewLine(4);
 
+            printama.close();
+        }, this::showToast);
+    }
+
+    private void printQrReceipt2() {
+        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
+        String nota = "Some Text";
+        Printama.with(this).connect(printama -> {
+            printama.printImage(logo, 200);
+            printama.addNewLine();
+            printama.printTextln(Printama.CENTER, "Title Text");
+            printama.setNormalText();
+            printama.printTextln(Printama.CENTER, "Some Text");
+            printama.printDashedLine();
+            printama.addNewLine();
+            QRCodeWriter writer = new QRCodeWriter();
+            BitMatrix bitMatrix;
+            try {
+                bitMatrix = writer.encode(nota, BarcodeFormat.QR_CODE, 300, 300);
+                int width = bitMatrix.getWidth();
+                int height = bitMatrix.getHeight();
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        int color = Color.WHITE;
+                        if (bitMatrix.get(x, y)) color = Color.BLACK;
+                        bitmap.setPixel(x, y, color);
+                    }
+                }
+                if (bitmap != null) {
+                    printama.printImage(bitmap);
+                }
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+
+            printama.addNewLine();
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
