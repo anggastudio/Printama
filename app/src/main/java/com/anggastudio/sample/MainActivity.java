@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageLeft() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(Printama.LEFT, bitmap, 200);
             printama.close();
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageCenter() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
             boolean print = printama.printImage(Printama.CENTER, bitmap, 200);
             if (!print) {
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageRight() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(Printama.RIGHT, bitmap, 200);
             printama.close();
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageOri() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap); // original size, centered as default
             printama.close();
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printImageFull() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();

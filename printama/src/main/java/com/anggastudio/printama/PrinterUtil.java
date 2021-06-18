@@ -19,8 +19,8 @@ import static com.anggastudio.printama.Printama.RIGHT;
 class PrinterUtil {
     private static final String TAG = "PRINTAMA";
 
-    private static final int PRINTER_WIDTH = 400;
-    private static final int INITIAL_MARGIN_LEFT = -12;
+    private static final int PRINTER_WIDTH = 384;
+    private static final int INITIAL_MARGIN_LEFT = -4;
     private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
     private static final int HEAD = 8;
