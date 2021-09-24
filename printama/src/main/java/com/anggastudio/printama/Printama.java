@@ -216,7 +216,12 @@ public class Printama {
         return util.printImage(bitmap);
     }
 
+    @Deprecated
     public boolean printImage(int alignment, Bitmap bitmap, int width) {
+        return util.printImage(alignment, bitmap, width);
+    }
+
+    public boolean printImage(Bitmap bitmap, int width, int alignment) {
         return util.printImage(alignment, bitmap, width);
     }
 
@@ -284,12 +289,32 @@ public class Printama {
         printText(LEFT, text);
     }
 
+    /**
+     * @deprecated  As of release 1.0.0,
+     * replaced by {@link Printama#printText(String text, int align)} instead
+     */
+    @Deprecated
     public void printText(int align, String text) {
         util.setAlign(align);
         util.printText(text);
     }
 
+    public void printText(String text, int align) {
+        util.setAlign(align);
+        util.printText(text);
+    }
+
+    /**
+     * @deprecated  As of release 1.0.0,
+     * replaced by {@link Printama#printTextln(String text, int align)} instead
+     */
+    @Deprecated
     public void printTextln(int align, String text) {
+        util.setAlign(align);
+        printTextln(text);
+    }
+
+    public void printTextln(String text, int align) {
         util.setAlign(align);
         printTextln(text);
     }
@@ -400,14 +425,27 @@ public class Printama {
         printText(LEFT, text);
     }
 
+    @Deprecated
     public void printTextNormal(int align, String text) {
         setNormalText();
-        ;
         util.setAlign(align);
         util.printText(text);
     }
 
+    public void printTextNormal(String text, int align) {
+        setNormalText();
+        util.setAlign(align);
+        util.printText(text);
+    }
+
+    @Deprecated
     public void printTextlnNormal(int align, String text) {
+        setNormalText();
+        util.setAlign(align);
+        printTextln(text);
+    }
+
+    public void printTextlnNormal(String text, int align) {
         setNormalText();
         util.setAlign(align);
         printTextln(text);
@@ -426,6 +464,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextBold(int align, String text) {
         setBold();
         util.setAlign(align);
@@ -433,7 +472,26 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextBold(String text, int align) {
+        setBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    /**
+     * @deprecated  As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnBold(String text, int align)} instead
+     */
+    @Deprecated
     public void printTextlnBold(int align, String text) {
+        setBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnBold(String text, int align) {
         setBold();
         util.setAlign(align);
         printTextln(text);
