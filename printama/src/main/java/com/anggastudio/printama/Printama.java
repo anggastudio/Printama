@@ -38,8 +38,8 @@ public class Printama {
     private static final int MAX_CHAR_WIDE = MAX_CHAR / 2;
 
     private static Printama printama;
-    private PrinterUtil util;
-    private BluetoothDevice printer;
+    private final PrinterUtil util;
+    private final BluetoothDevice printer;
 
     //----------------------------------------------------------------------------------------------
     // CONSTRUCTOR
@@ -216,6 +216,10 @@ public class Printama {
         return util.printImage(bitmap);
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printImage(Bitmap bitmap, int width, int alignment)} instead
+     */
     @Deprecated
     public boolean printImage(int alignment, Bitmap bitmap, int width) {
         return util.printImage(alignment, bitmap, width);
@@ -425,6 +429,10 @@ public class Printama {
         printText(LEFT, text);
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextNormal(String text, int align)} instead
+     */
     @Deprecated
     public void printTextNormal(int align, String text) {
         setNormalText();
@@ -438,6 +446,10 @@ public class Printama {
         util.printText(text);
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnNormal(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnNormal(int align, String text) {
         setNormalText();
@@ -464,6 +476,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextBold(int align, String text) {
         setBold();
@@ -512,6 +528,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextTall(String text, int align)} instead
+     */
     @Deprecated
     public void printTextTall(int align, String text) {
         setTall();
@@ -527,6 +547,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnTall(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnTall(int align, String text) {
         setTall();
@@ -556,6 +580,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextTallBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextTallBold(int align, String text) {
         setTallBold();
@@ -571,6 +599,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnTallBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnTallBold(int align, String text) {
         setTallBold();
@@ -600,6 +632,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextWide(String text, int align)} instead
+     */
     @Deprecated
     public void printTextWide(int align, String text) {
         setWide();
@@ -615,6 +651,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnWide(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnWide(int align, String text) {
         setWide();
@@ -644,6 +684,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextWideBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextWideBold(int align, String text) {
         setWideBold();
@@ -659,6 +703,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnWideBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnWideBold(int align, String text) {
         setWideBold();
@@ -688,6 +736,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextWideTall(String text, int align)} instead
+     */
     @Deprecated
     public void printTextWideTall(int align, String text) {
         setWideTall();
@@ -703,6 +755,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnWideTall(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnWideTall(int align, String text) {
         setWideTall();
@@ -732,6 +788,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextWideTallBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextWideTallBold(int align, String text) {
         setWideTallBold();
@@ -747,6 +807,10 @@ public class Printama {
         setNormalText();
     }
 
+    /**
+     * @deprecated As of release 1.0.0,
+     * replaced by {@link Printama#printTextlnWideTallBold(String text, int align)} instead
+     */
     @Deprecated
     public void printTextlnWideTallBold(int align, String text) {
         setWideTallBold();
