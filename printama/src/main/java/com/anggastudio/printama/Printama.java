@@ -512,6 +512,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextTall(int align, String text) {
         setTall();
         util.setAlign(align);
@@ -519,7 +520,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextTall(String text, int align) {
+        setTall();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnTall(int align, String text) {
+        setTall();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnTall(String text, int align) {
         setTall();
         util.setAlign(align);
         printTextln(text);
@@ -540,6 +556,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextTallBold(int align, String text) {
         setTallBold();
         util.setAlign(align);
@@ -547,7 +564,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextTallBold(String text, int align) {
+        setTallBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnTallBold(int align, String text) {
+        setTallBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnTallBold(String text, int align) {
         setTallBold();
         util.setAlign(align);
         printTextln(text);
@@ -568,6 +600,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextWide(int align, String text) {
         setWide();
         util.setAlign(align);
@@ -575,7 +608,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextWide(String text, int align) {
+        setWide();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnWide(int align, String text) {
+        setWide();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWide(String text, int align) {
         setWide();
         util.setAlign(align);
         printTextln(text);
@@ -596,6 +644,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextWideBold(int align, String text) {
         setWideBold();
         util.setAlign(align);
@@ -603,7 +652,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextWideBold(String text, int align) {
+        setWideBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnWideBold(int align, String text) {
+        setWideBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideBold(String text, int align) {
         setWideBold();
         util.setAlign(align);
         printTextln(text);
@@ -624,6 +688,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextWideTall(int align, String text) {
         setWideTall();
         util.setAlign(align);
@@ -631,7 +696,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextWideTall(String text, int align) {
+        setWideTall();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnWideTall(int align, String text) {
+        setWideTall();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTall(String text, int align) {
         setWideTall();
         util.setAlign(align);
         printTextln(text);
@@ -652,6 +732,7 @@ public class Printama {
         setNormalText();
     }
 
+    @Deprecated
     public void printTextWideTallBold(int align, String text) {
         setWideTallBold();
         util.setAlign(align);
@@ -659,7 +740,22 @@ public class Printama {
         setNormalText();
     }
 
+    public void printTextWideTallBold(String text, int align) {
+        setWideTallBold();
+        util.setAlign(align);
+        util.printText(text);
+        setNormalText();
+    }
+
+    @Deprecated
     public void printTextlnWideTallBold(int align, String text) {
+        setWideTallBold();
+        util.setAlign(align);
+        printTextln(text);
+        setNormalText();
+    }
+
+    public void printTextlnWideTallBold(String text, int align) {
         setWideTallBold();
         util.setAlign(align);
         printTextln(text);
