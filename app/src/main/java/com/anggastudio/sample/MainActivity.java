@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 "cool isn't it?\n" +
                 "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.LEFT, text);
+            printama.printText(text, Printama.LEFT);
             // or simply
             // printama.printText("some text") --> will be printed left aligned as default
             printama.close();
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 "cool isn't it?\n" +
                 "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.CENTER, text);
+            printama.printText(text, Printama.CENTER);
             printama.close();
         });
     }
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 "cool isn't it?\n" +
                 "------------------\n";
         Printama.with(this).connect(printama -> {
-            printama.printText(Printama.RIGHT, text);
+            printama.printText(text, Printama.RIGHT);
             printama.close();
         });
     }
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     private void printImageLeft() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            printama.printImage(Printama.LEFT, bitmap, 200);
+            printama.printImage(bitmap, 200, Printama.LEFT);
             printama.close();
         }, this::showToast);
     }
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     private void printImageCenter() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            boolean print = printama.printImage(Printama.CENTER, bitmap, 200);
+            boolean print = printama.printImage(bitmap, 200, Printama.CENTER);
             if (!print) {
                 Toast.makeText(MainActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
             }
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     private void printImageRight() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
         Printama.with(this).connect(printama -> {
-            printama.printImage(Printama.RIGHT, bitmap, 200);
+            printama.printImage(bitmap, 200, Printama.RIGHT);
             printama.close();
         }, this::showToast);
     }
@@ -264,10 +264,10 @@ public class MainActivity extends AppCompatActivity {
             printama.printImage(logo, 300);
             printama.addNewLine(1);
             printama.setNormalText();
-            printama.printTextln(Printama.CENTER, header.getMerchantName().toUpperCase());
-            printama.printTextln(Printama.CENTER, header.getMerchantAddress1().toUpperCase());
-            printama.printTextln(Printama.CENTER, header.getMerchantAddress2().toUpperCase());
-            printama.printTextln(Printama.CENTER, "MERC" + header.getMerchantId().toUpperCase());
+            printama.printTextln(header.getMerchantName().toUpperCase(), Printama.CENTER);
+            printama.printTextln(header.getMerchantAddress1().toUpperCase(), Printama.CENTER);
+            printama.printTextln(header.getMerchantAddress2().toUpperCase(), Printama.CENTER);
+            printama.printTextln("MERC" + header.getMerchantId().toUpperCase(), Printama.CENTER);
             printama.printDoubleDashedLine();
 
             // body
@@ -275,18 +275,18 @@ public class MainActivity extends AppCompatActivity {
             printama.printTextln(invoice);
 
             printama.printDashedLine();
-            printama.printTextln(Printama.CENTER, "TAGIHAN");
+            printama.printTextln("TAGIHAN", Printama.CENTER);
             printama.printDashedLine();
-            printama.printTextln(Printama.CENTER, "Scan kode QR untuk membayar");
+            printama.printTextln("Scan kode QR untuk membayar", Printama.CENTER);
             printama.printImage(Util.getQrCode(body.getQrCode()), 300);
-            printama.printTextln(Printama.CENTER, "TOTAL         " + body.getTotalPayment());
+            printama.printTextln("TOTAL         " + body.getTotalPayment(), Printama.CENTER);
 
             // footer
-            printama.printTextln(Printama.CENTER, footer.getPaymentBy());
-            if (footer.getIssuer() != null) printama.printText(Printama.CENTER, footer.getIssuer());
-            printama.printTextln(Printama.CENTER, footer.getPowered());
+            printama.printTextln(footer.getPaymentBy(), Printama.CENTER);
+            if (footer.getIssuer() != null) printama.printText(footer.getIssuer(), Printama.CENTER);
+            printama.printTextln(footer.getPowered(), Printama.CENTER);
             if (footer.getEnvironment() != null)
-                printama.printTextln(Printama.CENTER, footer.getEnvironment());
+                printama.printTextln(footer.getEnvironment(), Printama.CENTER);
             printama.addNewLine(4);
 
             printama.close();
@@ -299,9 +299,9 @@ public class MainActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(logo, 200);
             printama.addNewLine();
-            printama.printTextln(Printama.CENTER, "Title Text");
+            printama.printTextln("Title Text", Printama.CENTER);
             printama.setNormalText();
-            printama.printTextln(Printama.CENTER, "Some Text");
+            printama.printTextln("Some Text", Printama.CENTER);
             printama.printDashedLine();
             printama.addNewLine();
             QRCodeWriter writer = new QRCodeWriter();

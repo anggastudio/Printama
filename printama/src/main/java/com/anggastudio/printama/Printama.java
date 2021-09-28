@@ -121,9 +121,9 @@ public class Printama {
     public void printTest() {
         printama.connect(printama -> {
             printama.setNormalText();
-            printama.printTextln(Printama.CENTER, "------------------");
-            printama.printTextln(Printama.CENTER, "Print Test");
-            printama.printTextln(Printama.CENTER, "------------------");
+            printama.printTextln("------------------", Printama.CENTER);
+            printama.printTextln("Print Test", Printama.CENTER);
+            printama.printTextln("------------------", Printama.CENTER);
             printama.feedPaper();
             printama.close();
         });
@@ -290,11 +290,11 @@ public class Printama {
     //----------------------------------------------------------------------------------------------
 
     public void printText(String text) {
-        printText(LEFT, text);
+        printText(text, LEFT);
     }
 
     /**
-     * @deprecated  As of release 1.0.0,
+     * @deprecated As of release 1.0.0,
      * replaced by {@link Printama#printText(String text, int align)} instead
      */
     @Deprecated
@@ -309,7 +309,7 @@ public class Printama {
     }
 
     /**
-     * @deprecated  As of release 1.0.0,
+     * @deprecated As of release 1.0.0,
      * replaced by {@link Printama#printTextln(String text, int align)} instead
      */
     @Deprecated
@@ -426,7 +426,7 @@ public class Printama {
     // Normal
     public void printTextNormal(String text) {
         setNormalText();
-        printText(LEFT, text);
+        printText(text, LEFT);
     }
 
     /**
@@ -472,7 +472,7 @@ public class Printama {
     // Bold
     public void printTextBold(String text) {
         setBold();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -496,7 +496,7 @@ public class Printama {
     }
 
     /**
-     * @deprecated  As of release 1.0.0,
+     * @deprecated As of release 1.0.0,
      * replaced by {@link Printama#printTextlnBold(String text, int align)} instead
      */
     @Deprecated
@@ -524,7 +524,7 @@ public class Printama {
     // Tall
     public void printTextTall(String text) {
         setTall();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -576,7 +576,7 @@ public class Printama {
     // TallBold
     public void printTextTallBold(String text) {
         setTallBold();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -628,7 +628,7 @@ public class Printama {
     // Wide
     public void printTextWide(String text) {
         setWide();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -680,7 +680,7 @@ public class Printama {
     // WideBold
     public void printTextWideBold(String text) {
         setWideBold();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -732,7 +732,7 @@ public class Printama {
     // WideTall
     public void printTextWideTall(String text) {
         setWideTall();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
@@ -784,7 +784,7 @@ public class Printama {
     // WideTallBold
     public void printTextWideTallBold(String text) {
         setWideTallBold();
-        printText(LEFT, text);
+        printText(text, LEFT);
         setNormalText();
     }
 
