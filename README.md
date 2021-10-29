@@ -265,7 +265,6 @@ dependencies {
 
 [Apache License 2.0](LICENSE)
 
-
 ## Thanks To:
 
 - [imrankst1221](https://github.com/imrankst1221/Thermal-Printer-in-Android)
@@ -273,3 +272,19 @@ dependencies {
 - <a href="https://github.com/anggastudio/Printama/graphs/contributors"><img src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
 - WP
 
+## Next Step:
+
+- release 1.0.0 to make it more stable
+- enhance documentation
+- create a video tutorial
+- testing on more printers
+- (still in my mind) migrate to kotlin
+
+## Support me:
+
+I notice that some of you very happy with this library and some of you wants to give support. But I
+also notice some of you wants to support me anonymously. Well then, I appreciate if you want to
+support me by sending some ETH or BNB via these wallet address:
+
+- 0x2fB5BF149Ac0765b546DB4feD3E64FBF9f14eb8a
+- 0x7A65cc9d8031f67847662cC92Fa93b71dCc95605
