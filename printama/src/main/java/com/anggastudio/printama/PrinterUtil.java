@@ -1,20 +1,21 @@
 package com.anggastudio.printama;
 
+import static com.anggastudio.printama.Printama.CENTER;
+import static com.anggastudio.printama.Printama.FULL_WIDTH;
+import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
+import static com.anggastudio.printama.Printama.RIGHT;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.ParcelUuid;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
-
-import static com.anggastudio.printama.Printama.CENTER;
-import static com.anggastudio.printama.Printama.FULL_WIDTH;
-import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
-import static com.anggastudio.printama.Printama.RIGHT;
 
 class PrinterUtil {
     private static final String TAG = "PRINTAMA";
@@ -44,7 +45,7 @@ class PrinterUtil {
     private static final byte[] WIDE_TALL = new byte[]{0x1B, 0x21, 0x20 | 0x10};
     private static final byte[] WIDE_TALL_BOLD = new byte[]{0x1B, 0x21, 0x20 | 0x10 | 0x08};
 
-    private BluetoothDevice printer;
+    private final BluetoothDevice printer;
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
 
@@ -291,7 +292,7 @@ class PrinterUtil {
     }
 
     private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {
-        private ConnectionListener listener;
+        private final ConnectionListener listener;
 
         private ConnectAsyncTask(ConnectionListener listener) {
             this.listener = listener;
@@ -302,7 +303,8 @@ class PrinterUtil {
             BluetoothDevice device = bluetoothDevices[0];
             UUID uuid;
             if (device != null) {
-                uuid = device.getUuids()[0].getUuid();
+                ParcelUuid[] uuids = device.getUuids();
+                uuid = (uuids != null && uuids.length > 0) ? uuids[0].getUuid() : UUID.randomUUID();
             } else {
                 return null;
             }
