@@ -284,7 +284,7 @@ dependencies {
 
 I notice that some of you very happy with this library and some of you wants to give support. But I
 also notice some of you wants to support me anonymously. Well then, I appreciate if you want to
-support me by sending some ETH or BNB via these wallet address:
+support me by sending some ETH or BNB via these wallet addresses:
 
 - 0x2fB5BF149Ac0765b546DB4feD3E64FBF9f14eb8a
 - 0x7A65cc9d8031f67847662cC92Fa93b71dCc95605
