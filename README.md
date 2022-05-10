@@ -1,5 +1,6 @@
 <p align="center">
   <h1 align="center">Printama</h1>
+  <h4 align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</h4>
 </p>
 
 <p align="center">
@@ -13,7 +14,6 @@
   <a href="https://github.com/anggastudio/Printama/graphs/contributors"><img src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
   <a href="https://twitter.com/angga_studio"><img alt="Twitter" src="https://img.shields.io/twitter/follow/angga_studio"></a>
   <a href="https://github.com/anggastudio"><img alt="Github" src="https://img.shields.io/github/followers/anggastudio?label=follow&style=social"></a>
-  <p align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</p>
 </p>
 
 ## Screenshots
