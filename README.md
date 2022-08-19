@@ -7,6 +7,8 @@
   <img src="https://images.unsplash.com/photo-1598346762291-aee88549193f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"/>
 </p>
 
+[![](https://jitpack.io/v/anggastudio/Printama.svg)](https://jitpack.io/#anggastudio/Printama)
+
 <p align="center">
   <a href="https://jitpack.io/#anggastudio/Printama"><img src="https://img.shields.io/jitpack/v/github/anggastudio/Printama"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"></a>
@@ -259,7 +261,7 @@ dependencies {
 ```
 #### Other like Maven, SBT, Leiningen
 **just visit the jitpack page**
-[Printama Jitpack](https://jitpack.io/#anggastudio/Printama)
+[![](https://jitpack.io/v/anggastudio/Printama.svg)](https://jitpack.io/#anggastudio/Printama)
 
 ## License
 
