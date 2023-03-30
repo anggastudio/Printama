@@ -34,7 +34,7 @@ public class Printama {
     public static final int ORIGINAL_WIDTH = 0;
     public static final int GET_PRINTER_CODE = 921;
 
-    private static final int MAX_CHAR = 32;
+    private static int MAX_CHAR = 32;
     private static final int MAX_CHAR_WIDE = MAX_CHAR / 2;
 
     private static Printama printama;
@@ -176,6 +176,19 @@ public class Printama {
     // PRINTER COMMANDS
     //----------------------------------------------------------------------------------------------
 
+    /**
+     * By default is 58mm
+     * @param type 1 = 58mm, 2 = 80mm
+     */
+    public void setPaperSize(int type) {
+        util.setPaperSize(type);
+        if (type == 1) {
+            MAX_CHAR = 32;
+        } else if (type == 2) {
+            MAX_CHAR = 48;
+        }
+    }
+
     public void setLineSpacing(int lineSpacing) {
         util.setLineSpacing(lineSpacing);
     }
@@ -186,18 +199,29 @@ public class Printama {
 
 
     public void printDashedLine() {
-        util.setAlign(LEFT);
-        util.printText("--------------------------------");
+        util.setAlign(LEFT);StringBuilder dash = new StringBuilder();
+        for (int i = 0; i < MAX_CHAR; i++) {
+            dash.append("-");
+        }
+        util.printText(dash.toString());
     }
 
     public void printLine() {
         util.setAlign(LEFT);
-        util.printText("________________________________");
+        StringBuilder dash = new StringBuilder();
+        for (int i = 0; i < MAX_CHAR; i++) {
+            dash.append("_");
+        }
+        util.printText(dash.toString());
     }
 
     public void printDoubleDashedLine() {
         util.setAlign(LEFT);
-        util.printText("================================");
+        StringBuilder dash = new StringBuilder();
+        for (int i = 0; i < MAX_CHAR; i++) {
+            dash.append("=");
+        }
+        util.printText(dash.toString());
     }
 
     public void addNewLine() {

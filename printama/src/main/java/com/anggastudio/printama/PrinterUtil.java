@@ -20,7 +20,7 @@ import java.util.UUID;
 class PrinterUtil {
     private static final String TAG = "PRINTAMA";
 
-    private static final int PRINTER_WIDTH = 384;
+    private static int PRINTER_WIDTH = 384;
     private static final int INITIAL_MARGIN_LEFT = -4;
     private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
@@ -102,6 +102,14 @@ class PrinterUtil {
     //----------------------------------------------------------------------------------------------
     // PRINT TEXT
     //----------------------------------------------------------------------------------------------
+
+    void setPaperSize(int type) {
+        if (type == 1) {
+            PRINTER_WIDTH = 384;
+        } else {
+            PRINTER_WIDTH = 576;
+        }
+    }
 
     boolean printText(String text) {
         try {
