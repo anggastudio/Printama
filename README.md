@@ -30,6 +30,16 @@
 |---|---|
 |![](images/layout.jpeg)|![](images/print_layout.jpeg)|
 
+
+## Support me:
+
+I notice that some of you are very happy with this library and some of you want to give support. But I also noticed some of
+you want to support me anonymously. Well then, I appreciate it if you bought me a coffee :coffee:
+
+:coffee: via buymeacoffee --> https://www.buymeacoffee.com/anggastudio
+:coffee: via ko-fi -->https://ko-fi.com/anggastudio
+
+
 ## Usage
 
 Currently still in Alpha. Make sure to use java 8+ configuration. Documentation is in progress. Just take a look at
@@ -350,11 +360,3 @@ dependencies {
 - testing on more printers
 - (still in my mind) migrate to kotlin
 
-## Support me:
-
-I notice that some of you very happy with this library and some of you wants to give support. But I also notice some of
-you wants to support me anonymously. Well then, I appreciate if you want to support me by sending some ETH or BNB via
-these wallet addresses:
-
-- 0x2fB5BF149Ac0765b546DB4feD3E64FBF9f14eb8a
-- 0x7A65cc9d8031f67847662cC92Fa93b71dCc95605
