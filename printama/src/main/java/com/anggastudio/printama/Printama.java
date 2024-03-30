@@ -38,6 +38,7 @@ public class Printama {
     private static final int MAX_CHAR_WIDE = MAX_CHAR / 2;
 
     private static Printama printama;
+    private static final int REQUEST_ENABLE_BT = 1101;
     private final PrinterUtil util;
     private final BluetoothDevice printer;
 
@@ -146,7 +147,16 @@ public class Printama {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         int activeColorResource = activeColor == 0 ? activeColor : ContextCompat.getColor(activity, activeColor);
         int inactiveColorResource = inactiveColor == 0 ? inactiveColor : ContextCompat.getColor(activity, inactiveColor);
-        if (defaultAdapter != null && !defaultAdapter.getBondedDevices().isEmpty()) {
+
+        // Check if Bluetooth is enabled
+        if (defaultAdapter == null || !defaultAdapter.isEnabled()) {
+            // Bluetooth is not enabled, prompt user to enable it
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            return;
+        }
+
+        if (!defaultAdapter.getBondedDevices().isEmpty()) {
             FragmentManager fm = activity.getSupportFragmentManager();
             DeviceListFragment fragment = DeviceListFragment.newInstance();
             fragment.setDeviceList(defaultAdapter.getBondedDevices());
@@ -154,7 +164,7 @@ public class Printama {
             fragment.setColorTheme(activeColorResource, inactiveColorResource);
             fragment.show(fm, "DeviceListFragment");
         } else {
-            onConnectPrinter.onConnectPrinter("failed to connect printer");
+            onConnectPrinter.onConnectPrinter("failed to connect printer, please try again");
         }
     }
 
@@ -165,7 +175,7 @@ public class Printama {
     }
 
     public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
-        String printerName = "failed to get printer";
+        String printerName = "Failed to get printer, try again!";
         if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
             printerName = data.getStringExtra("printama");
         }
