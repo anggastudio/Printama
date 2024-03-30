@@ -99,21 +99,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="vertical">
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_will_print_title"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="center"-->
-<!--            android:text="This will be printed"/>-->
 
         <ImageView
             android:id="@+id/iv_image_will_be_printed"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"/>
-
+            android:adjustViewBounds="true"
+            android:padding="24dp" />
 
     </LinearLayout>
 
