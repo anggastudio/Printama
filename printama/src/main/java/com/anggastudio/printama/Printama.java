@@ -21,6 +21,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import java.io.FileInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -889,6 +890,10 @@ public class Printama {
 
     public void setWideTallBold() {
         util.setWideTallBold();
+    }
+
+    public void printFileInputStream(FileInputStream inputStream) {
+        util.printFileInputStream(inputStream);
     }
 
     //----------------------------------------------------------------------------------------------

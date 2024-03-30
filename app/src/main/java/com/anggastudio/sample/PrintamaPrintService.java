@@ -9,7 +9,12 @@ import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+
+import com.anggastudio.printama.Printama;
+import com.anggastudio.sample.util.SharedPref;
+import com.anggastudio.sample.util.Util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,6 +25,8 @@ public class PrintamaPrintService extends PrintService {
 
     @Override
     protected PrinterDiscoverySession onCreatePrinterDiscoverySession() {
+
+        SharedPref.init(getApplicationContext());
         return new PrinterDiscoverySession() {
             @Override
             public void onStartPrinterDiscovery(@NonNull List<PrinterId> priorityList) {
@@ -97,21 +104,28 @@ public class PrintamaPrintService extends PrintService {
     @Override
     protected void onPrintJobQueued(android.printservice.PrintJob printJob) {
         try {
-            PrintDocument printDocument = printJob.getDocument();
-            if (printDocument != null) {
-                FileInputStream inputStream = new FileInputStream(printDocument.getData().getFileDescriptor());
+            if (Util.isAllowToPrint()) {
+                PrintDocument printDocument = printJob.getDocument();
+                if (printDocument != null && printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
+                    FileInputStream inputStream = new FileInputStream(printDocument.getData().getFileDescriptor());
+                    // Process the print data as needed
+                    // Example: Read the content and send it to the printer
+                    // Example: Convert the content to a printable format
+                    // Example: Perform any necessary data processing or formatting
+                    // Example: Send the data to a thermal printer
 
-                // Process the print data as needed
-                // Example: Read the content and send it to the printer
-                // Example: Convert the content to a printable format
-                // Example: Perform any necessary data processing or formatting
-                // Example: Send the data to a thermal printer
+                    // Print the bitmap as
+                    Printama.with(this).connect(printama -> {
+                        printama.printFileInputStream(inputStream);
+                        printama.close();
+                    }, this::showToast);
 
+                    inputStream.close();
+                }
                 showToast("print success");
-
-                inputStream.close();
+            } else {
+                showToast("print not allowed");
             }
-
             printJob.complete();
         } catch (IOException e) {
             Log.e("PrintService", "Error processing print job", e);

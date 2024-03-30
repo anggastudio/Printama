@@ -13,6 +13,8 @@ import android.os.AsyncTask;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
@@ -289,6 +291,32 @@ class PrinterUtil {
         addNewLine();
         addNewLine();
         addNewLine();
+    }
+
+    // print FileInputStream
+    public boolean printFileInputStream(FileInputStream inputStream) {
+        try {
+            byte[] data = convertInputStreamToByteArray(inputStream);
+            btOutputStream.write(data);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private byte[] convertInputStreamToByteArray(FileInputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        int nRead;
+        byte[] data = new byte[1024];
+
+        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        return buffer.toByteArray();
     }
 
     private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {

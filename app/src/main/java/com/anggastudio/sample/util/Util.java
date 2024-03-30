@@ -23,4 +23,14 @@ public class Util {
         return QRCode.from(qrCode).bitmap();
     }
 
+    public static boolean isAllowToPrint() {
+        Integer attempCount = SharedPref.getInt(SharedPref.ATTEMP_COUNT);
+        if (attempCount != null && attempCount < 20) {
+            attempCount++;
+            SharedPref.setInt(SharedPref.ATTEMP_COUNT, attempCount);
+            return true;
+        }
+        return false;
+    }
+
 }

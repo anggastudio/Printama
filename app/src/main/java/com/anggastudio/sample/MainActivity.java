@@ -19,6 +19,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.anggastudio.printama.Printama;
+import com.anggastudio.sample.util.SharedPref;
+import com.anggastudio.sample.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.btn_printer_settings).setOnClickListener(v -> showPrinterList());
-
+        SharedPref.init(MainActivity.this);
         checkBluetoothPermission();
 
         // Check if the activity was started by a share intent
@@ -149,11 +151,15 @@ public class MainActivity extends AppCompatActivity {
     private void printImageReceived(Uri imageUri) {
         Bitmap bitmap = convertUriToBitmap(imageUri);
         if (bitmap != null) {
-            // Print the bitmap as
-            Printama.with(this).connect(printama -> {
-                printama.printImage(bitmap, Printama.FULL_WIDTH);
-                printama.close();
-            }, this::showToast);
+            if(Util.isAllowToPrint()) {
+                // Print the bitmap as
+                Printama.with(this).connect(printama -> {
+                    printama.printImage(bitmap, Printama.FULL_WIDTH);
+                    printama.close();
+                }, this::showToast);
+            } else {
+                showToast("print not allowed");
+            }
         } else {
             // Handle the case where conversion failed
             showToast("failed to print image");
