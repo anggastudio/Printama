@@ -4,6 +4,7 @@ import static com.anggastudio.printama.Printama.CENTER;
 import static com.anggastudio.printama.Printama.FULL_WIDTH;
 import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
+import static com.anggastudio.printama.Printama.WITHOUT_MARGIN;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -23,11 +24,10 @@ class PrinterUtil {
     private static final String TAG = "PRINTAMA";
 
     private static final int PRINTER_WIDTH = 384;
-    private static final int INITIAL_MARGIN_LEFT = -4;
+    private static final int INITIAL_MARGIN_LEFT = -5;
     private static final int BIT_WIDTH = 384;
     private static final int WIDTH = 48;
     private static final int HEAD = 8;
-
     // printer commands
     private static final byte[] NEW_LINE = {10};
     private static final byte[] ESC_ALIGN_CENTER = {0x1b, 'a', 0x01};
@@ -220,7 +220,6 @@ class PrinterUtil {
     }
 
     boolean printImage(int alignment, Bitmap bitmap, int width) {
-        if (width == FULL_WIDTH) width = PRINTER_WIDTH;
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
         if (scaledBitmap != null) {
             int marginLeft = INITIAL_MARGIN_LEFT;
@@ -271,6 +270,7 @@ class PrinterUtil {
     }
 
     private Bitmap scaledBitmap(Bitmap bitmap, int width) {
+        if (width == FULL_WIDTH) width = PRINTER_WIDTH;
         try {
             int desiredWidth = width == 0 || bitmap.getWidth() <= PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
             if (width > 0 && width <= PRINTER_WIDTH) {
@@ -291,32 +291,6 @@ class PrinterUtil {
         addNewLine();
         addNewLine();
         addNewLine();
-    }
-
-    // print FileInputStream
-    public boolean printFileInputStream(FileInputStream inputStream) {
-        try {
-            byte[] data = convertInputStreamToByteArray(inputStream);
-            btOutputStream.write(data);
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private byte[] convertInputStreamToByteArray(FileInputStream inputStream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-        int nRead;
-        byte[] data = new byte[1024];
-
-        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-        buffer.flush();
-        return buffer.toByteArray();
     }
 
     private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {

@@ -32,6 +32,7 @@ public class Printama {
     public static final int RIGHT = -2;
     public static final int LEFT = 0;
     public static final int FULL_WIDTH = -1;
+    public static final int WITHOUT_MARGIN = -2;
     public static final int ORIGINAL_WIDTH = 0;
     public static final int GET_PRINTER_CODE = 921;
 
@@ -890,10 +891,6 @@ public class Printama {
 
     public void setWideTallBold() {
         util.setWideTallBold();
-    }
-
-    public void printFileInputStream(FileInputStream inputStream) {
-        util.printFileInputStream(inputStream);
     }
 
     //----------------------------------------------------------------------------------------------
