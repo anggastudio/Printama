@@ -1,3 +1,5 @@
+> ⚠️ **Note:** Please use this version instead. We are currently fixing this library for Android 13 usage.
+
 <p align="center">
   <h1 align="center">Printama</h1>
   <h4 align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</h4>
