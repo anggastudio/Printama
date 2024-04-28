@@ -1,6 +1,6 @@
-```diff
-- ⚠️ **Note:** Please use 0.9.7 version instead. We are currently fixing this library for Android 13 usage.
-```
+<div style="background-color: maroon; border-left: 12px solid #ffa500; padding: 10px; border-radius: 8px;">
+    <p><strong>⚠️ Note:</strong> Please use 0.9.7 version instead. We are currently fixing this library for Android 13 usage.</p>
+</div>
 
 <p align="center">
   <h1 align="center">Printama</h1>
