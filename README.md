@@ -1,5 +1,8 @@
 <div style="background-color: maroon; border-left: 12px solid #ffa500; padding: 10px; border-radius: 8px;">
-    <p><strong>⚠️ Note:</strong> Please use 0.9.7 version instead. We are currently fixing this library for Android 13 usage.</p>
+    <p><strong>✅ Note:</strong> Please use 0.9.73 version for Android 13 and above.</p>
+    <p><strong>⚠️ Note:</strong> Don't use 0.9.72 version.</p>
+    <p><strong>⚠️ Note:</strong> Don't use 0.9.71 version.</p>
+    <p><strong>✅ Note:</strong> Please use 0.9.7 version for Android below 13.</p>
 </div>
 
 <p align="center">
