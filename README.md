@@ -1,4 +1,6 @@
-> ⚠️ **Note:** Please use this version instead. We are currently fixing this library for Android 13 usage.
+```diff
+- ⚠️ **Note:** Please use 0.9.7 version instead. We are currently fixing this library for Android 13 usage.
+```
 
 <p align="center">
   <h1 align="center">Printama</h1>
