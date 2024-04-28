@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.anggastudio.printama">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--BLUETOOTH PERMISSION-->
+    <!-- Request legacy Bluetooth permissions on older devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!-- Needed only if your app looks for Bluetooth devices.
+             If your app doesn't use Bluetooth scan results to derive physical
+             location information, you can strongly assert that your app
+             doesn't derive physical location. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <!-- Needed only if your app makes the device discoverable to Bluetooth
+      devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <!-- Needed only if your app communicates with already-paired Bluetooth
+           devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!--bibo01 : hardware option-->
+    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
     <application>
         <activity android:name=".ChoosePrinterActivity"></activity>

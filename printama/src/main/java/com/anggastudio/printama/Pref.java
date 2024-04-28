@@ -2,8 +2,7 @@ package com.anggastudio.printama;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import androidx.preference.PreferenceManager;
+import android.preference.PreferenceManager;
 
 class Pref {
 

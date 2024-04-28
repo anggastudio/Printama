@@ -4,7 +4,6 @@ import static com.anggastudio.printama.Printama.CENTER;
 import static com.anggastudio.printama.Printama.FULL_WIDTH;
 import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
-import static com.anggastudio.printama.Printama.WITHOUT_MARGIN;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -14,8 +13,6 @@ import android.os.AsyncTask;
 import android.os.ParcelUuid;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
