@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.androidLibrary)
+    id 'maven-publish'
 }
+group = 'com.github.anggastudio'
 
 android {
     namespace 'com.anggastudio.printama'

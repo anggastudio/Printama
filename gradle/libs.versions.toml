@@ -8,6 +8,7 @@ material = "1.11.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
 preference = "1.1.1"
+androidMaven = "2.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -22,4 +23,5 @@ preference = { group = "androidx.preference", name = "preference", version.ref =
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+dcendentsAndroidMaven = { id = "com.github.dcendents.android-maven", version.ref = "androidMaven" }
 

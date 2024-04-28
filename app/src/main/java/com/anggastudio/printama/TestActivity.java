@@ -153,7 +153,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageLeft() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, 200, Printama.LEFT);
             printama.close();
@@ -161,7 +161,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageCenter() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             boolean print = printama.printImage(bitmap, 200, Printama.CENTER);
             if (!print) {
@@ -172,7 +172,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageRight() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, 200, Printama.RIGHT);
             printama.close();
@@ -180,7 +180,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageOri() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap); // original size, centered as default
             printama.close();
@@ -188,7 +188,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageFull() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.mipmap.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.FULL_WIDTH);
             printama.close();
@@ -196,7 +196,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void printImageBackground() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher_background);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, Printama.ORIGINAL_WIDTH);
             printama.close();
