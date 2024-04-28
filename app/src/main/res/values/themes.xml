@@ -5,5 +5,5 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.Printama" parent="Base.Theme.Printama" />
+    <style name="Theme.PrintamaLib" parent="Base.Theme.Printama" />
 </resources>

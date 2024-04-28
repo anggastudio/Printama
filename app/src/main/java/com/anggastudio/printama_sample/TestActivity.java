@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama_sample;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,12 +10,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.anggastudio.printama.mock.Mock;
-import com.anggastudio.printama.model.PrintBody;
-import com.anggastudio.printama.model.PrintFooter;
-import com.anggastudio.printama.model.PrintHeader;
-import com.anggastudio.printama.model.PrintModel;
-import com.anggastudio.printama.util.Util;
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama_sample.mock.Mock;
+import com.anggastudio.printama_sample.model.PrintBody;
+import com.anggastudio.printama_sample.model.PrintFooter;
+import com.anggastudio.printama_sample.model.PrintHeader;
+import com.anggastudio.printama_sample.model.PrintModel;
+import com.anggastudio.printama_sample.util.Util;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;

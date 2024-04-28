@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama_sample;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,8 +21,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 
-import com.anggastudio.printama.util.SharedPref;
-import com.anggastudio.printama.util.Util;
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama_sample.util.SharedPref;
+import com.anggastudio.printama_sample.util.Util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

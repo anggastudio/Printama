@@ -1,4 +1,4 @@
-package com.anggastudio.printama.util;
+package com.anggastudio.printama_sample.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

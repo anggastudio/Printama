@@ -1,4 +1,4 @@
-package com.anggastudio.printama.model;
+package com.anggastudio.printama_sample.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

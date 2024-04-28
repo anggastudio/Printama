@@ -1,10 +1,10 @@
-package com.anggastudio.printama.mock;
+package com.anggastudio.printama_sample.mock;
 
 
-import com.anggastudio.printama.model.PrintBody;
-import com.anggastudio.printama.model.PrintFooter;
-import com.anggastudio.printama.model.PrintHeader;
-import com.anggastudio.printama.model.PrintModel;
+import com.anggastudio.printama_sample.model.PrintBody;
+import com.anggastudio.printama_sample.model.PrintFooter;
+import com.anggastudio.printama_sample.model.PrintHeader;
+import com.anggastudio.printama_sample.model.PrintModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

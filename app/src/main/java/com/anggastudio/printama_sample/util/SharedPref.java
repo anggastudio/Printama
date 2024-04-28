@@ -1,4 +1,4 @@
-package com.anggastudio.printama.util;
+package com.anggastudio.printama_sample.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

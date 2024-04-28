@@ -1,4 +1,4 @@
-package com.anggastudio.printama.model;
+package com.anggastudio.printama_sample.model;
 
 public class PrintHeader {
 

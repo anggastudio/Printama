@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama_sample;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
@@ -22,8 +22,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.anggastudio.printama.util.SharedPref;
-import com.anggastudio.printama.util.Util;
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama_sample.util.SharedPref;
+import com.anggastudio.printama_sample.util.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showPrinterList() {
-        Printama.showPrinterList(this, R.color.colorBlue, printerName -> {
+        Printama.showPrinterList(this, R.color.black, printerName -> {
             Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
             TextView connectedTo = findViewById(R.id.tv_printer_info);
             String text = "Connected to : " + printerName;

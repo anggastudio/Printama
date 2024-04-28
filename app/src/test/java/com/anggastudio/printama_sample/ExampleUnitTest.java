@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama_sample;
 
 import org.junit.Test;
 
