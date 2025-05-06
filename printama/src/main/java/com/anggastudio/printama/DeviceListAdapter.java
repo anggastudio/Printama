@@ -18,10 +18,10 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
     private int selectedDevicePos = -1;
     private Printama.OnConnectPrinter onConnectPrinter;
 
-    public DeviceListAdapter(ArrayList<BluetoothDevice> bondedDevices, String mPrinterName) {
+    public DeviceListAdapter(ArrayList<BluetoothDevice> bondedDevices, String mPrinterAddress) {
         this.bondedDevices = bondedDevices;
         for (int i = 0; i < bondedDevices.size(); i++) {
-            if (bondedDevices.get(i).getName().equalsIgnoreCase(mPrinterName)) {
+            if (bondedDevices.get(i).getAddress().equalsIgnoreCase(mPrinterAddress)) {
                 selectedDevicePos = i;
             }
         }
@@ -37,7 +37,8 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         BluetoothDevice device = bondedDevices.get(position);
-        holder.tvDeviceName.setText(device.getName());
+        String deviceNameDisplay = Printama.getDeviceNameDisplay(device);
+        holder.tvDeviceName.setText(deviceNameDisplay);
         holder.itemView.setOnClickListener(v -> {
             selectDevice(holder, position);
         });
@@ -53,7 +54,7 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
         holder.ivIndicator.setImageResource(R.drawable.ic_check_circle);
         if (onConnectPrinter != null) {
             BluetoothDevice device = bondedDevices.get(position);
-            onConnectPrinter.onConnectPrinter(device.getName());
+            onConnectPrinter.onConnectPrinter(device);
         }
         notifyDataSetChanged();
     }

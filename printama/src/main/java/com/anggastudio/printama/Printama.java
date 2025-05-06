@@ -2,6 +2,7 @@ package com.anggastudio.printama;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -53,9 +56,9 @@ public class Printama {
         util = new PrinterUtil(printer);
     }
 
-    public Printama(Context context, String printerName) {
+    public Printama(Context context, String printerAddress) {
         Pref.init(context);
-        printer = getPrinter(printerName);
+        printer = getPrinter(printerAddress);
         util = new PrinterUtil(printer);
     }
 
@@ -75,20 +78,36 @@ public class Printama {
         return printama;
     }
 
-    private static BluetoothDevice getPrinter() {
+    public static BluetoothDevice getPrinter() {
         return getPrinter(Pref.getString(Pref.SAVED_DEVICE));
     }
 
-    private static BluetoothDevice getPrinter(String printerName) {
+    private static BluetoothDevice getPrinter(String printerAddress) {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
         if (defaultAdapter == null) return null;
         for (BluetoothDevice device : defaultAdapter.getBondedDevices()) {
-            if (device.getName().equalsIgnoreCase(printerName)) {
+            if (isBluetoothPrinter(device) && device.getAddress().equalsIgnoreCase(printerAddress)) {
                 printer = device;
+                break;
             }
         }
         return printer;
+    }
+
+    private static boolean isBluetoothPrinter(BluetoothDevice device) {
+        if (device.getBluetoothClass() != null) {
+            int majorClass = device.getBluetoothClass().getMajorDeviceClass();
+            // Printers are in the IMAGING major class (0x0600)
+            if (majorClass == BluetoothClass.Device.Major.IMAGING) {
+                // Additional check to ensure it's specifically a printer device
+                int deviceClass = device.getBluetoothClass().getDeviceClass();
+                // Printer is typically indicated by bits 8-11 being set to 0x0004
+                // 0x0680 represents an imaging printer device
+                return (deviceClass & 0x0680) == 0x0680;
+            }
+        }
+        return false;
     }
 
     public BluetoothDevice getConnectedPrinter() {
@@ -158,14 +177,24 @@ public class Printama {
         }
 
         if (!defaultAdapter.getBondedDevices().isEmpty()) {
+            // Filter only printer devices
+            Set<BluetoothDevice> allDevices = defaultAdapter.getBondedDevices();
+            Set<BluetoothDevice> printerDevices = new HashSet<>();
+
+            for (BluetoothDevice device : allDevices) {
+                if (isBluetoothPrinter(device)) {
+                    printerDevices.add(device);
+                }
+            }
+
             FragmentManager fm = activity.getSupportFragmentManager();
             DeviceListFragment fragment = DeviceListFragment.newInstance();
-            fragment.setDeviceList(defaultAdapter.getBondedDevices());
+            fragment.setDeviceList(printerDevices);
             fragment.setOnConnectPrinter(onConnectPrinter);
             fragment.setColorTheme(activeColorResource, inactiveColorResource);
             fragment.show(fm, "DeviceListFragment");
         } else {
-            onConnectPrinter.onConnectPrinter("failed to connect printer, please try again");
+            onConnectPrinter.onConnectPrinter(null);
         }
     }
 
@@ -905,11 +934,27 @@ public class Printama {
     }
 
     public interface OnConnectPrinter {
-        void onConnectPrinter(String printerName);
+        void onConnectPrinter(BluetoothDevice device);
     }
 
     public interface Callback {
         void printama(Printama printama);
+    }
+
+    public static String getDeviceNameDisplay(BluetoothDevice device) {
+        if (device == null) {
+            return null;
+        }
+        String deviceInfo = device.getName();
+        if (device.getAddress() != null) {
+            deviceInfo += "_" + device.getAddress().substring(device.getAddress().length() - 5);
+        }
+        return deviceInfo;
+    }
+
+    public static String getSavedPrinterName(Context context) {
+        BluetoothDevice connectedPrinter = Printama.with(context).getConnectedPrinter();
+        return getDeviceNameDisplay(connectedPrinter);
     }
 
 

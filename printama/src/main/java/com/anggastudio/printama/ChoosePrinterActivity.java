@@ -17,7 +17,7 @@ import java.util.Set;
 public class ChoosePrinterActivity extends Activity {
 
     private Set<BluetoothDevice> bondedDevices;
-    private String mPrinterName;
+    private String mPrinterAddress;
     private Button saveButton;
     private Button testButton;
 
@@ -59,27 +59,27 @@ public class ChoosePrinterActivity extends Activity {
             testButton.setOnClickListener(v -> testPrinter());
             saveButton = findViewById(R.id.btn_save_printer);
             saveButton.setOnClickListener(v -> savePrinter());
-            mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
+            mPrinterAddress = Pref.getString(Pref.SAVED_DEVICE);
             toggleButtons();
 
             RecyclerView rvDeviceList = findViewById(R.id.rv_device_list);
             rvDeviceList.setLayoutManager(new LinearLayoutManager(this));
             ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-            DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
+            DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterAddress);
             rvDeviceList.setAdapter(adapter);
-            adapter.setOnConnectPrinter(printerName -> {
-                this.mPrinterName = printerName;
+            adapter.setOnConnectPrinter(device -> {
+                this.mPrinterAddress = device.getAddress();
                 toggleButtons();
             });
         }
     }
 
     private void testPrinter() {
-        Printama.with(this, mPrinterName).printTest();
+        Printama.with(this, mPrinterAddress).printTest();
     }
 
     private void toggleButtons() {
-        if (mPrinterName != null) {
+        if (mPrinterAddress != null) {
             testButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
             saveButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreen));
         } else {
@@ -89,9 +89,9 @@ public class ChoosePrinterActivity extends Activity {
     }
 
     private void savePrinter() {
-        Pref.setString(Pref.SAVED_DEVICE, mPrinterName);
+        Pref.setString(Pref.SAVED_DEVICE, mPrinterAddress);
         Intent intent = new Intent();
-        intent.putExtra("printama", mPrinterName);
+        intent.putExtra("printama", mPrinterAddress);
         setResult(Activity.RESULT_OK, intent);
         finish();
     }

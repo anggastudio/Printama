@@ -1,7 +1,6 @@
 package com.anggastudio.printama_sample;
 
 import android.Manifest;
-import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -70,30 +69,53 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Permission has already been granted
             // You can proceed with your Bluetooth functionality here
-            getSavedPrinter();
+            displaySavedPrinterName();
         }
     }
 
-    private void getSavedPrinter() {
-        BluetoothDevice connectedPrinter = Printama.with(this).getConnectedPrinter();
-        if (connectedPrinter != null) {
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            String text = "Connected to : " + connectedPrinter.getName();
-            connectedTo.setText(text);
-            findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+    private void displaySavedPrinterName() {
+        // get saved printer name
+        String connectedToStr = getPrinterConnectMessage();
+        // display to the UI
+        TextView tvConnectedTo = findViewById(R.id.tv_printer_info);
+        tvConnectedTo.setText(connectedToStr);
+    }
+
+    private void showTestPrinterButton() {
+        findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
+        findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+    }
+
+    private void hideTestPrinterButton() {
+        findViewById(R.id.btn_printer_test).setVisibility(View.GONE);
+    }
+
+    private String getPrinterConnectMessage() {
+        String deviceNameDisplay = Printama.getSavedPrinterName(this);
+        String connectedToStr = "";
+        if (deviceNameDisplay == null) {
+            connectedToStr = "Please connect Printer";
+            hideTestPrinterButton();
+        } else {
+            connectedToStr = "Connected to : " + deviceNameDisplay;
+            showTestPrinterButton();
         }
+        return connectedToStr;
     }
 
     private void showPrinterList() {
-        Printama.showPrinterList(this, R.color.black, printerName -> {
-            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            String text = "Connected to : " + printerName;
-            connectedTo.setText(text);
-            if (!printerName.contains("failed")) {
-                findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-                findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+        Printama.showPrinterList(this, R.color.black, selectedDevice -> {
+            if (selectedDevice != null) {
+                TextView tvConnectedTo = findViewById(R.id.tv_printer_info);
+                String connectedToStr = getPrinterConnectMessage();
+                tvConnectedTo.setText(connectedToStr);
+
+                showTestPrinterButton();
+                // Only show Toast if printer name is not null
+                String deviceNameDisplay = Printama.getDeviceNameDisplay(selectedDevice);
+                Toast.makeText(this, deviceNameDisplay, Toast.LENGTH_SHORT).show();
+            } else {
+                hideTestPrinterButton();
             }
         });
     }
@@ -116,13 +138,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showResult(String printerName) {
-        showToast(printerName);
-        TextView connectedTo = findViewById(R.id.tv_printer_info);
-        String text = "Connected to : " + printerName;
-        connectedTo.setText(text);
-        if (!printerName.contains("failed")) {
-            findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+        if (printerName != null) {
+            TextView connectedTo = findViewById(R.id.tv_printer_info);
+            String text = "Connected to : " + printerName;
+            connectedTo.setText(text);
+
+            showTestPrinterButton();
+            showToast(printerName);
+        } else {
+            hideTestPrinterButton();
         }
     }
 
@@ -162,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     private void printImageReceived(Uri imageUri) {
         Bitmap bitmap = convertUriToBitmap(imageUri);
         if (bitmap != null) {
-            if(Util.isAllowToPrint()) {
+            if (Util.isAllowToPrint()) {
                 // Print the bitmap as
                 Printama.with(this).connect(printama -> {
                     printama.printImage(bitmap, Printama.FULL_WIDTH);
@@ -187,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted
                 // You can proceed with your Bluetooth functionality here
-                getSavedPrinter();
+                displaySavedPrinterName();
             } else {
                 // Permission denied
                 // You can handle this case as per your app's requirement

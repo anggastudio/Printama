@@ -21,7 +21,7 @@ public class DeviceListFragment extends DialogFragment {
 
     private Printama.OnConnectPrinter onConnectPrinter;
     private Set<BluetoothDevice> bondedDevices;
-    private String mPrinterName;
+    private String selectedDeviceAddress;
     private Button saveButton;
     private Button testButton;
     private int inactiveColor;
@@ -59,15 +59,15 @@ public class DeviceListFragment extends DialogFragment {
         testButton.setOnClickListener(v -> testPrinter());
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
-        mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
+        selectedDeviceAddress = Pref.getString(Pref.SAVED_DEVICE);
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
+        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, selectedDeviceAddress);
         rvDeviceList.setAdapter(adapter);
-        adapter.setOnConnectPrinter(printerName -> {
-            this.mPrinterName = printerName;
+        adapter.setOnConnectPrinter(device -> {
+            this.selectedDeviceAddress = device.getAddress();
             toggleButtons();
         });
     }
@@ -92,12 +92,12 @@ public class DeviceListFragment extends DialogFragment {
     }
 
     private void testPrinter() {
-        Printama.with(getActivity(), mPrinterName).printTest();
+        Printama.with(getActivity(), selectedDeviceAddress).printTest();
     }
 
     private void toggleButtons() {
         if (getContext() != null) {
-            if (mPrinterName != null) {
+            if (selectedDeviceAddress != null) {
                 testButton.setBackgroundColor(activeColor);
                 saveButton.setBackgroundColor(activeColor);
             } else {
@@ -108,9 +108,10 @@ public class DeviceListFragment extends DialogFragment {
     }
 
     private void savePrinter() {
-        Pref.setString(Pref.SAVED_DEVICE, mPrinterName);
+        Pref.setString(Pref.SAVED_DEVICE, selectedDeviceAddress);
         if (onConnectPrinter != null) {
-            onConnectPrinter.onConnectPrinter(mPrinterName);
+            BluetoothDevice device = Printama.getPrinter(); // saved printer
+            onConnectPrinter.onConnectPrinter(device);
         }
         dismiss();
     }
