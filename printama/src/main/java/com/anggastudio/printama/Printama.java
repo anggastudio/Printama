@@ -1,5 +1,6 @@
 package com.anggastudio.printama;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -17,6 +18,8 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.RequiresPermission;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -37,9 +40,7 @@ public class Printama {
     public static final int WITHOUT_MARGIN = -2;
     public static final int ORIGINAL_WIDTH = 0;
     public static final int GET_PRINTER_CODE = 921;
-
-    private static final int MAX_CHAR = 32;
-    private static final int MAX_CHAR_WIDE = MAX_CHAR / 2;
+    public static final int GET_CHOSEN_PRINTER_WIDTH = 922;
 
     private static Printama printama;
     private static final int REQUEST_ENABLE_BT = 1101;
@@ -50,38 +51,47 @@ public class Printama {
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------------
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public Printama(Context context) {
         Pref.init(context);
         printer = getPrinter();
         util = new PrinterUtil(printer);
+        util.isIs3InchPrinter(is3inchesPrinter());
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public Printama(Context context, String printerAddress) {
         Pref.init(context);
         printer = getPrinter(printerAddress);
         util = new PrinterUtil(printer);
+        util.isIs3InchPrinter(is3inchesPrinter());
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static Printama with(Context context, Callback callback) {
         Printama printama = new Printama(context);
         callback.printama(printama);
         return printama;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static Printama with(Context context) {
         printama = new Printama(context);
         return printama;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     static Printama with(Context context, String printerName) {
         printama = new Printama(context, printerName);
         return printama;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static BluetoothDevice getPrinter() {
         return getPrinter(Pref.getString(Pref.SAVED_DEVICE));
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private static BluetoothDevice getPrinter(String printerAddress) {
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice printer = null;
@@ -95,6 +105,7 @@ public class Printama {
         return printer;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private static boolean isBluetoothPrinter(BluetoothDevice device) {
         if (device.getBluetoothClass() != null) {
             int majorClass = device.getBluetoothClass().getMajorDeviceClass();
@@ -110,6 +121,19 @@ public class Printama {
         return false;
     }
 
+    public static void is3inchesPrinter(boolean is3inches) {
+        Pref.setBoolean(Pref.IS_PRINTER_3INCH, is3inches);
+    }
+
+    public static boolean is3inchesPrinter() {
+        return Pref.getBoolean(Pref.IS_PRINTER_3INCH);
+    }
+
+    public static void resetPrinterConnection() {
+
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public BluetoothDevice getConnectedPrinter() {
         return getPrinter();
     }
@@ -119,6 +143,7 @@ public class Printama {
     }
 
     public void connect(final OnConnected onConnected, final OnFailed onFailed) {
+        util.isIs3InchPrinter(is3inchesPrinter());
         util.connectPrinter(() -> {
             if (onConnected != null) onConnected.onConnected(this);
         }, () -> {
@@ -142,9 +167,19 @@ public class Printama {
     public void printTest() {
         printama.connect(printama -> {
             printama.setNormalText();
-            printama.printTextln("------------------", Printama.CENTER);
+            util.setAlign(CENTER);
+            if (!util.isIs3InchPrinter()) {
+                printTextln("X------------------------------X");
+            } else {
+                printTextln("X----------------------------------------------X");
+            }
             printama.printTextln("Print Test", Printama.CENTER);
-            printama.printTextln("------------------", Printama.CENTER);
+            util.setAlign(CENTER);
+            if (!util.isIs3InchPrinter()) {
+                printTextln("X==============================X");
+            } else {
+                printTextln("X==============================================X");
+            }
             printama.feedPaper();
             printama.close();
         });
@@ -154,14 +189,39 @@ public class Printama {
     // PRINTER LIST OVERLAY
     //----------------------------------------------------------------------------------------------
 
+    /**
+     * to choose bluetooth printer which already paired to your device
+     *
+     * @param activity
+     * @param onConnectPrinter
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
         showPrinterList(activity, 0, 0, onConnectPrinter);
     }
 
-    public static void showPrinterList(FragmentActivity activity, int activeColor, OnConnectPrinter onConnectPrinter) {
+    /**
+     * to choose bluetooth printer which already paired to your device
+     *
+     * @param activity
+     * @param activeColor      @ColorRes example: R.color.black
+     * @param onConnectPrinter
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    public static void showPrinterList(FragmentActivity activity, @ColorRes int activeColor, OnConnectPrinter onConnectPrinter) {
         showPrinterList(activity, activeColor, 0, onConnectPrinter);
     }
 
+
+    /**
+     * to choose bluetooth printer which already paired to your device
+     *
+     * @param activity
+     * @param activeColor      @ColorRes example: R.color.black
+     * @param inactiveColor    @ColorRes example: R.color.black
+     * @param onConnectPrinter
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static void showPrinterList(FragmentActivity activity, int activeColor, int inactiveColor, OnConnectPrinter onConnectPrinter) {
         Pref.init(activity);
         BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -198,18 +258,119 @@ public class Printama {
         }
     }
 
+    /**
+     * Only use this if your project is not androidX.
+     * <p>
+     * This method will call startActivityForResult to open Choose Printer Page.
+     * You can get the result from onActivityResult and call Printama.getPrinterResult() and set all params.
+     *
+     * @param activity
+     */
     public static void showPrinterList(Activity activity) {
         Pref.init(activity);
         Intent intent = new Intent(activity, ChoosePrinterActivity.class);
         activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
     }
 
+    /**
+     * Will return printer MAC address if success.
+     * Will return empty string if failed.
+     * <p>
+     * Call this method from onActivityResult and set all the params.
+     *
+     * @param resultCode
+     * @param requestCode
+     * @param data
+     * @return
+     */
     public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
-        String printerName = "Failed to get printer, try again!";
+        String printerAddress = "";
         if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
-            printerName = data.getStringExtra("printama");
+            printerAddress = data.getStringExtra("printama");
         }
-        return printerName;
+        return printerAddress;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // PRINTER LIST OVERLAY
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * to choose printer width
+     * will return integer 58 if 2 inches printer
+     * will return integer 80 if 3 inches printer
+     *
+     * @param activity
+     * @param onChoosePrinterWidth
+     */
+    public static void showIs3inchesDialog(FragmentActivity activity, OnChoosePrinterWidth onChoosePrinterWidth) {
+        showIs3inchesDialog(activity, 0, 0, onChoosePrinterWidth);
+    }
+
+    /**
+     * to choose bluetooth printer which already paired to your device
+     *
+     * @param activity
+     * @param activeColor          @ColorRes example: R.color.black
+     * @param onChoosePrinterWidth
+     */
+    public static void showIs3inchesDialog(FragmentActivity activity, @ColorRes int activeColor, OnChoosePrinterWidth onChoosePrinterWidth) {
+        showIs3inchesDialog(activity, activeColor, 0, onChoosePrinterWidth);
+    }
+
+
+    /**
+     * to choose bluetooth printer which already paired to your device
+     *
+     * @param activity
+     * @param activeColor          @ColorRes example: R.color.black
+     * @param inactiveColor        @ColorRes example: R.color.black
+     * @param onChoosePrinterWidth
+     */
+    public static void showIs3inchesDialog(FragmentActivity activity, int activeColor, int inactiveColor, OnChoosePrinterWidth onChoosePrinterWidth) {
+        Pref.init(activity);
+
+        int activeColorResource = activeColor == 0 ? activeColor : ContextCompat.getColor(activity, activeColor);
+        int inactiveColorResource = inactiveColor == 0 ? inactiveColor : ContextCompat.getColor(activity, inactiveColor);
+
+        FragmentManager fm = activity.getSupportFragmentManager();
+        ChoosePrinterWidthFragment fragment = ChoosePrinterWidthFragment.newInstance();
+        fragment.setOnChoosePrinterWidth(onChoosePrinterWidth);
+        fragment.setColorTheme(activeColorResource, inactiveColorResource);
+        fragment.show(fm, "DeviceListFragment");
+    }
+
+    /**
+     * Only use this if your project is not androidX.
+     * <p>
+     * This method will call startActivityForResult to open Choose Printer Page.
+     * You can get the result from onActivityResult and call Printama.getPrinterResult() and set all params.
+     *
+     * @param activity
+     */
+    public static void showIs3inchesDialog(Activity activity) {
+        Pref.init(activity);
+        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
+        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
+    }
+
+    /**
+     * Will return printer MAC address if success.
+     * Will return empty string if failed.
+     * <p>
+     * Call this method from onActivityResult and set all the params.
+     *
+     * @param resultCode
+     * @param requestCode
+     * @param data
+     * @return
+     */
+    public static String showIs3inchesDialog(int resultCode, int requestCode, Intent data) {
+        String printerAddress = "";
+        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
+            printerAddress = data.getStringExtra("printama");
+        }
+        return printerAddress;
     }
 
     //----------------------------------------------------------------------------------------------
@@ -226,18 +387,26 @@ public class Printama {
 
 
     public void printDashedLine() {
-        util.setAlign(LEFT);
-        util.printText("--------------------------------");
+        util.setAlign(CENTER);
+        if (!util.isIs3InchPrinter()) {
+            printTextln("--------------------------------");
+        } else {
+            printTextln("------------------------------------------------");
+        }
     }
 
     public void printLine() {
-        util.setAlign(LEFT);
-        util.printText("________________________________");
+        util.setAlign(CENTER);
+        printTextln("________________________________");
     }
 
     public void printDoubleDashedLine() {
-        util.setAlign(LEFT);
-        util.printText("================================");
+        util.setAlign(CENTER);
+        if (!util.isIs3InchPrinter()) {
+            printTextln("================================");
+        } else {
+            printTextln("================================================");
+        }
     }
 
     public void addNewLine() {
@@ -279,9 +448,6 @@ public class Printama {
     }
 
     public static Bitmap getBitmapFromVector(Drawable drawable) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = drawable != null ? (DrawableCompat.wrap(drawable)).mutate() : null;
-        }
         if (drawable != null) {
             Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                     drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -374,32 +540,32 @@ public class Printama {
 
     public void printTextJustify(String text1, String text2) {
         String justifiedText = getJustifiedText(text1, text2);
-        printText(justifiedText);
+        printTextln(justifiedText);
     }
 
     public void printTextJustify(String text1, String text2, String text3) {
         String justifiedText = getJustifiedText(text1, text2, text3);
-        printText(justifiedText);
+        printTextln(justifiedText);
     }
 
     public void printTextJustify(String text1, String text2, String text3, String text4) {
         String justifiedText = getJustifiedText(text1, text2, text3, text4);
-        printText(justifiedText);
+        printTextln(justifiedText);
     }
 
     public void printTextJustifyBold(String text1, String text2) {
         String justifiedText = getJustifiedText(text1, text2);
-        printTextBold(justifiedText);
+        printTextlnBold(justifiedText);
     }
 
     public void printTextJustifyBold(String text1, String text2, String text3) {
         String justifiedText = getJustifiedText(text1, text2, text3);
-        printTextBold(justifiedText);
+        printTextlnBold(justifiedText);
     }
 
     public void printTextJustifyBold(String text1, String text2, String text3, String text4) {
         String justifiedText = getJustifiedText(text1, text2, text3, text4);
-        printTextBold(justifiedText);
+        printTextlnBold(justifiedText);
     }
 
     private String getJustifiedText(String text1, String text2) {
@@ -426,7 +592,8 @@ public class Printama {
     private String getSpaces(String text1, String text2) {
         int text1Length = text1.length();
         int text2Length = text2.length();
-        int spacesCount = MAX_CHAR - text1Length - text2Length;
+        int maxChars = util.getMaxChar();
+        int spacesCount = maxChars - text1Length - text2Length;
         StringBuilder spaces = new StringBuilder();
         for (int i = 0; i < spacesCount; i++) {
             spaces.append(" ");
@@ -438,7 +605,8 @@ public class Printama {
         int text1Length = text1.length();
         int text2Length = text2.length();
         int text3Length = text3.length();
-        int spacesCount = (MAX_CHAR - text1Length - text2Length - text3Length) / 2;
+        int maxChars = util.getMaxChar();
+        int spacesCount = (maxChars - text1Length - text2Length - text3Length) / 2;
         StringBuilder spaces = new StringBuilder();
         for (int i = 0; i < spacesCount; i++) {
             spaces.append(" ");
@@ -451,7 +619,8 @@ public class Printama {
         int text2Length = text2.length();
         int text3Length = text3.length();
         int text4Length = text4.length();
-        int spacesCount = (MAX_CHAR - text1Length - text2Length - text3Length - text4Length) / 3;
+        int maxChars = util.getMaxChar();
+        int spacesCount = (maxChars - text1Length - text2Length - text3Length - text4Length) / 3;
         StringBuilder spaces = new StringBuilder();
         for (int i = 0; i < spacesCount; i++) {
             spaces.append(" ");
@@ -937,10 +1106,15 @@ public class Printama {
         void onConnectPrinter(BluetoothDevice device);
     }
 
+    public interface OnChoosePrinterWidth {
+        void onChoosePrinterWidth(boolean is3inches);
+    }
+
     public interface Callback {
         void printama(Printama printama);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static String getDeviceNameDisplay(BluetoothDevice device) {
         if (device == null) {
             return null;
@@ -952,10 +1126,12 @@ public class Printama {
         return deviceInfo;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static String getSavedPrinterName(Context context) {
         BluetoothDevice connectedPrinter = Printama.with(context).getConnectedPrinter();
         return getDeviceNameDisplay(connectedPrinter);
     }
 
-
 }
+
+

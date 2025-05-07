@@ -5,6 +5,7 @@ import static com.anggastudio.printama.Printama.FULL_WIDTH;
 import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
 import static com.anggastudio.printama.Printama.RIGHT;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.graphics.Bitmap;
@@ -13,17 +14,22 @@ import android.os.AsyncTask;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import androidx.annotation.RequiresPermission;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.UUID;
 
 class PrinterUtil {
     private static final String TAG = "PRINTAMA";
-
-    private static final int PRINTER_WIDTH = 384;
     private static final int INITIAL_MARGIN_LEFT = -5;
-    private static final int BIT_WIDTH = 384;
-    private static final int WIDTH = 48;
+    private static final int PRINTER_WIDTH_2_INCH = 384; // 2-inch (58mm) printer
+    private static final int PRINTER_WIDTH_3_INCH = 576; // 3-inch (80mm) printer
+    private static final int MAX_CHAR_2_INCH = 32;
+    private static final int MAX_CHAR_3_INCH = 48;
+    private static final int WIDTH_2_INCH = 48;  // 384/8 = 48 bytes per line
+    private static final int WIDTH_3_INCH = 72;  // 576/8 = 72 bytes per line
     private static final int HEAD = 8;
     // printer commands
     private static final byte[] NEW_LINE = {10};
@@ -47,6 +53,7 @@ class PrinterUtil {
     private final BluetoothDevice printer;
     private BluetoothSocket btSocket = null;
     private OutputStream btOutputStream = null;
+    private boolean is3InchPrinter;
 
     PrinterUtil(BluetoothDevice printer) {
         this.printer = printer;
@@ -204,7 +211,7 @@ class PrinterUtil {
 
     boolean printImage(Bitmap bitmap) {
         try {
-            int width = bitmap.getWidth() > PRINTER_WIDTH ? FULL_WIDTH : ORIGINAL_WIDTH;
+            int width = bitmap.getWidth() > getPrinterWidth() ? FULL_WIDTH : ORIGINAL_WIDTH;
             return printImage(Printama.CENTER, bitmap, width);
         } catch (NullPointerException e) {
             Log.e(TAG, "Maybe resource is vector or mipmap?");
@@ -219,14 +226,14 @@ class PrinterUtil {
     boolean printImage(int alignment, Bitmap bitmap, int width) {
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
         if (scaledBitmap != null) {
-            int marginLeft = INITIAL_MARGIN_LEFT;
+            int marginLeft = 0;  // Simplified, removed INITIAL_MARGIN_LEFT
             if (alignment == CENTER) {
-                marginLeft = marginLeft + ((PRINTER_WIDTH - scaledBitmap.getWidth()) / 2);
+                marginLeft = (getPrinterWidth() - scaledBitmap.getWidth()) / 2;
             } else if (alignment == RIGHT) {
-                marginLeft = marginLeft + PRINTER_WIDTH - scaledBitmap.getWidth();
+                marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
             byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
-            int lines = (command.length - HEAD) / WIDTH;
+            int lines = (command.length - HEAD) / getLineWidth();
             System.arraycopy(new byte[]{
                     0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
                     (byte) ((lines >> 8) & 0xff)
@@ -237,50 +244,113 @@ class PrinterUtil {
         }
     }
 
-    private static byte[] autoGrayScale(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
+    private byte[] autoGrayScale(Bitmap bm, int bitMarginLeft, int bitMarginTop) {
         byte[] result;
         int n = bm.getHeight() + bitMarginTop;
         int offset = HEAD;
-        result = new byte[n * WIDTH + offset];
+        int lineWidth = getLineWidth();
+        result = new byte[n * lineWidth + offset];
+        Arrays.fill(result, (byte) 0x00); // Initialize array with zeros
+        
+        // Create a temporary array to hold grayscale values
+        int[][] grayPixels = new int[bm.getHeight()][bm.getWidth()];
+        
+        // First pass: Convert to grayscale and store values
         for (int y = 0; y < bm.getHeight(); y++) {
             for (int x = 0; x < bm.getWidth(); x++) {
-                if (x + bitMarginLeft < BIT_WIDTH) {
-                    int color = bm.getPixel(x, y);
-                    int alpha = Color.alpha(color);
-                    int red = Color.red(color);
-                    int green = Color.green(color);
-                    int blue = Color.blue(color);
-                    if (alpha > 128 && (red < 128 || green < 128 || blue < 128)) {
-                        // set the color black
-                        int bitX = bitMarginLeft + x;
-                        int byteX = bitX / 8;
-                        int byteY = y + bitMarginTop;
-                        result[offset + byteY * WIDTH + byteX] |= (0x80 >> (bitX - byteX * 8));
+                int color = bm.getPixel(x, y);
+                int alpha = Color.alpha(color);
+                if (alpha < 128) {
+                    grayPixels[y][x] = 255; // Treat transparent as white
+                    continue;
+                }
+                
+                // Convert to grayscale using luminance formula
+                int red = Color.red(color);
+                int green = Color.green(color);
+                int blue = Color.blue(color);
+                int gray = (int)(red * 0.299 + green * 0.587 + blue * 0.114);
+                gray = Math.max(0, Math.min(255, gray));
+                grayPixels[y][x] = gray;
+            }
+        }
+        
+        // Second pass: Apply dithering and convert to binary
+        for (int y = 0; y < bm.getHeight(); y++) {
+            for (int x = 0; x < bm.getWidth(); x++) {
+                if (x + bitMarginLeft >= getPrinterWidth()) {
+                    continue; // Skip instead of break to process remaining pixels
+                }
+                
+                int oldPixel = Math.max(0, Math.min(255, grayPixels[y][x]));
+                int newPixel = oldPixel > 192 ? 255 : 0;
+                
+                // If dark pixel, set it in result array
+                if (newPixel == 0) {
+                    int bitX = bitMarginLeft + x;
+                    int byteX = bitX / 8;
+                    int byteY = y + bitMarginTop;
+                    int bitPosition = 7 - (bitX % 8); // Correct bit position calculation
+                    int byteIndex = offset + byteY * lineWidth + byteX;
+                    
+                    // Add bounds checking
+                    if (byteIndex < result.length) {
+                        result[byteIndex] |= (1 << bitPosition);
                     }
-                } else {
-                    // ignore the rest data of this line
-                    break;
+                }
+                
+                // Distribute error with bounds checking
+                int error = oldPixel - newPixel;
+                if (x + 1 < bm.getWidth()) {
+                    grayPixels[y][x + 1] = Math.max(0, Math.min(255, 
+                        grayPixels[y][x + 1] + (error * 7 / 16)));
+                }
+                if (y + 1 < bm.getHeight()) {
+                    if (x > 0) {
+                        grayPixels[y + 1][x - 1] = Math.max(0, Math.min(255, 
+                            grayPixels[y + 1][x - 1] + (error * 3 / 16)));
+                    }
+                    grayPixels[y + 1][x] = Math.max(0, Math.min(255, 
+                        grayPixels[y + 1][x] + (error * 5 / 16)));
+                    if (x + 1 < bm.getWidth()) {
+                        grayPixels[y + 1][x + 1] = Math.max(0, Math.min(255, 
+                            grayPixels[y + 1][x + 1] + (error * 1 / 16)));
+                    }
                 }
             }
         }
+        
         return result;
     }
 
     private Bitmap scaledBitmap(Bitmap bitmap, int width) {
-        if (width == FULL_WIDTH) width = PRINTER_WIDTH;
         try {
-            int desiredWidth = width == 0 || bitmap.getWidth() <= PRINTER_WIDTH ? bitmap.getWidth() : PRINTER_WIDTH;
-            if (width > 0 && width <= PRINTER_WIDTH) {
-                desiredWidth = width;
-            }
-            int height;
+            int printerWidth = getPrinterWidth();
+            int desiredWidth = getDesiredWidth(bitmap, width, printerWidth);
+
             float scale = (float) desiredWidth / (float) bitmap.getWidth();
-            height = (int) (bitmap.getHeight() * scale);
+            int height = (int) (bitmap.getHeight() * scale);
             return Bitmap.createScaledBitmap(bitmap, desiredWidth, height, true);
         } catch (NullPointerException e) {
             Log.e(TAG, "Maybe resource is vector or mipmap?");
             return null;
         }
+    }
+
+    private static int getDesiredWidth(Bitmap bitmap, int width, int printerWidth) {
+        int desiredWidth;
+
+        if (width == FULL_WIDTH || width >= printerWidth) {
+            // Always use full printer width when requested or when width exceeds printer capacity
+            desiredWidth = printerWidth;
+        } else if (width > 0) {
+            // Use specified width if it's positive and within printer limits
+            desiredWidth = width;
+        } else {
+            // For width <= 0, scale to printer width if original exceeds it
+            desiredWidth = Math.min(bitmap.getWidth(), printerWidth);
+        }
+        return desiredWidth;
     }
 
     void feedPaper() {
@@ -290,6 +360,10 @@ class PrinterUtil {
         addNewLine();
     }
 
+    public int getMaxChar() {
+        return is3InchPrinter ? MAX_CHAR_3_INCH : MAX_CHAR_2_INCH;
+    }
+
     private static class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Void, BluetoothSocket> {
         private final ConnectionListener listener;
 
@@ -297,6 +371,7 @@ class PrinterUtil {
             this.listener = listener;
         }
 
+        @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
         @Override
         protected BluetoothSocket doInBackground(BluetoothDevice... bluetoothDevices) {
             BluetoothDevice device = bluetoothDevices[0];
@@ -343,4 +418,19 @@ class PrinterUtil {
         void onFailed();
     }
 
+    public boolean isIs3InchPrinter() {
+        return is3InchPrinter;
+    }
+
+    public void isIs3InchPrinter(boolean is3inches) {
+        is3InchPrinter = is3inches;
+    }
+
+    private int getLineWidth() {
+        return is3InchPrinter ? WIDTH_3_INCH : WIDTH_2_INCH;
+    }
+
+    private int getPrinterWidth() {
+        return is3InchPrinter ? PRINTER_WIDTH_3_INCH : PRINTER_WIDTH_2_INCH;
+    }
 }

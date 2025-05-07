@@ -1,5 +1,6 @@
 package com.anggastudio.printama_sample;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.anggastudio.printama.Printama;
@@ -24,6 +26,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 
 public class TestActivity extends AppCompatActivity {
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +51,13 @@ public class TestActivity extends AppCompatActivity {
     }
 
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void testPrinter() {
+        // Show loading indicator if needed
         Printama.with(this).printTest();
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printTextLeft() {
         String text = "-------------\n" +
                 "This will be printed\n" +
@@ -66,6 +72,7 @@ public class TestActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printTextCenter() {
         String text = "-------------\n" +
                 "This will be printed\n" +
@@ -78,6 +85,7 @@ public class TestActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printTextRight() {
         String text = "-------------\n" +
                 "This will be printed\n" +
@@ -90,6 +98,7 @@ public class TestActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printTextJustified() {
         Printama.with(this).connect(printama -> {
 
@@ -107,6 +116,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printTextStyles() {
         Printama.with(this).connect(printama -> {
             printama.setSmallText();
@@ -153,6 +163,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageLeft() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -161,6 +172,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageCenter() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -172,6 +184,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageRight() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -180,6 +193,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageOri() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -188,6 +202,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageFull() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -196,6 +211,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageBackground() {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
@@ -204,6 +220,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImagePhoto() {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rose);
         Printama.with(this).connect(printama -> {
@@ -212,6 +229,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printView() {
         View view = findViewById(R.id.root_view);
         Printama.with(this).connect(printama -> {
@@ -220,6 +238,7 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printQrReceipt() {
         PrintModel printModel = Mock.getPrintModelMock();
         Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
@@ -230,7 +249,7 @@ public class TestActivity extends AppCompatActivity {
         String invoice = "INVOICE: " + body.getInvoice();
 
         Printama.with(this).connect(printama -> {
-            printama.printImage(logo, 300);
+            printama.printImage(logo, 300, Printama.CENTER);
             printama.addNewLine(1);
             printama.setNormalText();
             printama.printTextln(header.getMerchantName().toUpperCase(), Printama.CENTER);
@@ -262,11 +281,12 @@ public class TestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printQrReceipt2() {
         Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
         String nota = "Some Text";
         Printama.with(this).connect(printama -> {
-            printama.printImage(logo, 200);
+            printama.printImage(logo, 200, Printama.CENTER);
             printama.addNewLine();
             printama.printTextln("Title Text", Printama.CENTER);
             printama.setNormalText();
