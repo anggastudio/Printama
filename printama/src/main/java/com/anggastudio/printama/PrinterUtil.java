@@ -226,19 +226,46 @@ class PrinterUtil {
     boolean printImage(int alignment, Bitmap bitmap, int width) {
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
         if (scaledBitmap != null) {
-            int marginLeft = 0;  // Simplified, removed INITIAL_MARGIN_LEFT
+            int marginLeft = 0;
             if (alignment == CENTER) {
                 marginLeft = (getPrinterWidth() - scaledBitmap.getWidth()) / 2;
             } else if (alignment == RIGHT) {
                 marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
+            
+            // Calculate correct width in bytes for printer command
+            int widthBytes = getLineWidth();
+            int lines = scaledBitmap.getHeight();
+    
             byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
-            int lines = (command.length - HEAD) / getLineWidth();
+            
+            // Fix: Correct printer command header for both printer sizes
             System.arraycopy(new byte[]{
-                    0x1D, 0x76, 0x30, 0x00, 0x30, 0x00, (byte) (lines & 0xff),
-                    (byte) ((lines >> 8) & 0xff)
+                    0x1D, 0x76, 0x30, 0x00,
+                    (byte) (widthBytes & 0xff),  // Width in bytes (low byte)
+                    (byte) ((widthBytes >> 8) & 0xff),  // Width in bytes (high byte)
+                    (byte) (lines & 0xff),  // Height (low byte)
+                    (byte) ((lines >> 8) & 0xff)  // Height (high byte)
             }, 0, command, 0, HEAD);
-            return printUnicode(command);
+    
+            // Convert GS v 0 command to ESC * commands for better compatibility
+            byte[][] commandLines = convertGSv0ToEscAsterisk(command);
+            
+            // Print each line of the image
+            boolean success = true;
+            for (byte[] line : commandLines) {
+                if (!printUnicode(line)) {
+                    success = false;
+                    break;
+                }
+            }
+            
+            // Add a command to reset the printer state after image printing
+            if (success) {
+                printUnicode(new byte[]{0x1B, 0x40}); // ESC @ command to initialize printer
+            }
+            
+            return success;
         } else {
             return false;
         }
@@ -250,11 +277,11 @@ class PrinterUtil {
         int offset = HEAD;
         int lineWidth = getLineWidth();
         result = new byte[n * lineWidth + offset];
-        Arrays.fill(result, (byte) 0x00); // Initialize array with zeros
-        
+        Arrays.fill(result, (byte) 0x00); // Initialize all bytes to zero
+
         // Create a temporary array to hold grayscale values
         int[][] grayPixels = new int[bm.getHeight()][bm.getWidth()];
-        
+
         // First pass: Convert to grayscale and store values
         for (int y = 0; y < bm.getHeight(); y++) {
             for (int x = 0; x < bm.getWidth(); x++) {
@@ -264,62 +291,77 @@ class PrinterUtil {
                     grayPixels[y][x] = 255; // Treat transparent as white
                     continue;
                 }
-                
+
                 // Convert to grayscale using luminance formula
                 int red = Color.red(color);
                 int green = Color.green(color);
                 int blue = Color.blue(color);
-                int gray = (int)(red * 0.299 + green * 0.587 + blue * 0.114);
+                int gray = (int) (red * 0.299 + green * 0.587 + blue * 0.114);
                 gray = Math.max(0, Math.min(255, gray));
                 grayPixels[y][x] = gray;
             }
         }
-        
+
         // Second pass: Apply dithering and convert to binary
         for (int y = 0; y < bm.getHeight(); y++) {
             for (int x = 0; x < bm.getWidth(); x++) {
+                // Skip pixels that would be outside the printer width
                 if (x + bitMarginLeft >= getPrinterWidth()) {
-                    continue; // Skip instead of break to process remaining pixels
+                    continue;
                 }
-                
+
                 int oldPixel = Math.max(0, Math.min(255, grayPixels[y][x]));
-                int newPixel = oldPixel > 192 ? 255 : 0;
-                
+                int newPixel = oldPixel > 128 ? 255 : 0;  // 128 threshold
+
                 // If dark pixel, set it in result array
                 if (newPixel == 0) {
                     int bitX = bitMarginLeft + x;
                     int byteX = bitX / 8;
                     int byteY = y + bitMarginTop;
-                    int bitPosition = 7 - (bitX % 8); // Correct bit position calculation
-                    int byteIndex = offset + byteY * lineWidth + byteX;
-                    
-                    // Add bounds checking
-                    if (byteIndex < result.length) {
-                        result[byteIndex] |= (1 << bitPosition);
+                    int bitOffset = 7 - (bitX % 8);  // Bit position within byte
+
+                    // Ensure we don't exceed the line width
+                    if (byteX < lineWidth) {
+                        int byteIndex = offset + byteY * lineWidth + byteX;
+
+                        if (byteIndex < result.length) {
+                            result[byteIndex] |= (1 << bitOffset);
+                        }
                     }
                 }
-                
-                // Distribute error with bounds checking
+
+                // Apply error diffusion with proper bounds checking
                 int error = oldPixel - newPixel;
+
+                // Distribute error to neighboring pixels using Floyd-Steinberg dithering
                 if (x + 1 < bm.getWidth()) {
-                    grayPixels[y][x + 1] = Math.max(0, Math.min(255, 
-                        grayPixels[y][x + 1] + (error * 7 / 16)));
+                    grayPixels[y][x + 1] = Math.max(0, Math.min(255,
+                            grayPixels[y][x + 1] + (error * 7 / 16)));
                 }
+
                 if (y + 1 < bm.getHeight()) {
                     if (x > 0) {
-                        grayPixels[y + 1][x - 1] = Math.max(0, Math.min(255, 
-                            grayPixels[y + 1][x - 1] + (error * 3 / 16)));
+                        grayPixels[y + 1][x - 1] = Math.max(0, Math.min(255,
+                                grayPixels[y + 1][x - 1] + (error * 3 / 16)));
                     }
-                    grayPixels[y + 1][x] = Math.max(0, Math.min(255, 
-                        grayPixels[y + 1][x] + (error * 5 / 16)));
+
+                    grayPixels[y + 1][x] = Math.max(0, Math.min(255,
+                            grayPixels[y + 1][x] + (error * 5 / 16)));
+
                     if (x + 1 < bm.getWidth()) {
-                        grayPixels[y + 1][x + 1] = Math.max(0, Math.min(255, 
-                            grayPixels[y + 1][x + 1] + (error * 1 / 16)));
+                        grayPixels[y + 1][x + 1] = Math.max(0, Math.min(255,
+                                grayPixels[y + 1][x + 1] + (error * 1 / 16)));
                     }
                 }
             }
         }
-        
+
+        // Ensure the end of the image data is properly terminated
+        // Add padding zeros at the end to ensure clean termination
+        for (int i = offset + n * lineWidth - lineWidth; i < result.length; i++) {
+            result[i] = 0x00;
+        }
+
         return result;
     }
 
@@ -432,5 +474,63 @@ class PrinterUtil {
 
     private int getPrinterWidth() {
         return is3InchPrinter ? PRINTER_WIDTH_3_INCH : PRINTER_WIDTH_2_INCH;
+    }
+
+
+    // escpos lib
+
+    public static final byte LF = 0x0A;
+    public static final byte[] LINE_SPACING_24 = {0x1b, 0x33, 0x18};
+    public static final byte[] LINE_SPACING_30 = {0x1b, 0x33, 0x1e};
+
+    public static byte[][] convertGSv0ToEscAsterisk(byte[] bytes) {
+        int
+                xL = bytes[4] & 0xFF,
+                xH = bytes[5] & 0xFF,
+                yL = bytes[6] & 0xFF,
+                yH = bytes[7] & 0xFF,
+                bytesByLine = xH * 256 + xL,
+                dotsByLine = bytesByLine * 8,
+                nH = dotsByLine / 256,
+                nL = dotsByLine % 256,
+                imageHeight = yH * 256 + yL,
+                imageLineHeightCount = (int) Math.ceil((double) imageHeight / 24.0),
+                imageBytesSize = 6 + bytesByLine * 24;
+    
+        byte[][] returnedBytes = new byte[imageLineHeightCount + 2][];
+        returnedBytes[0] = LINE_SPACING_24;
+        for (int i = 0; i < imageLineHeightCount; ++i) {
+            int pxBaseRow = i * 24;
+            byte[] imageBytes = new byte[imageBytesSize];
+            imageBytes[0] = 0x1B;
+            imageBytes[1] = 0x2A;
+            imageBytes[2] = 0x21;
+            imageBytes[3] = (byte) nL;
+            imageBytes[4] = (byte) nH;
+            for (int j = 5; j < imageBytes.length - 1; ++j) { // Fixed: -1 to avoid overwriting LF
+                int
+                        imgByte = j - 5,
+                        byteRow = imgByte % 3,
+                        pxColumn = imgByte / 3,
+                        bitColumn = 1 << (7 - pxColumn % 8),
+                        pxRow = pxBaseRow + byteRow * 8;
+                for (int k = 0; k < 8; ++k) {
+                    int indexBytes = bytesByLine * (pxRow + k) + pxColumn / 8 + 8;
+    
+                    if (indexBytes >= bytes.length) {
+                        break;
+                    }
+    
+                    boolean isBlack = (bytes[indexBytes] & bitColumn) == bitColumn;
+                    if (isBlack) {
+                        imageBytes[j] |= 1 << (7 - k);
+                    }
+                }
+            }
+            imageBytes[imageBytes.length - 1] = LF;
+            returnedBytes[i + 1] = imageBytes;
+        }
+        returnedBytes[returnedBytes.length - 1] = LINE_SPACING_30;
+        return returnedBytes;
     }
 }
