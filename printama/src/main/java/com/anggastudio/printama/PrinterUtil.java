@@ -1,10 +1,5 @@
 package com.anggastudio.printama;
 
-import static com.anggastudio.printama.Printama.CENTER;
-import static com.anggastudio.printama.Printama.FULL_WIDTH;
-import static com.anggastudio.printama.Printama.ORIGINAL_WIDTH;
-import static com.anggastudio.printama.Printama.RIGHT;
-
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -183,10 +178,10 @@ class PrinterUtil {
     void setAlign(int alignType) {
         byte[] d;
         switch (alignType) {
-            case CENTER:
+            case PA.CENTER:
                 d = ESC_ALIGN_CENTER;
                 break;
-            case RIGHT:
+            case PA.RIGHT:
                 d = ESC_ALIGN_RIGHT;
                 break;
             default:
@@ -211,8 +206,8 @@ class PrinterUtil {
 
     boolean printImage(Bitmap bitmap) {
         try {
-            int width = bitmap.getWidth() > getPrinterWidth() ? FULL_WIDTH : ORIGINAL_WIDTH;
-            return printImage(Printama.CENTER, bitmap, width);
+            int width = bitmap.getWidth() > getPrinterWidth() ? PW.FULL_WIDTH : PW.ORIGINAL_WIDTH;
+            return printImage(PA.CENTER, bitmap, width);
         } catch (NullPointerException e) {
             Log.e(TAG, "Maybe resource is vector or mipmap?");
             return false;
@@ -220,16 +215,16 @@ class PrinterUtil {
     }
 
     boolean printImage(Bitmap bitmap, int width) {
-        return printImage(Printama.CENTER, bitmap, width);
+        return printImage(PA.CENTER, bitmap, width);
     }
 
     boolean printImage(int alignment, Bitmap bitmap, int width) {
         Bitmap scaledBitmap = scaledBitmap(bitmap, width);
         if (scaledBitmap != null) {
             int marginLeft = 0;
-            if (alignment == CENTER) {
+            if (alignment == PA.CENTER) {
                 marginLeft = (getPrinterWidth() - scaledBitmap.getWidth()) / 2;
-            } else if (alignment == RIGHT) {
+            } else if (alignment == PA.RIGHT) {
                 marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
             
@@ -382,7 +377,7 @@ class PrinterUtil {
     private static int getDesiredWidth(Bitmap bitmap, int width, int printerWidth) {
         int desiredWidth;
 
-        if (width == FULL_WIDTH || width >= printerWidth) {
+        if (width == PW.FULL_WIDTH || width >= printerWidth) {
             // Always use full printer width when requested or when width exceeds printer capacity
             desiredWidth = printerWidth;
         } else if (width > 0) {

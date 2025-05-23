@@ -27,6 +27,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.anggastudio.printama.PW;
 import com.anggastudio.printama.Printama;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
@@ -273,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             if (Util.isAllowToPrint()) {
                 // Print the bitmap as
                 Printama.with(this).connect(printama -> {
-                    printama.printImage(bitmap, Printama.FULL_WIDTH);
+                    printama.printImage(bitmap, PW.FULL_WIDTH);
                     printama.close();
                 }, this::showToast);
             } else {
