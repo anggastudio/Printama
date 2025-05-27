@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorGrayFA"
-    tools:context=".DeviceListFragment">
+    tools:context=".ui.DeviceListFragment">
 
     <ScrollView
         android:layout_width="match_parent"

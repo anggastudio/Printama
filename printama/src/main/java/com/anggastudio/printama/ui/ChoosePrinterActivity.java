@@ -1,5 +1,6 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,9 +8,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import androidx.annotation.RequiresPermission;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.R;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -21,6 +26,7 @@ public class ChoosePrinterActivity extends Activity {
     private Button saveButton;
     private Button testButton;
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +55,7 @@ public class ChoosePrinterActivity extends Activity {
     }
 
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onStart() {
         super.onStart();
@@ -59,7 +66,8 @@ public class ChoosePrinterActivity extends Activity {
             testButton.setOnClickListener(v -> testPrinter());
             saveButton = findViewById(R.id.btn_save_printer);
             saveButton.setOnClickListener(v -> savePrinter());
-            mPrinterAddress = Pref.getString(Pref.SAVED_DEVICE);
+//            mPrinterAddress = Pref.getString(Pref.SAVED_DEVICE);
+            mPrinterAddress = Printama.getPrinter().getAddress();
             toggleButtons();
 
             RecyclerView rvDeviceList = findViewById(R.id.rv_device_list);
@@ -74,6 +82,7 @@ public class ChoosePrinterActivity extends Activity {
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void testPrinter() {
         Printama.with(this, mPrinterAddress).printTest();
     }
@@ -89,7 +98,8 @@ public class ChoosePrinterActivity extends Activity {
     }
 
     private void savePrinter() {
-        Pref.setString(Pref.SAVED_DEVICE, mPrinterAddress);
+
+        Printama.savePrinter(mPrinterAddress);
         Intent intent = new Intent();
         intent.putExtra("printama", mPrinterAddress);
         setResult(Activity.RESULT_OK, intent);

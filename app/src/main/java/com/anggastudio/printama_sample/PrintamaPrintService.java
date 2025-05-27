@@ -24,7 +24,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.RequiresPermission;
 
 
-import com.anggastudio.printama.PW;
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama.Printama;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class PrintamaPrintService extends PrintService {
 
     @Override
@@ -125,7 +124,7 @@ public class PrintamaPrintService extends PrintService {
         try {
             if (Util.isAllowToPrint()) {
                 PrintDocument printDocument = printJob.getDocument();
-                if (printDocument != null && printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
+                if (printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
                     FileInputStream inputStream = new FileInputStream(printDocument.getData().getFileDescriptor());
 
                     // Convert the PDF data to a list of bitmaps

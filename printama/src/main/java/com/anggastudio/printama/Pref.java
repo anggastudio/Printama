@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 class Pref {
-
     private Pref() {
         // empty constructor
     }
@@ -43,5 +42,4 @@ class Pref {
         editor.putBoolean(key, value);
         editor.apply();
     }
-
 }

@@ -27,8 +27,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.anggastudio.printama.PW;
 import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.PrintamaUI;
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
 
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if the activity was started by a share intent
         Intent intent = getIntent();
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
             handleSharedImage(intent);
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
             handleSharedImages(intent);
         }
     }
@@ -131,18 +132,26 @@ public class MainActivity extends AppCompatActivity {
         tvConnectedTo.setText(connectedToStr);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showAfterConnectLayout() {
         findViewById(R.id.btn_connect).setVisibility(View.GONE);
         findViewById(R.id.printer_connected_layout).setVisibility(View.VISIBLE);
         findViewById(R.id.reset_button_layout).setVisibility(View.VISIBLE);
 
-        findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+        findViewById(R.id.btn_printer_simple_test).setOnClickListener(v -> simplePrintTest());
+        findViewById(R.id.btn_printer_advance_test).setOnClickListener(v -> gotoTestActivity());
         findViewById(R.id.btn_printer_width).setOnClickListener(v -> choosePrinterWidth());
         findViewById(R.id.btn_reset).setOnClickListener(v -> resetPrinterConnection());
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void simplePrintTest() {
+        // Show loading indicator if needed
+        Printama.with(this).printTest();
+    }
+
     private void choosePrinterWidth() {
-        Printama.showIs3inchesDialog(this, is3inches -> {
+        PrintamaUI.showIs3inchesDialog(this, is3inches -> {
             Printama.is3inchesPrinter(is3inches);
             displayPrinterWidthInfo();
         });
@@ -184,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showPrinterList() {
-        Printama.showPrinterList(this, selectedDevice -> {
+        PrintamaUI.showPrinterList(this, selectedDevice -> {
             if (selectedDevice != null) {
                 // printer chosen
                 TextView tvConnectedTo = findViewById(R.id.tv_printer_info);
@@ -201,23 +210,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void showPrinterListActivity() {
-        // only use this when your project is not androidX
-        Printama.showPrinterList(this);
-    }
-
-    private void testPrinter() {
+    private void gotoTestActivity() {
         Intent intent = new Intent(MainActivity.this, TestActivity.class);
         ContextCompat.startActivity(this, intent, new Bundle());
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String printerName = Printama.getPrinterResult(resultCode, requestCode, data);
+        String printerName = PrintamaUI.getPrinterResult(resultCode, requestCode, data);
         showResult(printerName);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showResult(String printerName) {
         if (printerName != null) {
             TextView connectedTo = findViewById(R.id.tv_printer_info);

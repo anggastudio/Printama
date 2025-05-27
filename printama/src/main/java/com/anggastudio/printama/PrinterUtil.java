@@ -11,6 +11,10 @@ import android.util.Log;
 
 import androidx.annotation.RequiresPermission;
 
+import com.anggastudio.printama.constants.PA;
+import com.anggastudio.printama.constants.PW;
+import com.anggastudio.printama.util.StrUtil;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;

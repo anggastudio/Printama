@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.R;
 
 public class ChoosePrinterWidthFragment extends DialogFragment {
 
@@ -54,7 +57,7 @@ public class ChoosePrinterWidthFragment extends DialogFragment {
         iv3inchSelected = view.findViewById(R.id.iv_select_width_3_inches);
 
         // default data
-        is3inches = Pref.getBoolean(Pref.IS_PRINTER_3INCH);
+        is3inches = Printama.is3inchesPrinter();
         if (is3inches) {
             select3inches();
         } else {

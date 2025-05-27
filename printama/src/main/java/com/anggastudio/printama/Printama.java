@@ -1,7 +1,6 @@
 package com.anggastudio.printama;
 
 import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
@@ -22,6 +21,11 @@ import androidx.annotation.RequiresPermission;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import com.anggastudio.printama.constants.PA;
+import com.anggastudio.printama.constants.PW;
+import com.anggastudio.printama.ui.ChoosePrinterWidthFragment;
+import com.anggastudio.printama.ui.DeviceListFragment;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,13 +61,8 @@ public class Printama {
     @Deprecated
     public static final int ORIGINAL_WIDTH = 0;
 
-    /**
-     * Used for request code to get bluetooth paired printer list
-     */
-    public static final int GET_PRINTER_CODE = 921;
-
     private static Printama _printama;
-    private static final int _REQUEST_ENABLE_BT = 1101;
+
     private final PrinterUtil _util;
     private final BluetoothDevice _printer;
 
@@ -101,7 +100,7 @@ public class Printama {
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    static Printama with(Context context, String printerName) {
+    public static Printama with(Context context, String printerName) {
         _printama = new Printama(context, printerName);
         return _printama;
     }
@@ -126,7 +125,7 @@ public class Printama {
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private static boolean isBluetoothPrinter(BluetoothDevice device) {
+    public static boolean isBluetoothPrinter(BluetoothDevice device) {
         if (device.getBluetoothClass() != null) {
             int majorClass = device.getBluetoothClass().getMajorDeviceClass();
             // Printers are in the IMAGING major class (0x0600)
@@ -151,6 +150,10 @@ public class Printama {
 
     public static void resetPrinterConnection() {
 
+    }
+
+    public static void savePrinter(String mPrinterAddress) {
+        Pref.setString(Pref.SAVED_DEVICE, mPrinterAddress);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -205,193 +208,13 @@ public class Printama {
         });
     }
 
-    //----------------------------------------------------------------------------------------------
-    // PRINTER LIST OVERLAY
-    //----------------------------------------------------------------------------------------------
-
-    /**
-     * to choose bluetooth printer which already paired to your device
-     *
-     * @param activity
-     * @param onConnectPrinter
-     */
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    public static void showPrinterList(FragmentActivity activity, OnConnectPrinter onConnectPrinter) {
-        showPrinterList(activity, 0, 0, onConnectPrinter);
-    }
-
-    /**
-     * to choose bluetooth printer which already paired to your device
-     *
-     * @param activity
-     * @param activeColor      @ColorRes example: R.color.black
-     * @param onConnectPrinter
-     */
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    public static void showPrinterList(FragmentActivity activity, @ColorRes int activeColor, OnConnectPrinter onConnectPrinter) {
-        showPrinterList(activity, activeColor, 0, onConnectPrinter);
-    }
 
 
-    /**
-     * to choose bluetooth printer which already paired to your device
-     *
-     * @param activity
-     * @param activeColor      @ColorRes example: R.color.black
-     * @param inactiveColor    @ColorRes example: R.color.black
-     * @param onConnectPrinter
-     */
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    public static void showPrinterList(FragmentActivity activity, int activeColor, int inactiveColor, OnConnectPrinter onConnectPrinter) {
-        Pref.init(activity);
-        BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
-        int activeColorResource = activeColor == 0 ? activeColor : ContextCompat.getColor(activity, activeColor);
-        int inactiveColorResource = inactiveColor == 0 ? inactiveColor : ContextCompat.getColor(activity, inactiveColor);
-
-        // Check if Bluetooth is enabled
-        if (defaultAdapter == null || !defaultAdapter.isEnabled()) {
-            // Bluetooth is not enabled, prompt user to enable it
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableBtIntent, _REQUEST_ENABLE_BT);
-            return;
-        }
-
-        if (!defaultAdapter.getBondedDevices().isEmpty()) {
-            // Filter only printer devices
-            Set<BluetoothDevice> allDevices = defaultAdapter.getBondedDevices();
-            Set<BluetoothDevice> printerDevices = new HashSet<>();
-
-            for (BluetoothDevice device : allDevices) {
-                if (isBluetoothPrinter(device)) {
-                    printerDevices.add(device);
-                }
-            }
-
-            FragmentManager fm = activity.getSupportFragmentManager();
-            DeviceListFragment fragment = DeviceListFragment.newInstance();
-            fragment.setDeviceList(printerDevices);
-            fragment.setOnConnectPrinter(onConnectPrinter);
-            fragment.setColorTheme(activeColorResource, inactiveColorResource);
-            fragment.show(fm, "DeviceListFragment");
-        } else {
-            onConnectPrinter.onConnectPrinter(null);
-        }
-    }
-
-    /**
-     * Only use this if your project is not androidX.
-     * <p>
-     * This method will call startActivityForResult to open Choose Printer Page.
-     * You can get the result from onActivityResult and call Printama.getPrinterResult() and set all params.
-     *
-     * @param activity
-     */
-    public static void showPrinterList(Activity activity) {
-        Pref.init(activity);
-        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
-        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
-    }
-
-    /**
-     * Will return printer MAC address if success.
-     * Will return empty string if failed.
-     * <p>
-     * Call this method from onActivityResult and set all the params.
-     *
-     * @param resultCode
-     * @param requestCode
-     * @param data
-     * @return
-     */
-    public static String getPrinterResult(int resultCode, int requestCode, Intent data) {
-        String printerAddress = "";
-        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
-            printerAddress = data.getStringExtra("printama");
-        }
-        return printerAddress;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // PRINTER LIST OVERLAY
-    //----------------------------------------------------------------------------------------------
-
-    /**
-     * to choose printer width
-     * will return integer 58 if 2 inches printer
-     * will return integer 80 if 3 inches printer
-     *
-     * @param activity
-     * @param onChoosePrinterWidth
-     */
-    public static void showIs3inchesDialog(FragmentActivity activity, OnChoosePrinterWidth onChoosePrinterWidth) {
-        showIs3inchesDialog(activity, 0, 0, onChoosePrinterWidth);
-    }
-
-    /**
-     * to choose bluetooth printer which already paired to your device
-     *
-     * @param activity
-     * @param activeColor          @ColorRes example: R.color.black
-     * @param onChoosePrinterWidth
-     */
-    public static void showIs3inchesDialog(FragmentActivity activity, @ColorRes int activeColor, OnChoosePrinterWidth onChoosePrinterWidth) {
-        showIs3inchesDialog(activity, activeColor, 0, onChoosePrinterWidth);
-    }
 
 
-    /**
-     * to choose bluetooth printer which already paired to your device
-     *
-     * @param activity
-     * @param activeColor          @ColorRes example: R.color.black
-     * @param inactiveColor        @ColorRes example: R.color.black
-     * @param onChoosePrinterWidth
-     */
-    public static void showIs3inchesDialog(FragmentActivity activity, int activeColor, int inactiveColor, OnChoosePrinterWidth onChoosePrinterWidth) {
-        Pref.init(activity);
 
-        int activeColorResource = activeColor == 0 ? activeColor : ContextCompat.getColor(activity, activeColor);
-        int inactiveColorResource = inactiveColor == 0 ? inactiveColor : ContextCompat.getColor(activity, inactiveColor);
 
-        FragmentManager fm = activity.getSupportFragmentManager();
-        ChoosePrinterWidthFragment fragment = ChoosePrinterWidthFragment.newInstance();
-        fragment.setOnChoosePrinterWidth(onChoosePrinterWidth);
-        fragment.setColorTheme(activeColorResource, inactiveColorResource);
-        fragment.show(fm, "DeviceListFragment");
-    }
 
-    /**
-     * Only use this if your project is not androidX.
-     * <p>
-     * This method will call startActivityForResult to open Choose Printer Page.
-     * You can get the result from onActivityResult and call Printama.getPrinterResult() and set all params.
-     *
-     * @param activity
-     */
-    public static void showIs3inchesDialog(Activity activity) {
-        Pref.init(activity);
-        Intent intent = new Intent(activity, ChoosePrinterActivity.class);
-        activity.startActivityForResult(intent, Printama.GET_PRINTER_CODE);
-    }
-
-    /**
-     * Will return printer MAC address if success.
-     * Will return empty string if failed.
-     * <p>
-     * Call this method from onActivityResult and set all the params.
-     *
-     * @param resultCode
-     * @param requestCode
-     * @param data
-     * @return
-     */
-    public static String showIs3inchesDialog(int resultCode, int requestCode, Intent data) {
-        String printerAddress = "";
-        if (-1 == resultCode && Printama.GET_PRINTER_CODE == requestCode && data != null) {
-            printerAddress = data.getStringExtra("printama");
-        }
-        return printerAddress;
-    }
 
     //----------------------------------------------------------------------------------------------
     // PRINTER COMMANDS

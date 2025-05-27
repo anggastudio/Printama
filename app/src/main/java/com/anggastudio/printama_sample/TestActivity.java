@@ -11,10 +11,13 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import com.anggastudio.printama.PA;
-import com.anggastudio.printama.PW;
 import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.constants.PA;
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama_sample.mock.Mock;
 import com.anggastudio.printama_sample.model.PrintBody;
 import com.anggastudio.printama_sample.model.PrintFooter;
@@ -33,7 +36,18 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_test);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_view), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
+        // back button
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            onBackPressed();
+        });
+
+        // print test buttons
         findViewById(R.id.btn_simple_print_test).setOnClickListener(v -> testPrinter());
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
@@ -45,7 +59,6 @@ public class TestActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
         findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri());
         findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
-        findViewById(R.id.btn_print_background).setOnClickListener(v -> printImageBackground());
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
         findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
         findViewById(R.id.btn_print_receipt).setOnClickListener(v -> printQrReceipt());
@@ -209,15 +222,6 @@ public class TestActivity extends AppCompatActivity {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, PW.FULL_WIDTH);
-            printama.close();
-        }, this::showToast);
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printImageBackground() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
-        Printama.with(this).connect(printama -> {
-            printama.printImage(bitmap, PW.ORIGINAL_WIDTH);
             printama.close();
         }, this::showToast);
     }

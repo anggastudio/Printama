@@ -1,5 +1,6 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama.ui;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.R;
 
 import java.util.ArrayList;
 
@@ -34,6 +39,7 @@ class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Holder> {
         return new Holder(view);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         BluetoothDevice device = bondedDevices.get(position);
