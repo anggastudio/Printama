@@ -38,6 +38,9 @@
         android:theme="@style/Theme.PrintamaLib"
         tools:targetApi="31">
         <activity
+            android:name=".DonationScreenActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

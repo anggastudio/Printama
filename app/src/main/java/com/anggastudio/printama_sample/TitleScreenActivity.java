@@ -37,8 +37,8 @@ public class TitleScreenActivity extends AppCompatActivity {
     }
 
     private void gotoDonatePage() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://ko-fi.com/anggastudio"));
-        startActivity(browserIntent);
+        Intent intent = new Intent(TitleScreenActivity.this, DonationScreenActivity.class);
+        ContextCompat.startActivity(this, intent, new Bundle());
     }
 
     private void gotoSettingsPage() {
