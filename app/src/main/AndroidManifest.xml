@@ -65,7 +65,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TestActivity"
+            android:name=".PrintTestActivity"
             android:exported="false" />
 
         <service

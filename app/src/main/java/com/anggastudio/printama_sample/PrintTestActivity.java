@@ -30,7 +30,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-public class TestActivity extends AppCompatActivity {
+public class PrintTestActivity extends AppCompatActivity {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
@@ -195,7 +195,7 @@ public class TestActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             boolean print = printama.printImage(bitmap, 200, PA.CENTER);
             if (!print) {
-                Toast.makeText(TestActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PrintTestActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
             }
             printama.close();
         }, this::showToast);
@@ -249,7 +249,7 @@ public class TestActivity extends AppCompatActivity {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printQrReceipt() {
         PrintModel printModel = Mock.getPrintModelMock();
-        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
+        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
         PrintHeader header = printModel.getPrintHeader();
         PrintBody body = printModel.getPrintBody();
         PrintFooter footer = printModel.getPrintFooter();
@@ -291,7 +291,7 @@ public class TestActivity extends AppCompatActivity {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printQrReceipt2() {
-        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.logo_gopay_print);
+        Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
         String nota = "Some Text";
         Printama.with(this).connect(printama -> {
             printama.printImage(logo, 200, PA.CENTER);

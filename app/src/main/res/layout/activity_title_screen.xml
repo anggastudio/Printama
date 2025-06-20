@@ -12,7 +12,17 @@
     tools:context=".TitleScreenActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/iv_logo"
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_launcher"
+        app:layout_constraintBottom_toTopOf="@+id/iv_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_title"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
@@ -31,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/iv_title">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/btn_settings_page"

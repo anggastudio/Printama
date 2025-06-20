@@ -3,18 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
-    android:layout_width="320dp"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:background="@color/colorWhite"
     android:orientation="vertical"
     android:scrollbars="none"
-    tools:context="com.anggastudio.printama_sample.TestActivity">
+    tools:context="com.anggastudio.printama_sample.PrintTestActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="58dp">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,7 +30,7 @@
                 android:adjustViewBounds="true"
                 android:padding="8dp"
                 android:rotation="180"
-                android:src="@drawable/baseline_arrow_right_alt_24" />
+                android:src="@drawable/tabler_arrow_right" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,7 +223,7 @@
                         android:adjustViewBounds="true"
                         android:padding="8dp"
                         android:rotation="180"
-                        android:src="@drawable/baseline_arrow_right_alt_24"
+                        android:src="@drawable/tabler_arrow_right"
                         app:tint="@color/white" />
 
                     <TextView
@@ -242,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:padding="8dp"
-                        android:src="@drawable/baseline_arrow_right_alt_24"
+                        android:src="@drawable/tabler_arrow_right"
                         app:tint="@color/white" />
 
                 </LinearLayout>

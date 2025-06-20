@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gotoTestActivity() {
-        Intent intent = new Intent(MainActivity.this, TestActivity.class);
+        Intent intent = new Intent(MainActivity.this, PrintTestActivity.class);
         ContextCompat.startActivity(this, intent, new Bundle());
     }
 
