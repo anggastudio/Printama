@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -35,6 +36,7 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_print_test);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_view), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -44,7 +46,7 @@ public class TestActivity extends AppCompatActivity {
 
         // back button
         findViewById(R.id.btn_back).setOnClickListener(v -> {
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
         });
 
         // print test buttons

@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // back button
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            getOnBackPressedDispatcher().onBackPressed();
+        });
+
+        // connect printer button
         findViewById(R.id.btn_printer_settings).setOnClickListener(v -> connectToPrinter(true));
         SharedPref.init(MainActivity.this);
         checkBluetoothPermission();
