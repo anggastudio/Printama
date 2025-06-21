@@ -65,6 +65,7 @@
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:gravity="center|start"
+                        android:layout_marginStart="8dp"
                         android:padding="8dp"
                         android:src="@drawable/tabler_printer"
                         app:tint="@color/colorGrayE" />
@@ -100,13 +101,12 @@
             android:id="@+id/printer_connected_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:layout_weight="1"
                 app:cardBackgroundColor="@color/colorGray5"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp">
@@ -129,6 +129,7 @@
                             android:adjustViewBounds="true"
                             android:gravity="center|start"
                             android:padding="8dp"
+                            android:layout_marginStart="8dp"
                             android:src="@drawable/tabler_arrow_autofit_content"
                             app:tint="@color/colorGrayE" />
 
@@ -178,73 +179,65 @@
 
             </androidx.cardview.widget.CardView>
 
+            <LinearLayout
+                android:id="@+id/test_printer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btn_printer_simple_test"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="4dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/colorPrimary"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_printer_simple_test"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:background="@color/colorGray5"
-                    android:gravity="center"
-                    android:text="Simple Print Test"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="12sp" />
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp">
 
-            </androidx.cardview.widget.CardView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/colorGray5"
+                        android:gravity="center"
+                        android:text="Simple Print Test"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="12sp" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btn_printer_advance_test"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="4dp"
-                android:layout_weight="1"
-                app:cardBackgroundColor="@color/colorPrimary"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+                </androidx.cardview.widget.CardView>
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="match_parent"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_printer_advance_test"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="4dp"
                     android:layout_weight="1"
-                    android:background="@color/colorGray5"
-                    android:gravity="center"
-                    android:text="Advance Print Test"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="12sp" />
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp">
 
-            </androidx.cardview.widget.CardView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/colorGray5"
+                        android:gravity="center"
+                        android:text="Advance Print Test"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="12sp" />
 
-        </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-        <LinearLayout
-            android:id="@+id/reset_button_layout"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
+            </LinearLayout>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/btn_reset"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_margin="8dp"
                 app:cardBackgroundColor="@color/colorGray5"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp">
@@ -257,6 +250,7 @@
                     android:drawablePadding="8dp"
                     android:drawableTint="@color/colorGrayE"
                     android:gravity="center"
+                    android:padding="8dp"
                     android:text="Reset Printer Config"
                     android:textColor="@color/colorGrayE"
                     android:textSize="12sp" />

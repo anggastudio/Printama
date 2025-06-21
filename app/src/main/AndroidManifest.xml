@@ -35,8 +35,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PrintamaLib"
-        tools:targetApi="31">
+        android:theme="@style/Theme.PrintamaLib">
         <activity
             android:name=".DonationScreenActivity"
             android:exported="false" />
