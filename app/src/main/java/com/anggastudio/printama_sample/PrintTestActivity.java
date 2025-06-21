@@ -50,28 +50,47 @@ public class PrintTestActivity extends AppCompatActivity {
         });
 
         // print test buttons
+        // simple test
         findViewById(R.id.btn_simple_print_test).setOnClickListener(v -> testPrinter());
+        findViewById(R.id.btn_feed_paper).setOnClickListener(v -> feedPaper());
+        // print texts
         findViewById(R.id.btn_print_text_left).setOnClickListener(v -> printTextLeft());
         findViewById(R.id.btn_print_text_center).setOnClickListener(v -> printTextCenter());
         findViewById(R.id.btn_print_text_right).setOnClickListener(v -> printTextRight());
         findViewById(R.id.btn_print_text_style).setOnClickListener(v -> printTextStyles());
         findViewById(R.id.btn_print_text_justify).setOnClickListener(v -> printTextJustified());
+        // print images
         findViewById(R.id.btn_print_image_left).setOnClickListener(v -> printImageLeft());
         findViewById(R.id.btn_print_image_center).setOnClickListener(v -> printImageCenter());
         findViewById(R.id.btn_print_image_right).setOnClickListener(v -> printImageRight());
-        findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri());
-        findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull());
+        // print images controlled width
+        findViewById(R.id.btn_print_image_ori).setOnClickListener(v -> printImageOri()); // original width
+        findViewById(R.id.btn_print_image_full).setOnClickListener(v -> printImageFull()); // full width
+        findViewById(R.id.btn_print_image_width_1_4).setOnClickListener(v -> printImageQuarterWidth()); // 1/4 width
+        findViewById(R.id.btn_print_image_width_1_2).setOnClickListener(v -> printImageHalfWidth()); // 1/2 width
+        findViewById(R.id.btn_print_image_width_3_4).setOnClickListener(v -> printImageThreeQuartersWidth()); // 3/4 width
+        findViewById(R.id.btn_print_image_width_1_3).setOnClickListener(v -> printImageOneThirdsWidth()); // 1/3 width
+        findViewById(R.id.btn_print_image_width_2_3).setOnClickListener(v -> printImageTwoThirdWidth()); // 2/3 width
+        // print image others
         findViewById(R.id.btn_print_image_photo).setOnClickListener(v -> printImagePhoto());
-        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printView());
+        findViewById(R.id.btn_print_layout).setOnClickListener(v -> printScreenLayout());
+        // print receipt demo
         findViewById(R.id.btn_print_receipt).setOnClickListener(v -> printQrReceipt());
         findViewById(R.id.btn_print_receipt2).setOnClickListener(v -> printQrReceipt2());
     }
-
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void testPrinter() {
         // Show loading indicator if needed
         Printama.with(this).printTest();
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void feedPaper() {
+        Printama.with(this).connect(printama -> {
+            printama.feedPaper();
+            printama.close();
+        });
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -85,6 +104,7 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printText(text, PA.LEFT);
             // or simply
             // printama.printText("some text") --> will be printed left aligned as default
+            printama.feedPaper();
             printama.close();
         });
     }
@@ -98,6 +118,7 @@ public class PrintTestActivity extends AppCompatActivity {
                 "------------------\n";
         Printama.with(this).connect(printama -> {
             printama.printText(text, PA.CENTER);
+            printama.feedPaper();
             printama.close();
         });
     }
@@ -111,6 +132,7 @@ public class PrintTestActivity extends AppCompatActivity {
                 "------------------\n";
         Printama.with(this).connect(printama -> {
             printama.printText(text, PA.RIGHT);
+            printama.feedPaper();
             printama.close();
         });
     }
@@ -185,6 +207,7 @@ public class PrintTestActivity extends AppCompatActivity {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, 200, PA.LEFT);
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
@@ -197,6 +220,7 @@ public class PrintTestActivity extends AppCompatActivity {
             if (!print) {
                 Toast.makeText(PrintTestActivity.this, "Print image failed", Toast.LENGTH_SHORT).show();
             }
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
@@ -206,24 +230,77 @@ public class PrintTestActivity extends AppCompatActivity {
         Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, 200, PA.RIGHT);
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageOri() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap); // original size, centered as default
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageFull() {
-        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.ic_launcher);
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, PW.FULL_WIDTH);
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printImageQuarterWidth() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, PW.QUARTER_WIDTH);
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printImageHalfWidth() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, PW.HALF_WIDTH);
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printImageThreeQuartersWidth() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, PW.THREE_QUARTERS_WIDTH);
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printImageOneThirdsWidth() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, PW.ONE_THIRD_WIDTH);
+            printama.feedPaper();
+            printama.close();
+        }, this::showToast);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printImageTwoThirdWidth() {
+        Bitmap bitmap = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
+        Printama.with(this).connect(printama -> {
+            printama.printImage(bitmap, PW.TWO_THIRD_WIDTH);
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
@@ -233,15 +310,17 @@ public class PrintTestActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.rose);
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, PW.FULL_WIDTH);
+            printama.feedPaper();
             printama.close();
         }, this::showToast);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printView() {
+    private void printScreenLayout() {
         View view = findViewById(R.id.root_view);
         Printama.with(this).connect(printama -> {
             printama.printFromView(view);
+            printama.feedPaper();
             new Handler().postDelayed(printama::close, 2000);
         }, this::showToast);
     }
@@ -283,8 +362,7 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printTextln(footer.getPowered(), PA.CENTER);
             if (footer.getEnvironment() != null)
                 printama.printTextln(footer.getEnvironment(), PA.CENTER);
-            printama.addNewLine(4);
-
+            printama.addNewLine(4); // same as feed paper
             printama.close();
         }, this::showToast);
     }

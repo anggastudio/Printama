@@ -44,7 +44,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="8dp">
 
             <androidx.cardview.widget.CardView
@@ -64,6 +64,29 @@
                     android:gravity="center"
                     android:padding="8dp"
                     android:text="Simple Test"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_feed_paper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Feed Paper"
                     android:textColor="@color/colorGrayE"
                     android:textSize="12sp" />
 
@@ -354,16 +377,16 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="8dp">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/btn_print_image_ori"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 app:cardBackgroundColor="@color/colorGray5"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp">
@@ -372,6 +395,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
                     android:drawablePadding="8dp"
                     android:gravity="center"
                     android:padding="8dp"

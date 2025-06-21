@@ -231,13 +231,13 @@ class PrinterUtil {
             } else if (alignment == PA.RIGHT) {
                 marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
-            
+
             // Calculate correct width in bytes for printer command
             int widthBytes = getLineWidth();
             int lines = scaledBitmap.getHeight();
-    
+
             byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
-            
+
             // Fix: Correct printer command header for both printer sizes
             System.arraycopy(new byte[]{
                     0x1D, 0x76, 0x30, 0x00,
@@ -246,10 +246,10 @@ class PrinterUtil {
                     (byte) (lines & 0xff),  // Height (low byte)
                     (byte) ((lines >> 8) & 0xff)  // Height (high byte)
             }, 0, command, 0, HEAD);
-    
+
             // Convert GS v 0 command to ESC * commands for better compatibility
             byte[][] commandLines = convertGSv0ToEscAsterisk(command);
-            
+
             // Print each line of the image
             boolean success = true;
             for (byte[] line : commandLines) {
@@ -258,12 +258,12 @@ class PrinterUtil {
                     break;
                 }
             }
-            
+
             // Add a command to reset the printer state after image printing
             if (success) {
                 printUnicode(new byte[]{0x1B, 0x40}); // ESC @ command to initialize printer
             }
-            
+
             return success;
         } else {
             return false;
@@ -388,8 +388,14 @@ class PrinterUtil {
             // Use specified width if it's positive and within printer limits
             desiredWidth = width;
         } else {
-            // For width <= 0, scale to printer width if original exceeds it
-            desiredWidth = Math.min(bitmap.getWidth(), printerWidth);
+            desiredWidth = switch (width) {
+                case PW.QUARTER_WIDTH -> (int) (printerWidth * 0.25); // 1/4 width
+                case PW.HALF_WIDTH -> (int) (printerWidth * 0.5); // 1/2 width
+                case PW.THREE_QUARTERS_WIDTH -> (int) (printerWidth * 0.75); // 3/4 width
+                case PW.ONE_THIRD_WIDTH -> (int) (printerWidth * 0.333); // 1/3 width
+                case PW.TWO_THIRD_WIDTH -> (int) (printerWidth * 0.667); // 2/3 width
+                default -> Math.min(bitmap.getWidth(), printerWidth); // original width
+            };
         }
         return desiredWidth;
     }
@@ -495,7 +501,7 @@ class PrinterUtil {
                 imageHeight = yH * 256 + yL,
                 imageLineHeightCount = (int) Math.ceil((double) imageHeight / 24.0),
                 imageBytesSize = 6 + bytesByLine * 24;
-    
+
         byte[][] returnedBytes = new byte[imageLineHeightCount + 2][];
         returnedBytes[0] = LINE_SPACING_24;
         for (int i = 0; i < imageLineHeightCount; ++i) {
@@ -515,11 +521,11 @@ class PrinterUtil {
                         pxRow = pxBaseRow + byteRow * 8;
                 for (int k = 0; k < 8; ++k) {
                     int indexBytes = bytesByLine * (pxRow + k) + pxColumn / 8 + 8;
-    
+
                     if (indexBytes >= bytes.length) {
                         break;
                     }
-    
+
                     boolean isBlack = (bytes[indexBytes] & bitColumn) == bitColumn;
                     if (isBlack) {
                         imageBytes[j] |= 1 << (7 - k);

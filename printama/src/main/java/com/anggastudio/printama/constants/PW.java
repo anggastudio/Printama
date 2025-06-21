@@ -32,7 +32,7 @@ public class PW {
      * For 2-inch printer: approximately 128px
      * For 3-inch printer: approximately 192px
      */
-    public static final int THIRD_WIDTH = -3;
+    public static final int ONE_THIRD_WIDTH = -3;
     
     /**
      * Prints the image using one-fourth (1/4) of the printer paper width
