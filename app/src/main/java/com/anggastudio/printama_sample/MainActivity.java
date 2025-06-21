@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                 showAfterConnectLayout();
                 // you can also get the printer name from Printama.getSavedPrinterName
                 String deviceNameDisplay = Printama.getSavedPrinterName(this);
-                Toast.makeText(this, "Connected to " + deviceNameDisplay, Toast.LENGTH_SHORT).show();
+                showToast("Connected to " + deviceNameDisplay);
             } else {
                 // failed to choose printer
                 hideAfterConnectLayout();
@@ -238,13 +238,11 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showResult(String printerName) {
-        if (printerName != null) {
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            String text = "Connected to : " + printerName;
-            connectedTo.setText(text);
-
+        if (printerName != null && !printerName.isEmpty()) {
+            checkPrinterConnection();
             showAfterConnectLayout();
-            showToast(printerName);
+            String connectionMessage = "Connected to : " + printerName;
+            showToast(connectionMessage);
         } else {
             hideAfterConnectLayout();
         }
