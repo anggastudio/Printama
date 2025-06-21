@@ -462,6 +462,152 @@ public class Printama {
     }
 
     //----------------------------------------------------------------------------------------------
+    // COLUMN FORMATTERS
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Format text into two columns with specified width percentages
+     * @param col1 First column text
+     * @param col2 Second column text
+     * @param col1Percent Width percentage for first column (0.0 to 1.0)
+     * @param col2Percent Width percentage for second column (0.0 to 1.0)
+     * @return Formatted string with proper column alignment
+     */
+    public String formatTwoColumns(String col1, String col2, double col1Percent, double col2Percent) {
+        int maxChars = _util.getMaxChar();
+        int col1Width = (int) (maxChars * col1Percent);
+        int col2Width = (int) (maxChars * col2Percent);
+        
+        String truncatedCol1 = truncateString(col1, col1Width);
+        String truncatedCol2 = truncateString(col2, col2Width);
+        
+        return String.format("%-" + col1Width + "s%" + col2Width + "s", truncatedCol1, truncatedCol2);
+    }
+
+    /**
+     * Format text into two columns with default widths (70% | 30%)
+     */
+    public String formatTwoColumns(String col1, String col2) {
+        return formatTwoColumns(col1, col2, 0.7, 0.3);
+    }
+
+    /**
+     * Format text into three columns with specified width percentages
+     * @param col1 First column text
+     * @param col2 Second column text
+     * @param col3 Third column text
+     * @param col1Percent Width percentage for first column (0.0 to 1.0)
+     * @param col2Percent Width percentage for second column (0.0 to 1.0)
+     * @param col3Percent Width percentage for third column (0.0 to 1.0)
+     * @return Formatted string with proper column alignment
+     */
+    public String formatThreeColumns(String col1, String col2, String col3, double col1Percent, double col2Percent, double col3Percent) {
+        int maxChars = _util.getMaxChar();
+        int col1Width = (int) (maxChars * col1Percent);
+        int col2Width = (int) (maxChars * col2Percent);
+        int col3Width = (int) (maxChars * col3Percent);
+        
+        String truncatedCol1 = truncateString(col1, col1Width);
+        String truncatedCol2 = truncateString(col2, col2Width);
+        String truncatedCol3 = truncateString(col3, col3Width);
+        
+        return String.format("%-" + col1Width + "s%-" + col2Width + "s%" + col3Width + "s", truncatedCol1, truncatedCol2, truncatedCol3);
+    }
+
+    /**
+     * Format text into three columns with default widths (50% | 20% | 30%)
+     */
+    public String formatThreeColumns(String col1, String col2, String col3) {
+        return formatThreeColumns(col1, col2, col3, 0.5, 0.2, 0.3);
+    }
+
+    /**
+     * Format text into four columns with specified width percentages
+     * @param col1 First column text
+     * @param col2 Second column text
+     * @param col3 Third column text
+     * @param col4 Fourth column text
+     * @param col1Percent Width percentage for first column (0.0 to 1.0)
+     * @param col2Percent Width percentage for second column (0.0 to 1.0)
+     * @param col3Percent Width percentage for third column (0.0 to 1.0)
+     * @param col4Percent Width percentage for fourth column (0.0 to 1.0)
+     * @return Formatted string with proper column alignment
+     */
+    public String formatFourColumns(String col1, String col2, String col3, String col4, double col1Percent, double col2Percent, double col3Percent, double col4Percent) {
+        int maxChars = _util.getMaxChar();
+        int col1Width = (int) (maxChars * col1Percent);
+        int col2Width = (int) (maxChars * col2Percent);
+        int col3Width = (int) (maxChars * col3Percent);
+        int col4Width = (int) (maxChars * col4Percent);
+        
+        String truncatedCol1 = truncateString(col1, col1Width);
+        String truncatedCol2 = truncateString(col2, col2Width);
+        String truncatedCol3 = truncateString(col3, col3Width);
+        String truncatedCol4 = truncateString(col4, col4Width);
+        
+        return String.format("%-" + col1Width + "s%-" + col2Width + "s%-" + col3Width + "s%" + col4Width + "s", truncatedCol1, truncatedCol2, truncatedCol3, truncatedCol4);
+    }
+
+    /**
+     * Format text into four columns with default widths (40% | 20% | 20% | 20%)
+     */
+    public String formatFourColumns(String col1, String col2, String col3, String col4) {
+        return formatFourColumns(col1, col2, col3, col4, 0.4, 0.2, 0.2, 0.2);
+    }
+
+    /**
+     * Format text into five columns with specified width percentages
+     * @param col1 First column text
+     * @param col2 Second column text
+     * @param col3 Third column text
+     * @param col4 Fourth column text
+     * @param col5 Fifth column text
+     * @param col1Percent Width percentage for first column (0.0 to 1.0)
+     * @param col2Percent Width percentage for second column (0.0 to 1.0)
+     * @param col3Percent Width percentage for third column (0.0 to 1.0)
+     * @param col4Percent Width percentage for fourth column (0.0 to 1.0)
+     * @param col5Percent Width percentage for fifth column (0.0 to 1.0)
+     * @return Formatted string with proper column alignment
+     */
+    public String formatFiveColumns(String col1, String col2, String col3, String col4, String col5, double col1Percent, double col2Percent, double col3Percent, double col4Percent, double col5Percent) {
+        int maxChars = _util.getMaxChar();
+        int col1Width = (int) (maxChars * col1Percent);
+        int col2Width = (int) (maxChars * col2Percent);
+        int col3Width = (int) (maxChars * col3Percent);
+        int col4Width = (int) (maxChars * col4Percent);
+        int col5Width = (int) (maxChars * col5Percent);
+        
+        String truncatedCol1 = truncateString(col1, col1Width);
+        String truncatedCol2 = truncateString(col2, col2Width);
+        String truncatedCol3 = truncateString(col3, col3Width);
+        String truncatedCol4 = truncateString(col4, col4Width);
+        String truncatedCol5 = truncateString(col5, col5Width);
+        
+        return String.format("%-" + col1Width + "s%-" + col2Width + "s%-" + col3Width + "s%-" + col4Width + "s%" + col5Width + "s", truncatedCol1, truncatedCol2, truncatedCol3, truncatedCol4, truncatedCol5);
+    }
+
+    /**
+     * Format text into five columns with default widths (30% | 15% | 15% | 20% | 20%)
+     */
+    public String formatFiveColumns(String col1, String col2, String col3, String col4, String col5) {
+        return formatFiveColumns(col1, col2, col3, col4, col5, 0.3, 0.15, 0.15, 0.2, 0.2);
+    }
+
+    /**
+     * Truncate string to specified width, adding "." if truncated
+     * @param text Original text
+     * @param width Maximum width
+     * @return Truncated string
+     */
+    private String truncateString(String text, int width) {
+        if (text == null) text = "";
+        if (text.length() <= width) {
+            return text;
+        }
+        return text.substring(0, width - 1) + ".";
+    }
+
+    //----------------------------------------------------------------------------------------------
     // PRINT TEXT WITH FORMATTING
     //----------------------------------------------------------------------------------------------
 

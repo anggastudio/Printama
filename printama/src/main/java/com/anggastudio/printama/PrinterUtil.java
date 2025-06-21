@@ -22,7 +22,6 @@ import java.util.UUID;
 
 class PrinterUtil {
     private static final String TAG = "PRINTAMA";
-    private static final int INITIAL_MARGIN_LEFT = -5;
     private static final int PRINTER_WIDTH_2_INCH = 384; // 2-inch (58mm) printer
     private static final int PRINTER_WIDTH_3_INCH = 576; // 3-inch (80mm) printer
     private static final int MAX_CHAR_2_INCH = 32;
@@ -231,12 +230,17 @@ class PrinterUtil {
             } else if (alignment == PA.RIGHT) {
                 marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
+            // For left alignment or full width, use no margin
+            if (alignment == PA.LEFT || width == PW.FULL_WIDTH) {
+                marginLeft = 0;
+            }
 
             // Calculate correct width in bytes for printer command
             int widthBytes = getLineWidth();
             int lines = scaledBitmap.getHeight();
 
-            byte[] command = autoGrayScale(scaledBitmap, marginLeft, 5);
+            // Remove top margin for better space utilization
+            byte[] command = autoGrayScale(scaledBitmap, marginLeft, 0);
 
             // Fix: Correct printer command header for both printer sizes
             System.arraycopy(new byte[]{
