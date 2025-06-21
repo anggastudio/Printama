@@ -65,7 +65,10 @@ public class DeviceListFragment extends DialogFragment {
         testButton.setOnClickListener(v -> testPrinter());
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
-        selectedDeviceAddress = Printama.getPrinter().getAddress();
+
+        if (Printama.getPrinter() != null) {
+            selectedDeviceAddress = Printama.getPrinter().getAddress();
+        }
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
