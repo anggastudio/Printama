@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -16,19 +15,12 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.RequiresPermission;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import com.anggastudio.printama.constants.PA;
 import com.anggastudio.printama.constants.PW;
-import com.anggastudio.printama.ui.ChoosePrinterWidthFragment;
-import com.anggastudio.printama.ui.DeviceListFragment;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -149,7 +141,8 @@ public class Printama {
     }
 
     public static void resetPrinterConnection() {
-
+        Pref.setString(Pref.SAVED_DEVICE, "");
+        Pref.setBoolean(Pref.IS_PRINTER_3INCH, false);
     }
 
     public static void savePrinter(String mPrinterAddress) {
@@ -207,13 +200,6 @@ public class Printama {
             printama.close();
         });
     }
-
-
-
-
-
-
-
 
 
     //----------------------------------------------------------------------------------------------
