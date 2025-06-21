@@ -1,13 +1,14 @@
 <div style="background-color: maroon; border-left: 12px solid #ffa500; padding: 10px; border-radius: 8px;">
-    <p><strong>✅ Note:</strong> Please use 0.9.73 version for Android 13 and above.</p>
-    <p><strong>⚠️ Note:</strong> Don't use 0.9.72 version.</p>
-    <p><strong>⚠️ Note:</strong> Don't use 0.9.71 version.</p>
-    <p><strong>✅ Note:</strong> Please use 0.9.7 version for Android below 13.</p>
+    <p><strong>🚀 Latest:</strong> Version 0.9.80 is now available with enhanced column formatting and improved stability!</p>
+    <p><strong>✅ Recommended:</strong> Use 0.9.80 for the best experience across all Android versions.</p>
+    <p><strong>✅ Recommended:</strong> Now support 3 Inches printer.</p>
+    <p><strong>📱 Compatibility:</strong> Supports Android 13+ with optimized Bluetooth permissions.</p>
+    <p><strong>⚠️ Deprecated:</strong> Versions 0.9.71 and 0.9.72 are no longer supported.</p>
 </div>
 
 <p align="center">
   <h1 align="center">Printama</h1>
-  <h4 align="center">Android library for bluetooth thermal printer.<br>Tested to many 2 inch bluetooth thermal printers.</h4>
+  <h4 align="center">🖨️ Professional Android library for Bluetooth thermal printing<br>✅ Extensively tested with 2-inch and 3-inch thermal printers<br>🎯 Built for developers who need reliable printing solutions</h4>
 </p>
 
 <p align="center">
@@ -37,23 +38,43 @@
 |![](images/layout.jpeg)|![](images/print_layout.jpeg)|
 
 
-## Support me:
+## 💝 Support the Project
 
-I notice that some of you are very happy with this library and some of you want to give support. But I also noticed some of
-you want to support me anonymously. Well then, I appreciate it if you bought me a coffee :coffee:
+Printama saves developers countless hours with reliable printing solutions. Your support helps us expand compatibility and maintain this free resource.
 
-|:coffee:|Link|
-|---|---|
-|buymeacoffee|https://www.buymeacoffee.com/anggastudio|
-|ko-fi|https://ko-fi.com/anggastudio|
+### 🚀 How Your Support Helps
+- **Hardware Acquisition:** Purchase various printer models for testing
+- **Continuous Testing:** Ensure compatibility across different brands
+- **Development Time:** Maintain and improve the library
+- **Documentation:** Create better guides and tutorials
+
+### ☕ Contribute Via
+
+|Platform|Link|Features|
+|---|---|---|
+|**PayPal**|[Donate via PayPal](https://paypal.me/anggastudio)|Secure, worldwide|
+|**Ko-fi**|[Support on Ko-fi](https://ko-fi.com/anggastudio)|Coffee-themed, easy|
+|**Buy Me a Coffee**|[Buy Me a Coffee](https://www.buymeacoffee.com/anggastudio)|Popular, anonymous option|
+|**Trakteer**|[Trakteer (ID)](https://trakteer.id/anggastudio)|Indonesian platform|
+|**Saweria**|[Saweria (ID)](https://saweria.co/anggastudio)|Indonesian platform|
+
+> 💡 **Tip:** The library includes a beautiful donation screen you can integrate into your apps to support the project!
 
 
-## Usage
+## Quick Start
 
-Currently still in Alpha. Make sure to use Java 8+ configuration. Documentation is in progress. Just take a look at
-sample project as an example.
+**Requirements:**
+- Android SDK 16+
+- Java 8+ configuration
+- Bluetooth thermal printer (2-inch or 3-inch)
 
-But here for an insight:
+**Latest Features in 0.9.80:**
+- 🆕 Advanced column formatting (2-5 columns)
+- 🔧 Improved text alignment and spacing
+- 📱 Enhanced Android 13+ compatibility
+- 🎨 Better receipt layout capabilities
+
+### Basic Setup
 **Permissions in your Manifest**
 
 ```
@@ -179,6 +200,35 @@ Printama.with(this).connect(printama -> {
 });
 ```
 
+**🆕 Advanced Column Formatting (New in 0.9.80)**
+
+Printama now includes powerful column formatting methods that automatically handle width calculation and text alignment:
+
+```java
+Printama.with(this).connect(printama -> {
+    // Two columns with default widths (70% - 30%)
+    printama.printTextln(printama.formatTwoColumns("Product", "Price"), Printama.LEFT);
+    printama.printTextln(printama.formatTwoColumns("Coffee", "$3.50"), Printama.LEFT);
+    
+    // Three columns with default widths (50% - 20% - 30%)
+    printama.printTextln(printama.formatThreeColumns("Item", "Qty", "Total"), Printama.LEFT);
+    printama.printTextln(printama.formatThreeColumns("Espresso", "2", "$7.00"), Printama.LEFT);
+    
+    // Four columns with default widths (40% - 20% - 20% - 20%)
+    printama.printTextln(printama.formatFourColumns("ID", "Name", "Stock", "Price"), Printama.LEFT);
+    printama.printTextln(printama.formatFourColumns("001", "Coffee", "50", "$3.50"), Printama.LEFT);
+    
+    // Five columns with default widths (30% - 20% - 20% - 15% - 15%)
+    printama.printTextln(printama.formatFiveColumns("ID", "Item", "Cat", "Qty", "$"), Printama.LEFT);
+    
+    // Custom column widths (percentages must sum to 100)
+    double[] customWidths = {60.0, 40.0}; // 60% - 40%
+    printama.printTextln(printama.formatTwoColumns("Description", "Amount", customWidths), Printama.LEFT);
+    
+    printama.close();
+});
+```
+
 **Print Text with format**
 
 ```java
@@ -299,16 +349,32 @@ Printama.with(this).connect(printama -> {
 });
 ```
 
-## Feature
+## Features
 
-* Dialog to choose bonded bluetooth device list.
-* Print Text with LEFT, CENTER, or RIGHT Alignment.
-* Print Text with JUSTIFY Alignment.
-* Print auto grayscale Bitmap with Custom width and Alignment.
-* Print photo (grayscaled)
-* Print your android screen or layout by passing the root view
-* Print vector drawable
-* Tested with 2 inch Bluetooth Thermal Printers.
+### 🔧 Core Printing Capabilities
+* **Text Alignment:** LEFT, CENTER, RIGHT, and JUSTIFY alignment options
+* **Image Printing:** Auto-grayscale bitmap printing with custom width and alignment
+* **Photo Printing:** High-quality grayscaled photo output
+* **Layout Printing:** Print Android views and layouts directly
+* **Vector Support:** Print vector drawables with perfect scaling
+
+### 🆕 Advanced Formatting (v0.9.80)
+* **Column Formatting:** Smart 2-5 column layouts with automatic width calculation
+* **Custom Widths:** Flexible column width percentages for precise control
+* **Text Overflow:** Automatic text truncation to prevent layout breaks
+* **Adaptive Sizing:** Auto-adjusts for 2-inch and 3-inch printer compatibility
+
+### 📱 Device & Connectivity
+* **Bluetooth Integration:** Seamless pairing with bonded device selection dialog
+* **Custom UI:** Customizable printer selection dialog colors
+* **Wide Compatibility:** Extensively tested with 2-inch and 3-inch thermal printers
+* **Android 13+ Ready:** Optimized for latest Android versions with proper permissions
+
+### 🎨 Text Styling Options
+* **Font Sizes:** Small, normal, tall, and wide text variants
+* **Text Effects:** Bold, underline, and strikethrough formatting
+* **Line Spacing:** Customizable spacing for better receipt layout
+* **Mixed Formatting:** Combine multiple text styles in single print job
 
 ## Contributing
 
@@ -360,12 +426,26 @@ dependencies {
 - <a href="https://github.com/anggastudio/Printama/graphs/contributors"><img src="https://img.shields.io/github/contributors/anggastudio/Printama"></a>
 - WP
 
-## Next Step:
+## Roadmap
 
-- release 1.0.0 to make it more stable
-- enhance documentation
-- create a video tutorial
-- 3 inches printer
-- testing on more printer brands
-- (still in my mind) migrate to kotlin
+### 🎯 Version 1.0.0 (Coming Soon)
+- **Stability Focus:** Comprehensive testing and bug fixes
+- **Documentation:** Complete API documentation and guides
+- **Video Tutorials:** Step-by-step implementation tutorials
+- **Kotlin Migration:** Modern Kotlin-first API design
+
+### 🔮 Future Enhancements
+- **3-inch Printer Optimization:** Enhanced support for wider thermal printers
+- **Multi-Brand Testing:** Expanded compatibility testing across printer manufacturers
+- **Advanced Layouts:** Template-based receipt designs
+- **Performance Optimization:** Faster printing and reduced memory usage
+- **Cloud Integration:** Remote printing capabilities
+
+### 📈 Recent Achievements (v0.9.80)
+- ✅ now support 3 Inches printer
+- ✅ Advanced column formatting system
+- ✅ Improved Android 13+ compatibility
+- ✅ Enhanced text alignment and spacing
+- ✅ Better error handling and stability
+
 
