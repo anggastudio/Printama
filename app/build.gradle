@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.anggastudio.printama_sample'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.anggastudio.printama_sample"
-        minSdk 19
-        targetSdk 34
+        minSdk 24
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 

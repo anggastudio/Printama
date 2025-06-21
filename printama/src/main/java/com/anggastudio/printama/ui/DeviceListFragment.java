@@ -1,5 +1,6 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama.ui;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,10 +10,14 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.R;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -21,7 +26,7 @@ public class DeviceListFragment extends DialogFragment {
 
     private Printama.OnConnectPrinter onConnectPrinter;
     private Set<BluetoothDevice> bondedDevices;
-    private String mPrinterName;
+    private String selectedDeviceAddress;
     private Button saveButton;
     private Button testButton;
     private int inactiveColor;
@@ -51,6 +56,7 @@ public class DeviceListFragment extends DialogFragment {
         this.bondedDevices = bondedDevices;
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -59,15 +65,18 @@ public class DeviceListFragment extends DialogFragment {
         testButton.setOnClickListener(v -> testPrinter());
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
-        mPrinterName = Pref.getString(Pref.SAVED_DEVICE);
+
+        if (Printama.getPrinter() != null) {
+            selectedDeviceAddress = Printama.getPrinter().getAddress();
+        }
 
         RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
-        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, mPrinterName);
+        DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, selectedDeviceAddress);
         rvDeviceList.setAdapter(adapter);
-        adapter.setOnConnectPrinter(printerName -> {
-            this.mPrinterName = printerName;
+        adapter.setOnConnectPrinter(device -> {
+            this.selectedDeviceAddress = device.getAddress();
             toggleButtons();
         });
     }
@@ -91,13 +100,14 @@ public class DeviceListFragment extends DialogFragment {
 
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void testPrinter() {
-        Printama.with(getActivity(), mPrinterName).printTest();
+        Printama.with(getActivity(), selectedDeviceAddress).printTest();
     }
 
     private void toggleButtons() {
         if (getContext() != null) {
-            if (mPrinterName != null) {
+            if (selectedDeviceAddress != null) {
                 testButton.setBackgroundColor(activeColor);
                 saveButton.setBackgroundColor(activeColor);
             } else {
@@ -107,10 +117,12 @@ public class DeviceListFragment extends DialogFragment {
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void savePrinter() {
-        Pref.setString(Pref.SAVED_DEVICE, mPrinterName);
+        Printama.savePrinter(selectedDeviceAddress);
         if (onConnectPrinter != null) {
-            onConnectPrinter.onConnectPrinter(mPrinterName);
+            BluetoothDevice device = Printama.getPrinter(); // saved printer
+            onConnectPrinter.onConnectPrinter(device);
         }
         dismiss();
     }

@@ -1,5 +1,6 @@
 package com.anggastudio.printama_sample;
 
+import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.print.PrinterCapabilitiesInfo;
 import android.print.PrinterId;
 import android.print.PrinterInfo;
 import android.printservice.PrintDocument;
+import android.printservice.PrintJob;
 import android.printservice.PrintService;
 import android.printservice.PrinterDiscoverySession;
 import android.util.Log;
@@ -19,8 +21,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RequiresPermission;
 
 
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama.Printama;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
@@ -35,7 +39,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiresApi(api = Build.VERSION_CODES.KITKAT)
 public class PrintamaPrintService extends PrintService {
 
     @Override
@@ -115,12 +118,13 @@ public class PrintamaPrintService extends PrintService {
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
-    protected void onPrintJobQueued(android.printservice.PrintJob printJob) {
+    protected void onPrintJobQueued(PrintJob printJob) {
         try {
             if (Util.isAllowToPrint()) {
                 PrintDocument printDocument = printJob.getDocument();
-                if (printDocument != null && printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
+                if (printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
                     FileInputStream inputStream = new FileInputStream(printDocument.getData().getFileDescriptor());
 
                     // Convert the PDF data to a list of bitmaps
@@ -149,10 +153,11 @@ public class PrintamaPrintService extends PrintService {
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printBitmap(List<Bitmap> bitmaps) {
         Printama.with(this).connect(printama -> {
             for (Bitmap bitmap : bitmaps) {
-                printama.printImage(bitmap, Printama.FULL_WIDTH);
+                printama.printImage(bitmap, PW.FULL_WIDTH);
             }
             printama.close();
         }, this::showToast);

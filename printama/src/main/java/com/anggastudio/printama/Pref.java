@@ -5,12 +5,12 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 class Pref {
-
-    private Pref(){
+    private Pref() {
         // empty constructor
     }
 
     static final String SAVED_DEVICE = "bonded_device";
+    static final String IS_PRINTER_3INCH = "is_printer_3inch";
     private static SharedPreferences sharedPreferences;
 
     static void init(Context context) {
@@ -31,4 +31,15 @@ class Pref {
         editor.apply();
     }
 
+    static boolean getBoolean(String key) {
+        if (sharedPreferences == null) return false;
+        return sharedPreferences.getBoolean(key, false);
+    }
+
+    static void setBoolean(String key, boolean value) {
+        if (sharedPreferences == null) return;
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
 }

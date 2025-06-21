@@ -1,232 +1,762 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:layout_gravity="center"
+    android:background="@color/colorWhite"
     android:orientation="vertical"
-    tools:context="com.anggastudio.printama_sample.TestActivity">
-
-    <Button
-        android:id="@+id/btn_simple_print_test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Simple Test"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
+    android:scrollbars="none"
+    tools:context="com.anggastudio.printama_sample.PrintTestActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="108dp">
 
-        <Button
-            android:id="@+id/btn_print_text_left"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="start|center"
-            android:text="Print Text Left"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
+            android:gravity="center|start"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_print_text_center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Text Center"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:padding="8dp"
+                android:rotation="180"
+                android:src="@drawable/tabler_arrow_right" />
 
-        <Button
-            android:id="@+id/btn_print_text_right"
-            android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advance Print Test"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="end|center"
-            android:text="Print Text Right"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_simple_print_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Simple Test"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_feed_paper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Feed Paper"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/tabler_letter_case"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="Print Texts"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_text_left"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="start"
+                    android:padding="8dp"
+                    android:text="Print Text\nLeft"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_text_center"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Text\nCenter"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_text_right"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="end"
+                    android:padding="8dp"
+                    android:text="Print Text\nRight"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_text_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Text Styles"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_text_justify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:padding="8dp"
+                        android:rotation="180"
+                        android:src="@drawable/tabler_arrow_right"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:drawablePadding="8dp"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Print Text Justified Alignment"
+                        android:textColor="@color/colorGrayE"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:padding="8dp"
+                        android:src="@drawable/tabler_arrow_right"
+                        app:tint="@color/white" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/tabler_photo"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="Print Images"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_left"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="start"
+                    android:padding="8dp"
+                    android:text="Print Image\nLeft"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_center"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\nCenter"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_right"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="end"
+                    android:padding="8dp"
+                    android:text="Print Image\nRight"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_ori"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image Original Width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_full"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image Full Width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_width_1_4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\n1/4 width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_width_1_2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\n1/2 width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_width_3_4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\n3/4 width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_width_1_3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\n1/3 width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_width_2_3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image\n2/3 width"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_image_photo"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Image Photo"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print This Layout"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|start"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/tabler_receipt"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="Print Example Receipts"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_receipt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Receipt 1"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_receipt2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Receipt 2"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_receipt3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Receipt 3 columns"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_print_receipt4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Print Receipt 4 columns"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_print_text_style"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Many Text Style"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
-
-    <Button
-        android:id="@+id/btn_print_text_justify"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Text Justify Alignment"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_print_image_left"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="start|center"
-            android:text="Print Image Left"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_print_image_center"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Image Center"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_print_image_right"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:gravity="end|center"
-            android:text="Print Image Right"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_print_image_full"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Image Full Width"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
-
-    <Button
-        android:id="@+id/btn_print_image_ori"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorAccent"
-        android:text="Print Image Original Width"
-        android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
-        android:textSize="12sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_print_background"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Image Background"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_print_image_photo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Image Photo"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_print_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print This Layout"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btn_print_receipt"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Receipt QR1"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/btn_print_receipt2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="Print Receipt QR2"
-            android:textAllCaps="false"
-            android:textColor="@color/colorWhite"
-            android:textSize="12sp" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

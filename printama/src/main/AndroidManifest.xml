@@ -21,7 +21,7 @@
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
 
     <application>
-        <activity android:name=".ChoosePrinterActivity"></activity>
+        <activity android:name=".ui.ChoosePrinterActivity"></activity>
     </application>
 
 </manifest>

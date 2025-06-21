@@ -1,64 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <!--BLUETOOTH PERMISSION-->
     <!-- Request legacy Bluetooth permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!-- Needed only if your app looks for Bluetooth devices.
-             If your app doesn't use Bluetooth scan results to derive physical
-             location information, you can strongly assert that your app
-             doesn't derive physical location. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <!-- Needed only if your app makes the device discoverable to Bluetooth
-      devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
-    <!-- Needed only if your app communicates with already-paired Bluetooth
-           devices. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" /> <!-- Needed for looks for Bluetooth devices. -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="31" /> <!-- Needed for communicates with already-paired Bluetooth devices. -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <!--bibo01 : hardware option-->
-    <uses-feature android:name="android.hardware.bluetooth" android:required="false"/>
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+    <!--
+ on Android 12 and higher, this app never derives physical location from
+         Bluetooth scan results and doesn't need location access for any other purpose.
+    -->
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" /> <!-- bibo01 : hardware option -->
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PrintamaLib"
-        tools:targetApi="31">
-        <activity android:name="com.anggastudio.printama_sample.MainActivity"
+        android:theme="@style/Theme.PrintamaLib">
+        <activity
+            android:name=".DonationScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".TitleScreenActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="image/*" />
-            </intent-filter>
         </activity>
         <activity
-            android:name="com.anggastudio.printama_sample.TestActivity"
+            android:name=".PrintTestActivity"
             android:exported="false" />
 
         <service
-            android:name="com.anggastudio.printama_sample.PrintamaPrintService"
-            android:permission="android.permission.BIND_PRINT_SERVICE"
-            android:exported="true">
+            android:name=".PrintamaPrintService"
+            android:exported="true"
+            android:permission="android.permission.BIND_PRINT_SERVICE">
             <intent-filter>
-                <action android:name="android.printservice.PrintService"/>
+                <action android:name="android.printservice.PrintService" />
             </intent-filter>
         </service>
     </application>

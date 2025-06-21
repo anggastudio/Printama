@@ -1,20 +1,25 @@
 package com.anggastudio.printama_sample;
 
 import android.Manifest;
-import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -23,6 +28,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.PrintamaUI;
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
 
@@ -44,85 +51,200 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-
-        findViewById(R.id.btn_printer_settings).setOnClickListener(v -> showPrinterList());
         SharedPref.init(MainActivity.this);
-        checkBluetoothPermission();
 
+        // back button
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            getOnBackPressedDispatcher().onBackPressed();
+        });
+
+        // connect printer button
+        findViewById(R.id.btn_printer_settings).setOnClickListener(v -> connectToPrinter(true));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // Check if the activity was started by a share intent
+        checkBluetoothPermission();
+        checkSharedImageIntent();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void checkSharedImageIntent() {
         Intent intent = getIntent();
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
+        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
             handleSharedImage(intent);
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
             handleSharedImages(intent);
+        }
+    }
+
+    private void connectToPrinter(boolean isTriggered) {
+        // Check if the permission is not granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            if (isTriggered) {
+                // Permission is not granted
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_CONNECT)
+                        || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.BLUETOOTH_SCAN)) {
+                    // Permission is denied
+                    new AlertDialog.Builder(this)
+                            .setTitle("Bluetooth Connect Permission (Nearby Devices) is Denied")
+                            .setMessage("Printing feature will not active since bluetooth connect (Nearby Devices) permission is not granted. Please open your app settings and allow Nearby devices permission")
+                            .setPositiveButton("Open Settings", (dialog, which) -> openDeviceSettings())
+                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                            .show();
+                } else {
+                    // ask permission
+                    requestBluetoothPermission();
+                }
+            }
+        } else {
+            // Permission has already been granted
+            showPrinterList();
+        }
+    }
+
+    private void openDeviceSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void requestBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.BLUETOOTH_SCAN,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                    },
+                    PERMISSION_REQUEST_BLUETOOTH_CONNECT);
+        } else {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, PERMISSION_REQUEST_BLUETOOTH_CONNECT);
         }
     }
 
     private void checkBluetoothPermission() {
         // Check if the permission is not granted
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted, request the permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN},
-                    PERMISSION_REQUEST_BLUETOOTH_CONNECT);
-        } else {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, android.Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED) {
             // Permission has already been granted
-            // You can proceed with your Bluetooth functionality here
-            getSavedPrinter();
+            checkPrinterConnection();
+        } else {
+            hideAfterConnectLayout();
         }
     }
 
-    private void getSavedPrinter() {
-        BluetoothDevice connectedPrinter = Printama.with(this).getConnectedPrinter();
-        if (connectedPrinter != null) {
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            String text = "Connected to : " + connectedPrinter.getName();
-            connectedTo.setText(text);
-            findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void showAfterConnectLayout() {
+        findViewById(R.id.printer_connected_layout).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.btn_printer_simple_test).setOnClickListener(v -> simplePrintTest());
+        findViewById(R.id.btn_printer_advance_test).setOnClickListener(v -> gotoTestActivity());
+        findViewById(R.id.btn_printer_width).setOnClickListener(v -> choosePrinterWidth());
+        findViewById(R.id.btn_reset).setOnClickListener(v -> resetPrinterConnection());
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void simplePrintTest() {
+        // Show loading indicator if needed
+        Printama.with(this).printTest();
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void choosePrinterWidth() {
+        PrintamaUI.showIs3inchesDialog(this, is3inches -> {
+            Printama.is3inchesPrinter(is3inches);
+            displayPrinterWidthInfo();
+        });
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void displayPrinterWidthInfo() {
+        boolean is3inches = Printama.is3inchesPrinter();
+        TextView tvPrinterWidth = findViewById(R.id.tv_printer_width_info);
+        if (is3inches) {
+            tvPrinterWidth.setText("3 inches");
+        } else {
+            tvPrinterWidth.setText("2 inches");
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void resetPrinterConnection() {
+        Printama.resetPrinterConnection();
+        checkPrinterConnection();
+    }
+
+    private void hideAfterConnectLayout() {
+        findViewById(R.id.printer_connected_layout).setVisibility(View.GONE);
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void checkPrinterConnection() {
+        String deviceNameDisplay = Printama.getSavedPrinterName(this);
+        TextView tvPrinterConnectionInfo = findViewById(R.id.tv_printer_info);
+        TextView btnConnect = findViewById(R.id.btn_connect);
+        if (deviceNameDisplay == null || deviceNameDisplay.isEmpty()) {
+            tvPrinterConnectionInfo.setText("Printer is not connected");
+            btnConnect.setText("Connect");
+            hideAfterConnectLayout();
+        } else {
+            tvPrinterConnectionInfo.setText("Printer is connected to:");
+            btnConnect.setText(deviceNameDisplay);
+            showAfterConnectLayout();
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showPrinterList() {
-        Printama.showPrinterList(this, R.color.black, printerName -> {
-            Toast.makeText(this, printerName, Toast.LENGTH_SHORT).show();
-            TextView connectedTo = findViewById(R.id.tv_printer_info);
-            String text = "Connected to : " + printerName;
-            connectedTo.setText(text);
-            if (!printerName.contains("failed")) {
-                findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-                findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+        PrintamaUI.showPrinterList(this, selectedDevice -> {
+            if (selectedDevice != null) {
+                // do whatever with the selectedDevice
+                checkPrinterConnection();
+                showAfterConnectLayout();
+                // you can also get the printer name from Printama.getSavedPrinterName
+                String deviceNameDisplay = Printama.getSavedPrinterName(this);
+                showToast("Connected to " + deviceNameDisplay);
+            } else {
+                // failed to choose printer
+                hideAfterConnectLayout();
             }
         });
     }
 
-    private void showPrinterListActivity() {
-        // only use this when your project is not androidX
-        Printama.showPrinterList(this);
-    }
-
-    private void testPrinter() {
-        Intent intent = new Intent(MainActivity.this, TestActivity.class);
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void gotoTestActivity() {
+        Intent intent = new Intent(MainActivity.this, PrintTestActivity.class);
         ContextCompat.startActivity(this, intent, new Bundle());
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String printerName = Printama.getPrinterResult(resultCode, requestCode, data);
+        String printerName = PrintamaUI.getPrinterResult(resultCode, requestCode, data);
         showResult(printerName);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void showResult(String printerName) {
-        showToast(printerName);
-        TextView connectedTo = findViewById(R.id.tv_printer_info);
-        String text = "Connected to : " + printerName;
-        connectedTo.setText(text);
-        if (!printerName.contains("failed")) {
-            findViewById(R.id.btn_printer_test).setVisibility(View.VISIBLE);
-            findViewById(R.id.btn_printer_test).setOnClickListener(v -> testPrinter());
+        if (printerName != null && !printerName.isEmpty()) {
+            checkPrinterConnection();
+            showAfterConnectLayout();
+            String connectionMessage = "Connected to : " + printerName;
+            showToast(connectionMessage);
+        } else {
+            hideAfterConnectLayout();
         }
     }
 
@@ -130,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -143,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void handleSharedImage(Intent intent) {
         Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         // Handle the single shared image URI here
@@ -151,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
         printImageReceived(imageUri);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void handleSharedImages(Intent intent) {
         ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         // Handle the multiple shared image URIs here
@@ -159,13 +284,14 @@ public class MainActivity extends AppCompatActivity {
         printImageReceived(imageUris.get(0));
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printImageReceived(Uri imageUri) {
         Bitmap bitmap = convertUriToBitmap(imageUri);
         if (bitmap != null) {
-            if(Util.isAllowToPrint()) {
+            if (Util.isAllowToPrint()) {
                 // Print the bitmap as
                 Printama.with(this).connect(printama -> {
-                    printama.printImage(bitmap, Printama.FULL_WIDTH);
+                    printama.printImage(bitmap, PW.FULL_WIDTH);
                     printama.close();
                 }, this::showToast);
             } else {
@@ -179,15 +305,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Handle the result of the permission request
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_BLUETOOTH_CONNECT) {
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted
                 // You can proceed with your Bluetooth functionality here
-                getSavedPrinter();
+                checkPrinterConnection();
             } else {
                 // Permission denied
                 // You can handle this case as per your app's requirement

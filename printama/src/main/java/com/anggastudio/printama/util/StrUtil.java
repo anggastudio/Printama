@@ -1,4 +1,4 @@
-package com.anggastudio.printama;
+package com.anggastudio.printama.util;
 
 public class StrUtil {
 
@@ -6,7 +6,7 @@ public class StrUtil {
 
     }
 
-    static String encodeNonAscii(String text) {
+    public static String encodeNonAscii(String text) {
         return text.replace('á', 'a')
                 .replace('č', 'c')
                 .replace('ď', 'd')
