@@ -61,12 +61,15 @@ Printama saves developers countless hours with reliable printing solutions. Your
 
 #### 💰 USDT Donation Details
 **Network:** BEP20 (Binance Smart Chain)  
-**Address:** `0x7A65cc9d8031f67847662cC92Fa93b71dCc95605`
+**Address:**
+```
+0x7A65cc9d8031f67847662cC92Fa93b71dCc95605
+```
 
 - **With Trust Wallet:** Click the USDT link above to open Trust Wallet directly
 - **Manual Transfer:** Copy the address above and send USDT via any BEP20-compatible wallet
 
-> 💡 **Tip:** The library includes a beautiful donation screen you can integrate into your apps to support the project!
+> 💡 **Tip:** The library includes a beautiful donation screen in the sample app!
 
 
 ## Quick Start
@@ -416,7 +419,13 @@ version: [![](https://jitpack.io/v/anggastudio/Printama.svg)](https://jitpack.io
 
 ```gradle
 dependencies {
+  ... 
+  #groovy
   implementation 'com.github.anggastudio:Printama:<version>'
+  #kts
+  implementation("com.github.anggastudio:Printama:<version>")
+  ...
+}
 ```
 
 #### Other like Maven, SBT, Leiningen:
