@@ -57,6 +57,14 @@ Printama saves developers countless hours with reliable printing solutions. Your
 |**Buy Me a Coffee**|[Buy Me a Coffee](https://www.buymeacoffee.com/anggastudio)|Popular, anonymous option|
 |**Trakteer**|[Trakteer (ID)](https://trakteer.id/anggastudio)|Indonesian platform|
 |**Saweria**|[Saweria (ID)](https://saweria.co/anggastudio)|Indonesian platform|
+|**USDT (BEP20)**|[Pay via Trust Wallet](https://link.trustwallet.com/send?coin=20000714&address=0x7A65cc9d8031f67847662cC92Fa93b71dCc95605&token_id=0x55d398326f99059fF775485246999027B3197955)|Crypto, decentralized|
+
+#### 💰 USDT Donation Details
+**Network:** BEP20 (Binance Smart Chain)  
+**Address:** `0x7A65cc9d8031f67847662cC92Fa93b71dCc95605`
+
+- **With Trust Wallet:** Click the USDT link above to open Trust Wallet directly
+- **Manual Transfer:** Copy the address above and send USDT via any BEP20-compatible wallet
 
 > 💡 **Tip:** The library includes a beautiful donation screen you can integrate into your apps to support the project!
 
