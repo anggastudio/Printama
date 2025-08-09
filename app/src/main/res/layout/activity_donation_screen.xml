@@ -5,10 +5,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center"
     android:background="@color/colorYellow"
     android:gravity="center"
-    android:orientation="vertical"
+    android:paddingVertical="32dp"
     tools:context=".DonationScreenActivity">
 
     <TextView
@@ -225,6 +224,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

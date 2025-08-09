@@ -3,6 +3,7 @@ package com.anggastudio.printama_sample;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +30,10 @@ public class TitleScreenActivity extends AppCompatActivity {
         findViewById(R.id.btn_github).setOnClickListener(v -> gotoGithubPage());
         findViewById(R.id.btn_donate).setOnClickListener(v -> gotoDonatePage());
 
+        String appVersion = BuildConfig.VERSION_NAME;
+        String appVersionDisplay = "Version " + appVersion;
+        TextView tvAppVersion = findViewById(R.id.tv_app_version);
+        tvAppVersion.setText(appVersionDisplay);
     }
 
     private void gotoGithubPage() {

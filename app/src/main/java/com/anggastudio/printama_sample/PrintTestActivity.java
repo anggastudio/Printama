@@ -372,7 +372,7 @@ public class PrintTestActivity extends AppCompatActivity {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printQrReceipt2() {
         Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
-        String qrData = "https://printama.anggastudio.com/payment/12345";
+        String qrData = "https://printama.anggastudio.dev/payment/12345";
         
         Printama.with(this).connect(printama -> {
             // Header Section
