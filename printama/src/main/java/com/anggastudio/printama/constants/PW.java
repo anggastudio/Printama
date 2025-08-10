@@ -13,6 +13,7 @@ public class PW {
      * will not calculated anything, will just get the width using Bitmap.getWidth()
      */
     public static final int ORIGINAL_WIDTH = 0;
+    
     /**
      * Prints the image using the full width of the printer paper
      * For 2-inch printer: approximately 384px

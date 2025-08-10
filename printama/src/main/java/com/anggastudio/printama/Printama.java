@@ -28,27 +28,76 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Printama {
 
     /**
-     * @deprecated As of release 1.0.0, replaced by {@link PA#CENTER} instead
+     * @deprecated As of release 1.0.0, replaced by {@link PA#CENTER}.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printText(Printama.CENTER, "Hello");
+     * 
+     * // New way
+     * printText("Hello", PA.CENTER);
+     * </pre>
+     * This constant will be removed in version 2.0.0.
      */
     @Deprecated
     public static final int CENTER = -1;
+    
     /**
-     * @deprecated As of release 1.0.0, replaced by {@link PA#RIGHT} instead
+     * @deprecated As of release 1.0.0, replaced by {@link PA#RIGHT}.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printText(Printama.RIGHT, "Hello");
+     * 
+     * // New way
+     * printText("Hello", PA.RIGHT);
+     * </pre>
+     * This constant will be removed in version 2.0.0.
      */
     @Deprecated
     public static final int RIGHT = -2;
+    
     /**
-     * @deprecated As of release 1.0.0, replaced by {@link PA#LEFT} instead
+     * @deprecated As of release 1.0.0, replaced by {@link PA#LEFT}.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printText(Printama.LEFT, "Hello");
+     * 
+     * // New way
+     * printText("Hello", PA.LEFT);
+     * </pre>
+     * This constant will be removed in version 2.0.0.
      */
     @Deprecated
     public static final int LEFT = 0;
+    
     /**
-     * @deprecated As of release 1.0.0, replaced by {@link PW#FULL_WIDTH} instead
+     * @deprecated As of release 1.0.0, replaced by {@link PW#FULL_WIDTH}.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printImage(Printama.CENTER, bitmap, Printama.FULL_WIDTH);
+     * 
+     * // New way
+     * printImage(bitmap, PW.FULL_WIDTH, PA.CENTER);
+     * </pre>
+     * This constant will be removed in version 2.0.0.
      */
     @Deprecated
     public static final int FULL_WIDTH = -1;
+    
     /**
-     * @deprecated As of release 1.0.0, replaced by {@link PW#ORIGINAL_WIDTH} instead
+     * @deprecated As of release 1.0.0, replaced by {@link PW#ORIGINAL_WIDTH}.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printImage(Printama.CENTER, bitmap, Printama.ORIGINAL_WIDTH);
+     * 
+     * // New way
+     * printImage(bitmap, PW.ORIGINAL_WIDTH, PA.CENTER);
+     * </pre>
+     * This constant will be removed in version 2.0.0.
      */
     @Deprecated
     public static final int ORIGINAL_WIDTH = 0;
@@ -62,6 +111,12 @@ public class Printama {
     // CONSTRUCTOR
     //----------------------------------------------------------------------------------------------
 
+    /**
+     * Creates a new Printama instance using the default saved printer.
+     * 
+     * @param context The application context
+     * @throws SecurityException if BLUETOOTH_CONNECT permission is not granted
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public Printama(Context context) {
         Pref.init(context);
@@ -70,6 +125,13 @@ public class Printama {
         _util.isIs3InchPrinter(is3inchesPrinter());
     }
 
+    /**
+     * Creates a new Printama instance with a specific printer address.
+     * 
+     * @param context The application context
+     * @param printerAddress The Bluetooth address of the target printer
+     * @throws SecurityException if BLUETOOTH_CONNECT permission is not granted
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public Printama(Context context, String printerAddress) {
         Pref.init(context);
@@ -78,6 +140,14 @@ public class Printama {
         _util.isIs3InchPrinter(is3inchesPrinter());
     }
 
+    /**
+     * Creates a Printama instance with callback for connection events.
+     * 
+     * @param context The application context
+     * @param callback Callback to receive the Printama instance
+     * @return Printama instance
+     * @throws SecurityException if BLUETOOTH_CONNECT permission is not granted
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static Printama with(Context context, Callback callback) {
         Printama printama = new Printama(context);
@@ -85,12 +155,27 @@ public class Printama {
         return printama;
     }
 
+    /**
+     * Creates a Printama instance using the default saved printer.
+     * 
+     * @param context The application context
+     * @return Printama instance
+     * @throws SecurityException if BLUETOOTH_CONNECT permission is not granted
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static Printama with(Context context) {
         _printama = new Printama(context);
         return _printama;
     }
 
+    /**
+     * Creates a Printama instance with a specific printer name.
+     * 
+     * @param context The application context
+     * @param printerName The name of the target printer
+     * @return Printama instance
+     * @throws SecurityException if BLUETOOTH_CONNECT permission is not granted
+     */
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     public static Printama with(Context context, String printerName) {
         _printama = new Printama(context, printerName);
@@ -259,8 +344,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printImage(Bitmap bitmap, int width, int alignment)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printImage(Bitmap, int, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printImage(PA.CENTER, bitmap, PW.FULL_WIDTH);
+     * 
+     * // New way
+     * printImage(bitmap, PW.FULL_WIDTH, PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public boolean printImage(int alignment, Bitmap bitmap, int width) {
@@ -333,13 +427,21 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printText(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printText(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printText(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printText("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printText(int align, String text) {
-        _util.setAlign(align);
-        _util.printText(text);
+        _util.printText(align, text);
     }
 
     public void printText(String text, int align) {
@@ -348,13 +450,21 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextln(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextln(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextln(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextln("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextln(int align, String text) {
-        _util.setAlign(align);
-        printTextln(text);
+        _util.printTextln(align, text);
     }
 
     public void printTextln(String text, int align) {
@@ -618,8 +728,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextNormal(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextNormal(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextNormal(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextNormal("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextNormal(int align, String text) {
@@ -635,8 +754,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnNormal(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnNormal(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnNormal(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnNormal("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnNormal(int align, String text) {
@@ -665,8 +793,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextBold(int align, String text) {
@@ -684,8 +821,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnBold(int align, String text) {
@@ -717,8 +863,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextTall(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextTall(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextTall(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextTall("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextTall(int align, String text) {
@@ -736,8 +891,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnTall(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnTall(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnTall(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnTall("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnTall(int align, String text) {
@@ -769,8 +933,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextTallBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextTallBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextTallBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextTallBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextTallBold(int align, String text) {
@@ -788,8 +961,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnTallBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnTallBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnTallBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnTallBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnTallBold(int align, String text) {
@@ -821,8 +1003,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextWide(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextWide(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextWide(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextWide("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextWide(int align, String text) {
@@ -840,8 +1031,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnWide(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnWide(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnWide(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnWide("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnWide(int align, String text) {
@@ -873,8 +1073,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextWideBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextWideBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextWideBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextWideBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextWideBold(int align, String text) {
@@ -892,8 +1101,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnWideBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnWideBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnWideBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnWideBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnWideBold(int align, String text) {
@@ -925,8 +1143,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextWideTall(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextWideTall(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextWideTall(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextWideTall("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextWideTall(int align, String text) {
@@ -944,8 +1171,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnWideTall(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnWideTall(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnWideTall(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnWideTall("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnWideTall(int align, String text) {
@@ -977,8 +1213,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextWideTallBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextWideTallBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextWideTallBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextWideTallBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextWideTallBold(int align, String text) {
@@ -996,8 +1241,17 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0,
-     * replaced by {@link Printama#printTextlnWideTallBold(String text, int align)} instead
+     * @deprecated As of release 1.0.0, parameter order changed for consistency.
+     * Use {@link #printTextlnWideTallBold(String, int)} instead.
+     * <p>Migration example:</p>
+     * <pre>
+     * // Old way (deprecated)
+     * printTextlnWideTallBold(PA.CENTER, "Hello World");
+     * 
+     * // New way
+     * printTextlnWideTallBold("Hello World", PA.CENTER);
+     * </pre>
+     * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printTextlnWideTallBold(int align, String text) {
