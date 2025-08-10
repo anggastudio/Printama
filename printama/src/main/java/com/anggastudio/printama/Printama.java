@@ -427,21 +427,21 @@ public class Printama {
     }
 
     /**
-     * @deprecated As of release 1.0.0, parameter order changed for consistency.
-     * Use {@link #printText(String, int)} instead.
+     * @deprecated As of release 1.0.0, replaced by {@link #printText(String, int)}.
      * <p>Migration example:</p>
      * <pre>
      * // Old way (deprecated)
-     * printText(PA.CENTER, "Hello World");
+     * printText(Printama.CENTER, "Hello");
      * 
      * // New way
-     * printText("Hello World", PA.CENTER);
+     * printText("Hello", PA.CENTER);
      * </pre>
      * This method will be removed in version 2.0.0.
      */
     @Deprecated
     public void printText(int align, String text) {
-        _util.printText(align, text);
+        _util.setAlign(align);
+        _util.printText(text);
     }
 
     public void printText(String text, int align) {
@@ -464,7 +464,8 @@ public class Printama {
      */
     @Deprecated
     public void printTextln(int align, String text) {
-        _util.printTextln(align, text);
+        _util.setAlign(align);
+        printTextln(text);
     }
 
     public void printTextln(String text, int align) {
