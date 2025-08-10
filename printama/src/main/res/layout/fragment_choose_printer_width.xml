@@ -4,14 +4,14 @@
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@color/colorGrayFA"
+    android:background="@drawable/dialog_rounded_background"
     tools:context=".ui.DeviceListFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -36,8 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="10dp"
-                android:textColor="@color/colorBlack"
-                android:text="2 inches or 58mm" />
+                android:text="2 inches or 58mm"
+                android:textColor="@color/colorBlack" />
 
             <ImageView
                 android:id="@+id/iv_select_width_2_inches"
@@ -61,8 +61,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="10dp"
-                android:textColor="@color/colorBlack"
-                android:text="3 inches or 80mm" />
+                android:text="3 inches or 80mm"
+                android:textColor="@color/colorBlack" />
 
             <ImageView
                 android:id="@+id/iv_select_width_3_inches"
@@ -78,9 +78,10 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="16dp"
+            android:backgroundTint="@color/colorGray5"
             android:gravity="center"
             android:text="Save"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorGrayE"
             android:textSize="14sp" />
 
     </LinearLayout>

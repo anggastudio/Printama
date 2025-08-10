@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGrayFA"
+    android:background="@drawable/dialog_rounded_background"
     tools:context=".ui.DeviceListFragment">
 
     <ScrollView
@@ -20,10 +20,24 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="20dp"
-                android:textColor="@color/colorBlack"
                 android:text="Choose Printer"
+                android:textColor="@color/colorBlack"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <!-- Empty state TextView - shows when no bonded devices -->
+            <TextView
+                android:id="@+id/tv_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textColor="@color/colorBlack"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:text="No paired Bluetooth printers found.\n\nTap the button below to open Bluetooth settings and pair a printer."
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_device_list"
@@ -45,6 +59,7 @@
                     android:layout_height="50dp"
                     android:layout_marginEnd="2dp"
                     android:layout_marginRight="2dp"
+                    android:backgroundTint="@color/colorGray5"
                     android:gravity="center"
                     android:text="Test"
                     android:textColor="@android:color/white"
@@ -57,6 +72,7 @@
                     android:layout_marginStart="2dp"
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorGray5"
                     android:gravity="center"
                     android:text="Save"
                     android:textColor="@android:color/white"

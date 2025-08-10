@@ -1,12 +1,21 @@
 package com.anggastudio.printama.ui;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +40,8 @@ public class DeviceListFragment extends DialogFragment {
     private Button testButton;
     private int inactiveColor;
     private int activeColor;
+    private RecyclerView rvDeviceList;
+    private TextView emptyStateText;
 
     public DeviceListFragment() {
         // Required empty public constructor
@@ -65,12 +76,39 @@ public class DeviceListFragment extends DialogFragment {
         testButton.setOnClickListener(v -> testPrinter());
         saveButton = view.findViewById(R.id.btn_save_printer);
         saveButton.setOnClickListener(v -> savePrinter());
+        
+        rvDeviceList = view.findViewById(R.id.rv_device_list);
+        emptyStateText = view.findViewById(R.id.tv_empty_state); // Add this TextView to layout
 
         if (Printama.getPrinter() != null) {
             selectedDeviceAddress = Printama.getPrinter().getAddress();
         }
 
-        RecyclerView rvDeviceList = view.findViewById(R.id.rv_device_list);
+        setupDeviceList();
+    }
+
+    /**
+     * Sets up the device list or shows empty state if no devices are available
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void setupDeviceList() {
+        if (bondedDevices == null || bondedDevices.isEmpty()) {
+            showEmptyState();
+        } else {
+            showDeviceList();
+        }
+    }
+
+    /**
+     * Shows the device list when bonded devices are available
+     */
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void showDeviceList() {
+        rvDeviceList.setVisibility(View.VISIBLE);
+        if (emptyStateText != null) {
+            emptyStateText.setVisibility(View.GONE);
+        }
+        
         rvDeviceList.setLayoutManager(new LinearLayoutManager(getContext()));
         ArrayList<BluetoothDevice> bluetoothDevices = new ArrayList<>(bondedDevices);
         DeviceListAdapter adapter = new DeviceListAdapter(bluetoothDevices, selectedDeviceAddress);
@@ -79,6 +117,46 @@ public class DeviceListFragment extends DialogFragment {
             this.selectedDeviceAddress = device.getAddress();
             toggleButtons();
         });
+    }
+
+    /**
+     * Shows empty state when no bonded devices are available
+     */
+    private void showEmptyState() {
+        rvDeviceList.setVisibility(View.GONE);
+        if (emptyStateText != null) {
+            emptyStateText.setVisibility(View.VISIBLE);
+            emptyStateText.setText("No paired Bluetooth printers found.\n\nTap the button below to open Bluetooth settings and pair a printer.");
+        }
+        
+        // Change save button to "Open Bluetooth Settings"
+        saveButton.setText("Open Bluetooth Settings");
+        saveButton.setOnClickListener(v -> openBluetoothSettings());
+        
+        // Disable test button
+        testButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Opens Bluetooth settings for the user to pair devices
+     */
+    private void openBluetoothSettings() {
+        Intent bluetoothSettings = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+        startActivityForResult(bluetoothSettings, 1001);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001) {
+            // User returned from Bluetooth settings
+            // The calling code should refresh the device list and call setDeviceList() again
+            if (onConnectPrinter != null) {
+                // Notify the parent that user returned from settings
+                // Parent should refresh bonded devices and call setDeviceList() again
+                dismiss(); // Close dialog so parent can refresh
+            }
+        }
     }
 
     @Override
@@ -97,34 +175,41 @@ public class DeviceListFragment extends DialogFragment {
                 this.inactiveColor = ContextCompat.getColor(getContext(), R.color.colorGray5);
             }
         }
-
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void testPrinter() {
-        Printama.with(getActivity(), selectedDeviceAddress).printTest();
+        if (selectedDeviceAddress != null) {
+            Printama.with(getActivity(), selectedDeviceAddress).printTest();
+        }
     }
 
     private void toggleButtons() {
-        if (getContext() != null) {
+        if (getContext() != null && bondedDevices != null && !bondedDevices.isEmpty()) {
             if (selectedDeviceAddress != null) {
                 testButton.setBackgroundColor(activeColor);
                 saveButton.setBackgroundColor(activeColor);
+                testButton.setEnabled(true);
+                saveButton.setEnabled(true);
             } else {
                 testButton.setBackgroundColor(inactiveColor);
                 saveButton.setBackgroundColor(inactiveColor);
+                testButton.setEnabled(false);
+                saveButton.setEnabled(false);
             }
         }
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void savePrinter() {
-        Printama.savePrinter(selectedDeviceAddress);
-        if (onConnectPrinter != null) {
-            BluetoothDevice device = Printama.getPrinter(); // saved printer
-            onConnectPrinter.onConnectPrinter(device);
+        if (selectedDeviceAddress != null) {
+            Printama.savePrinter(selectedDeviceAddress);
+            if (onConnectPrinter != null) {
+                BluetoothDevice device = Printama.getPrinter(); // saved printer
+                onConnectPrinter.onConnectPrinter(device);
+            }
+            dismiss();
         }
-        dismiss();
     }
 
     public void setColorTheme(int activeColor, int inactiveColor) {
@@ -134,5 +219,16 @@ public class DeviceListFragment extends DialogFragment {
         if (inactiveColor != 0) {
             this.inactiveColor = inactiveColor;
         }
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        if(dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
+        return dialog;
     }
 }
