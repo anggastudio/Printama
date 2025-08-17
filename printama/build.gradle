@@ -1,7 +1,14 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     id 'maven-publish'
+    id 'jacoco'
 }
+
+// Force Jacoco to compatible version for Gradle 8.x + JDK 17
+jacoco {
+    toolVersion = "0.8.7"
+}
+
 group = 'com.github.anggastudio'
 
 android {
@@ -48,6 +55,34 @@ android {
         // Android Gradle plugin
         singleVariant("release")
     }
+
+    testOptions {
+        unitTests {
+            // Required for Robolectric + resources
+            includeAndroidResources = true
+            all {
+                jacoco {
+                    includeNoLocationClasses = true
+                    excludes = ['jdk.internal.*']  // Exclude JDK internal classes from instrumentation
+                }
+                // IMPORTANT: Open JDK modules for reflection/instrumentation on JDK 17+
+                jvmArgs(
+                        '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+                        '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED',
+                        '--add-opens', 'java.base/java.io=ALL-UNNAMED',
+                        '--add-opens', 'java.base/jdk.internal.reflect=ALL-UNNAMED',
+                        '--add-exports', 'java.base/jdk.internal.reflect=ALL-UNNAMED'
+                )
+
+                // Force Gradle test workers to run on Java 17
+                javaLauncher = project.javaToolchains.launcherFor {
+                    languageVersion = JavaLanguageVersion.of(17)
+                }
+
+                maxParallelForks = 1
+            }
+        }
+    }
 }
 
 afterEvaluate {
@@ -66,7 +101,73 @@ afterEvaluate {
 dependencies {
     implementation libs.appcompat
     implementation libs.material
+
+    // Unit Testing Dependencies
     testImplementation libs.junit
+    testImplementation 'org.mockito:mockito-core:5.7.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.robolectric:robolectric:4.11.1'
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
+    testImplementation 'androidx.test:core:1.5.0'
+    testImplementation 'androidx.test.ext:junit:1.1.5'
+
+    // Android Testing Dependencies
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+}
+
+// Ensure all Test tasks inherit strict single-fork, JDK 17, and module opens
+tasks.withType(Test).configureEach {
+    maxParallelForks = 1
+    forkEvery = 0
+    jvmArgs(
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.io=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED',
+            '--add-opens', 'java.base/jdk.internal.reflect=ALL-UNNAMED',
+            '--add-exports', 'java.base/jdk.internal.reflect=ALL-UNNAMED'
+    )
+    javaLauncher = project.javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// Generate HTML + XML coverage report for unit tests
+tasks.register('jacocoTestReport', JacocoReport) {
+    dependsOn 'testDebugUnitTest'
+
+    reports {
+        html.required = true
+        xml.required = true
+    }
+
+    def fileFilter = [
+            '**/R.class', '**/R$*.class',
+            '**/BuildConfig.*', '**/Manifest*.*',
+            '**/*$*' // synthetic/anonymous classes
+    ]
+
+    def javaClasses = fileTree(
+            dir: "$buildDir/intermediates/javac/debug/classes",
+            exclude: fileFilter
+    )
+    def kotlinClasses = fileTree(
+            dir: "$buildDir/tmp/kotlin-classes/debug",
+            exclude: fileFilter
+    )
+
+    classDirectories.from = files(javaClasses, kotlinClasses)
+    sourceDirectories.from = files('src/main/java')
+
+    executionData.from = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "**/*.exec",
+            "**/*.ec"
+    ])
 }
