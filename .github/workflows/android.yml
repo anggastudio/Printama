@@ -2,6 +2,10 @@ name: Android CI
 
 on:
   push:
+    branches: 
+      - "master"
+    tags:
+      - "*"
   pull_request:
 
 concurrency:
@@ -41,6 +45,16 @@ jobs:
       - name: Generate coverage report (HTML + XML)
         run: ./gradlew :printama:jacocoTestReport --stacktrace
 
+      - name: Assemble release AAR (tag builds only)
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./gradlew :printama:assembleRelease --stacktrace
+
+      - name: Upload AAR artifact (tag builds only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: Printama-${{ github.ref_name }}.aar
+          path: printama/build/outputs/aar/printama-release.aar
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
