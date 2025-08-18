@@ -1,5 +1,7 @@
 [versions]
 agp = "8.8.0"
+core = "1.5.0"
+fragmentTesting = "1.6.2"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -7,10 +9,17 @@ appcompat = "1.6.1"
 material = "1.11.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
+mockitoAndroid = "4.6.1"
+mockitoCore = "5.7.0"
+mockitoInline = "5.2.0"
+powermockModuleJunit4 = "2.0.9"
 preference = "1.1.1"
-androidMaven = "2.1"
+robolectric = "4.11.1"
+runner = "1.5.2"
 
 [libraries]
+core = { module = "androidx.test:core", version.ref = "core" }
+fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "fragmentTesting" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -18,10 +27,17 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+powermock-api-mockito2 = { module = "org.powermock:powermock-api-mockito2", version.ref = "powermockModuleJunit4" }
+powermock-module-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermockModuleJunit4" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+rules = { module = "androidx.test:rules", version.ref = "core" }
+runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-dcendentsAndroidMaven = { id = "com.github.dcendents.android-maven", version.ref = "androidMaven" }
 

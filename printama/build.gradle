@@ -88,6 +88,11 @@ afterEvaluate {
         publications {
             release(MavenPublication) {
                 from components.release
+                artifactId = 'Printama'
+                pom {
+                    name = 'Printama'
+                    description = 'Android library for Bluetooth thermal printing'
+                }
             }
         }
         repositories {
@@ -102,21 +107,21 @@ dependencies {
 
     // Unit Testing Dependencies
     testImplementation libs.junit
-    testImplementation 'org.mockito:mockito-core:5.7.0'
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
-    testImplementation 'org.robolectric:robolectric:4.11.1'
-    testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
-    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
-    testImplementation 'androidx.test:core:1.5.0'
-    testImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation libs.mockito.core
+    testImplementation libs.mockito.inline
+    testImplementation libs.robolectric
+    testImplementation libs.powermock.module.junit4
+    testImplementation libs.powermock.api.mockito2
+    testImplementation libs.core
+    testImplementation libs.ext.junit
 
     // Android Testing Dependencies
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation 'androidx.fragment:fragment-testing:1.6.2'
-    androidTestImplementation 'org.mockito:mockito-android:4.6.1'
+    androidTestImplementation libs.runner
+    androidTestImplementation libs.rules
+    androidTestImplementation libs.fragment.testing
+    androidTestImplementation libs.mockito.android
 }
 
 // Ensure all Test tasks inherit strict single-fork, JDK 17, and module opens
@@ -138,6 +143,7 @@ tasks.withType(Test).configureEach {
 }
 
 // Generate HTML + XML coverage report for unit tests
+// tasks.register('jacocoTestReport', JacocoReport)
 tasks.register('jacocoTestReport', JacocoReport) {
     dependsOn 'testDebugUnitTest'
 
@@ -152,52 +158,54 @@ tasks.register('jacocoTestReport', JacocoReport) {
             '**/*$*' // synthetic/anonymous classes
     ]
 
-    def javaClasses = fileTree(
-            dir: "$buildDir/intermediates/javac/debug/classes",
-            exclude: fileFilter
-    )
-    def kotlinClasses = fileTree(
-            dir: "$buildDir/tmp/kotlin-classes/debug",
-            exclude: fileFilter
-    )
+    // Use provider-based paths instead of $buildDir
+    def javaClasses = layout.buildDirectory.dir("intermediates/javac/debug/classes")
+    def kotlinClasses = layout.buildDirectory.dir("tmp/kotlin-classes/debug")
 
-    classDirectories.from = files(javaClasses, kotlinClasses)
+    classDirectories.from = files(
+            javaClasses.map { it.asFileTree.matching { exclude fileFilter } },
+            kotlinClasses.map { it.asFileTree.matching { exclude fileFilter } }
+    )
     sourceDirectories.from = files('src/main/java')
 
-    executionData.from = fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "**/*.exec",
-            "**/*.ec"
-    ])
+    executionData.from = layout.buildDirectory.asFileTree.matching {
+        include "jacoco/testDebugUnitTest.exec"
+        include "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
+        include "**/*.exec"
+        include "**/*.ec"
+    }
 }
 
 // Enforce minimum coverage for unit tests
+// tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification)
 tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
     dependsOn 'testDebugUnitTest'
 
-    // Use the same class filters as the report
     def fileFilter = [
             '**/R.class', '**/R$*.class',
             '**/BuildConfig.*', '**/Manifest*.*',
             '**/*$*'
     ]
 
+    // Use provider-based paths instead of $buildDir
+    def javaClasses = layout.buildDirectory.dir("intermediates/javac/debug/classes")
+    def kotlinClasses = layout.buildDirectory.dir("tmp/kotlin-classes/debug")
+
     classDirectories.from = files(
-            fileTree(dir: "$buildDir/intermediates/javac/debug/classes", exclude: fileFilter),
-            fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", exclude: fileFilter)
+            javaClasses.map { it.asFileTree.matching { exclude fileFilter } },
+            kotlinClasses.map { it.asFileTree.matching { exclude fileFilter } }
     )
     sourceDirectories.from = files('src/main/java')
-    executionData.from = fileTree(dir: "$buildDir", includes: [
-            "jacoco/testDebugUnitTest.exec",
-            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "**/*.exec",
-            "**/*.ec"
-    ])
+
+    executionData.from = layout.buildDirectory.asFileTree.matching {
+        include "jacoco/testDebugUnitTest.exec"
+        include "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"
+        include "**/*.exec"
+        include "**/*.ec"
+    }
 
     violationRules {
         rule {
-            // Global project threshold (tweak as needed)
             limit {
                 counter = 'INSTRUCTION'
                 value = 'COVEREDRATIO'
