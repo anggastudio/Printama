@@ -24,12 +24,10 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled true  // Enable ProGuard in debug
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             consumerProguardFiles 'consumer-rules.pro'
-            debuggable true  // Keep debugging enabled
-            // Optional: Keep line numbers for easier debugging
-            proguardFiles 'proguard-debug.pro'
+            debuggable true
         }
         release {
             minifyEnabled true
@@ -172,4 +170,44 @@ tasks.register('jacocoTestReport', JacocoReport) {
             "**/*.exec",
             "**/*.ec"
     ])
+}
+
+// Enforce minimum coverage for unit tests
+tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+    dependsOn 'testDebugUnitTest'
+
+    // Use the same class filters as the report
+    def fileFilter = [
+            '**/R.class', '**/R$*.class',
+            '**/BuildConfig.*', '**/Manifest*.*',
+            '**/*$*'
+    ]
+
+    classDirectories.from = files(
+            fileTree(dir: "$buildDir/intermediates/javac/debug/classes", exclude: fileFilter),
+            fileTree(dir: "$buildDir/tmp/kotlin-classes/debug", exclude: fileFilter)
+    )
+    sourceDirectories.from = files('src/main/java')
+    executionData.from = fileTree(dir: "$buildDir", includes: [
+            "jacoco/testDebugUnitTest.exec",
+            "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "**/*.exec",
+            "**/*.ec"
+    ])
+
+    violationRules {
+        rule {
+            // Global project threshold (tweak as needed)
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
+    }
+}
+
+// Make 'check' fail if coverage is below threshold
+tasks.named('check') {
+    dependsOn 'jacocoTestCoverageVerification'
 }
