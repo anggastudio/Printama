@@ -4,6 +4,7 @@ import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -79,6 +81,10 @@ public class PrintTestActivity extends AppCompatActivity {
         findViewById(R.id.btn_print_receipt2).setOnClickListener(v -> printQrReceipt2());
         findViewById(R.id.btn_print_receipt3).setOnClickListener(v -> printThreeColumnReceipt());
         findViewById(R.id.btn_print_receipt4).setOnClickListener(v -> printFourColumnReceipt());
+
+        // others
+        findViewById(R.id.btn_print_exmpl1).setOnClickListener(v -> printExample1());
+        findViewById(R.id.btn_print_exmpl2).setOnClickListener(v -> printExample2());
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -373,7 +379,7 @@ public class PrintTestActivity extends AppCompatActivity {
     private void printQrReceipt2() {
         Bitmap logo = Printama.getBitmapFromVector(this, R.drawable.printama_logo);
         String qrData = "https://printama.anggastudio.dev/payment/12345";
-        
+
         Printama.with(this).connect(printama -> {
             // Header Section
             printama.printImage(logo, PW.QUARTER_WIDTH, PA.CENTER);
@@ -385,13 +391,13 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printTextln("123 Main Street, City", PA.CENTER);
             printama.printTextln("Tel: (555) 123-4567", PA.CENTER);
             printama.printDoubleDashedLine();
-            
+
             // Transaction Details
             printama.printTextJustify("Receipt #:", "RCP-001234");
             printama.printTextJustify("Date:", "2024-01-15 14:30");
             printama.printTextJustify("Cashier:", "John Doe");
             printama.printDashedLine();
-            
+
             // Items Section
             printama.setBold();
             printama.printTextln("ITEMS PURCHASED", PA.CENTER);
@@ -407,16 +413,16 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printTextJustify("TOTAL:", "$15.12");
             printama.setNormalText();
             printama.printDoubleDashedLine();
-            
+
             // Payment Section
             printama.setBold();
             printama.printTextln("PAYMENT METHOD", PA.CENTER);
             printama.setNormalText();
             printama.printTextln("Scan QR Code to Pay", PA.CENTER);
-            
+
             // Reduce line spacing before QR code
             printama.setLineSpacing(0);
-            
+
             // QR Code Generation
             QRCodeWriter writer = new QRCodeWriter();
             try {
@@ -424,28 +430,28 @@ public class PrintTestActivity extends AppCompatActivity {
                 int width = bitMatrix.getWidth();
                 int height = bitMatrix.getHeight();
                 Bitmap qrBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-                
+
                 for (int x = 0; x < width; x++) {
                     for (int y = 0; y < height; y++) {
                         qrBitmap.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                     }
                 }
-                
+
                 printama.printImage(qrBitmap, PA.CENTER);
             } catch (WriterException e) {
                 e.printStackTrace();
                 printama.printTextln("QR Code generation failed", PA.CENTER);
             }
-            
+
             // Reset line spacing to normal
             printama.setLineSpacing(30);
-            
+
             printama.printTextln("Payment Link:", PA.CENTER);
             printama.setSmallText();
             printama.printTextln(qrData, PA.CENTER);
             printama.setNormalText();
             printama.printDoubleDashedLine();
-            
+
             // Footer Section
             printama.printTextln("Thank you for your visit!", PA.CENTER);
             printama.printTextln("Please come again", PA.CENTER);
@@ -454,7 +460,7 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printTextln("Powered by Printama Library", PA.CENTER);
             printama.printTextln("Visit: github.com/anggastudio/Printama", PA.CENTER);
             printama.setNormalText();
-            
+
             printama.addNewLine(3);
             printama.close();
         }, this::showToast);
@@ -469,19 +475,19 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.setNormalText();
             printama.printTextln("Daily Summary", PA.CENTER);
             printama.printDashedLine();
-            
+
             // Three-column headers using custom formatting
             printama.setBold();
             printama.printTextln(printama.formatThreeColumns("ITEM", "QTY", "TOTAL"), PA.LEFT);
             printama.setNormalText();
             printama.printDashedLine();
-            
+
             // Three-column data
             printama.printTextln(printama.formatThreeColumns("Coffee", "12", "$36.00"), PA.LEFT);
             printama.printTextln(printama.formatThreeColumns("Tea", "8", "$16.00"), PA.LEFT);
             printama.printTextln(printama.formatThreeColumns("Pastry", "5", "$25.00"), PA.LEFT);
             printama.printTextln(printama.formatThreeColumns("Sandwich", "3", "$21.00"), PA.LEFT);
-            
+
             printama.printDashedLine();
             printama.setBold();
             printama.printTextln(printama.formatThreeColumns("TOTAL", "28", "$98.00"), PA.LEFT);
@@ -500,19 +506,19 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.setNormalText();
             printama.printTextln("Stock Status", PA.CENTER);
             printama.printDashedLine();
-            
+
             // Four-column headers using custom formatting
             printama.setBold();
             printama.printTextln(printama.formatFourColumns("ITEM", "QTY", "MIN", "STATUS"), PA.LEFT);
             printama.setNormalText();
             printama.printDashedLine();
-            
+
             // Four-column data
             printama.printTextln(printama.formatFourColumns("Coffee", "45", "20", "OK"), PA.LEFT);
             printama.printTextln(printama.formatFourColumns("Tea", "12", "15", "LOW"), PA.LEFT);
             printama.printTextln(printama.formatFourColumns("Sugar", "8", "10", "LOW"), PA.LEFT);
             printama.printTextln(printama.formatFourColumns("Milk", "25", "20", "OK"), PA.LEFT);
-            
+
             printama.printDashedLine();
             printama.printTextln("Report generated automatically", PA.CENTER);
             printama.addNewLine(2);
@@ -520,8 +526,75 @@ public class PrintTestActivity extends AppCompatActivity {
         }, this::showToast);
     }
 
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printExample1() {
+        QRCodeWriter writer = new QRCodeWriter();
+        Printama.with(this).connect(print -> {
+            try {
+                print.printTextln("SHOP RECEIPT", PA.CENTER);
+                // Use ZXing's QRCodeWriter (already imported) instead of BarcodeEncoder
+                Bitmap bitmap200 = bitMatrixToBitmap(
+                        writer.encode("MX250700006946093216", BarcodeFormat.QR_CODE, 200, 200)
+                );
+                print.printImage(bitmap200, PW.HALF_WIDTH, PA.CENTER);
+                print.printTextln("MX250700006946093216", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("ORDER", PA.CENTER);
+                // Widen the right column so “Rp 25.000,00” fits on 2-inch printers
+                print.printTextln(print.formatTwoColumns("FRIED RICE", "Rp 25.000,00", 0.60, 0.40), PA.LEFT);
+                print.printTextln(print.formatTwoColumns("CHICKEN NOODLES", "Rp 20.000,00", 0.60, 0.40), PA.LEFT);
+                print.printTextln(print.formatTwoColumns("ICED SWEET TEA", "Rp 7.000,00", 0.60, 0.40), PA.LEFT);
+                print.printTextln(print.formatTwoColumns("NORMAL TEA", "Rp 5.000,00", 0.60, 0.40), PA.LEFT);
+                print.printTextln("", PA.LEFT);
+                print.printTextlnBold("--------------------------------", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("SARAN DAN MASUKAN", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                Bitmap bitmap160 = bitMatrixToBitmap(
+                        writer.encode("http://mysite.com", BarcodeFormat.QR_CODE, 200, 200)
+                );
+                print.printImage(bitmap160, PW.HALF_WIDTH, PA.CENTER);
+                print.printTextln("http://mysite.com", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("HOPE YOU  ENJOY WITH OUR FOOD AND SERVICES", PA.CENTER);
+                print.printTextln("WISH YOU ALL THE BEST", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("--------- THANK YOU ---------", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                Bitmap bitmap150 = ((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.printama_colorful_logo)).getBitmap();
+                print.printImage(bitmap150, PW.THREE_QUARTERS_WIDTH, PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextlnBold("--------------------------------", PA.CENTER);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("", PA.LEFT);
+                print.printTextln("", PA.LEFT);
+                print.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printExample2() {
+
+    }
+
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    // Helper: convert ZXing BitMatrix → Bitmap for printing
+    private Bitmap bitMatrixToBitmap(BitMatrix matrix) {
+        int width = matrix.getWidth();
+        int height = matrix.getHeight();
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bmp.setPixel(x, y, matrix.get(x, y) ? Color.BLACK : Color.WHITE);
+            }
+        }
+        return bmp;
     }
 
 
