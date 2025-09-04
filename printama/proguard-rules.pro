@@ -60,6 +60,12 @@
 -keepattributes InnerClasses
 -keepattributes EnclosingMethod
 
+# Preserve method parameter names for better IDE hints and reflection
+-keepattributes MethodParameters
+
+# Preserve local variable tables (fallback for older toolchains and debuggability)
+-keepattributes LocalVariableTable,LocalVariableTypeTable
+
 # Don't warn about missing classes (common in Android libraries)
 -dontwarn java.lang.invoke.**
 -dontwarn javax.annotation.**

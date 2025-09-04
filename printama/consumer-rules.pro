@@ -74,3 +74,9 @@
 
 # Keep annotations
 -keepattributes *Annotation*
+
+# Preserve method parameter names so API remains readable in IDE/code completion
+-keepattributes MethodParameters
+
+# Preserve local variable tables (helpful for older toolchains and debugging)
+-keepattributes LocalVariableTable,LocalVariableTypeTable

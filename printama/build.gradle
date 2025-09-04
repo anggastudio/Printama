@@ -219,3 +219,7 @@ tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
 tasks.named('check') {
     dependsOn 'jacocoTestCoverageVerification'
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['-parameters']
+}
