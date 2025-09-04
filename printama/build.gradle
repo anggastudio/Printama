@@ -10,7 +10,7 @@ jacoco {
 }
 
 group = 'com.github.anggastudio'
-version = '1.0.4-SNAPSHOT'
+version = '1.0.1-SNAPSHOT'
 
 android {
     namespace 'com.anggastudio.printama'

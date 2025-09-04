@@ -1,2 +1,4 @@
 jdk:
   - openjdk17
+install:
+  - ./gradlew -Pgroup=com.github.anggastudio -Pversion=${VERSION} :printama:publishReleasePublicationToMavenLocal -x test -x lint
