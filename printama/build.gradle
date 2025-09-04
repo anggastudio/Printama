@@ -10,7 +10,7 @@ jacoco {
 }
 
 group = 'com.github.anggastudio'
-version = '1.0.1-SNAPSHOT'
+version = '1.0.2-SNAPSHOT'
 
 android {
     namespace 'com.anggastudio.printama'
@@ -54,7 +54,6 @@ android {
         // Android Gradle plugin
         singleVariant("release") {
             withSourcesJar()
-            withJavadocJar()
         }
     }
 
