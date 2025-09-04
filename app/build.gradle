@@ -48,10 +48,11 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation libs.preference
-    implementation project(':printama')
+    // implementation project(':printama')
+     implementation files('libs/printama-release.aar')
+//    implementation 'com.github.anggastudio:Printama:1.0.1-SNAPSHOT'
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
 
     implementation 'com.github.kenglxn.QRGen:android:2.6.0'
 }
