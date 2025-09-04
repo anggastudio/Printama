@@ -25,6 +25,58 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Printama is a lightweight Android library for printing text and bitmaps to ESC/POS Bluetooth
+ * thermal printers.
+ *
+ * <p><b>Features</b>:</p>
+ * <ul>
+ *   <li>Text printing with multiple styles (normal, bold, wide, tall, justify)</li>
+ *   <li>Multi-column helpers (formatTwoColumns/Three/Four/Five)</li>
+ *   <li>Image printing from Bitmap or directly from a View</li>
+ *   <li>Utilities to choose/save the target printer and paper width (2"/3")</li>
+ * </ul>
+ *
+ * <p><b>Quickstart</b>:</p>
+ * <pre>{@code
+ * // Requires android.permission.BLUETOOTH_CONNECT on Android 12+
+ * Printama.with(context, printama -> {
+ *     printama.printTextln("Hello Printer!", PA.CENTER);
+ *     printama.feedPaper();
+ *     printama.close();
+ * });
+ *
+ * // Or get an instance directly (uses the saved/default printer)
+ * Printama p = Printama.with(context);
+ * p.printTextln("Hello", PA.LEFT);
+ * p.close();
+ * }</pre>
+ *
+ * <p><b>Threading</b>:</p>
+ * <ul>
+ *   <li>Most text APIs are lightweight and can be called on the main thread.</li>
+ *   <li>Image-heavy operations (e.g., printFromView) offload work to a background thread internally.</li>
+ * </ul>
+ *
+ * <p><b>Permissions</b>:</p>
+ * <ul>
+ *   <li>Callers must hold {@code android.permission.BLUETOOTH_CONNECT} at runtime on Android 12+.</li>
+ * </ul>
+ *
+ * <p><b>Deprecated API notes</b>:</p>
+ * <ul>
+ *   <li>Several constants and old parameter orders were deprecated in 1.0.0 and will be removed in 2.0.0.
+ *       See each {@code @deprecated} tag for migration examples.</li>
+ * </ul>
+ *
+ * <p><b>See also</b>:</p>
+ * <ul>
+ *   <li>{@link com.anggastudio.printama.constants.PA} - alignment constants</li>
+ *   <li>{@link com.anggastudio.printama.constants.PW} - image width options</li>
+ * </ul>
+ *
+ * @since 1.0.0
+ */
 public class Printama {
 
     /**
@@ -577,12 +629,28 @@ public class Printama {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Format text into two columns with specified width percentages
-     * @param col1 First column text
-     * @param col2 Second column text
-     * @param col1Percent Width percentage for first column (0.0 to 1.0)
-     * @param col2Percent Width percentage for second column (0.0 to 1.0)
-     * @return Formatted string with proper column alignment
+     * Format text into two columns with specified width percentages.
+     * Behavior:
+     * - col1 is left-aligned; col2 is right-aligned.
+     * - Text longer than its allotted width is truncated and a dot (".") is appended.
+     * - Widths are computed from the current printer's max characters per line.
+     * - Percentages are multiplied by maxChars; fractional parts are truncated.
+     * - The sum of percentages should be close to 1.0; rounding may cause a character of slack or squeeze.
+     *
+     * Example:
+     * <pre>{@code
+     * Printama.with(context).connect(p -> {
+     *     String line = p.formatTwoColumns("Nasi Goreng", "Rp 25.000,00", 0.6, 0.4);
+     *     p.printTextln(line);
+     *     p.close();
+     * });
+     * }</pre>
+     *
+     * @param col1         First column text (left-aligned)
+     * @param col2         Second column text (right-aligned)
+     * @param col1Percent  Width percentage for the first column (0.0 to 1.0)
+     * @param col2Percent  Width percentage for the second column (0.0 to 1.0)
+     * @return Formatted string with proper two-column alignment ready to pass to printText/printTextln
      */
     public String formatTwoColumns(String col1, String col2, double col1Percent, double col2Percent) {
         int maxChars = _util.getMaxChar();
@@ -596,21 +664,42 @@ public class Printama {
     }
 
     /**
-     * Format text into two columns with default widths (70% | 30%)
+     * Format text into two columns with default widths (70% | 30%).
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatTwoColumns("Subtotal", "Rp 100.000,00");
+     * printama.printTextln(line);
+     * }</pre>
      */
     public String formatTwoColumns(String col1, String col2) {
         return formatTwoColumns(col1, col2, 0.7, 0.3);
     }
 
     /**
-     * Format text into three columns with specified width percentages
-     * @param col1 First column text
-     * @param col2 Second column text
-     * @param col3 Third column text
-     * @param col1Percent Width percentage for first column (0.0 to 1.0)
-     * @param col2Percent Width percentage for second column (0.0 to 1.0)
-     * @param col3Percent Width percentage for third column (0.0 to 1.0)
-     * @return Formatted string with proper column alignment
+     * Formats text into three columns with specified width percentages.
+     * Behavior:
+     * - col1 and col2 are left-aligned; col3 is right-aligned.
+     * - Text exceeding its width is truncated with a trailing dot (".").
+     * - Widths are based on the printer's current max characters per line; percentages are floored to ints.
+     * - Sum of percentages should be near 1.0; rounding may introduce a 1-char difference.
+     *
+     * Example:
+     * <pre>{@code
+     * Printama.with(context).connect(p -> {
+     *     String line = p.formatThreeColumns("Nasi Goreng", "x2", "Rp 25.000,00", 0.55, 0.10, 0.35);
+     *     p.printTextln(line);
+     *     p.close();
+     * });
+     * }</pre>
+     *
+     * @param col1         First column text (left-aligned)
+     * @param col2         Second column text (left-aligned)
+     * @param col3         Third column text (right-aligned)
+     * @param col1Percent  Width percentage for the first column (0.0 to 1.0)
+     * @param col2Percent  Width percentage for the second column (0.0 to 1.0)
+     * @param col3Percent  Width percentage for the third column (0.0 to 1.0)
+     * @return Formatted line ready to be printed
      */
     public String formatThreeColumns(String col1, String col2, String col3, double col1Percent, double col2Percent, double col3Percent) {
         int maxChars = _util.getMaxChar();
@@ -626,23 +715,40 @@ public class Printama {
     }
 
     /**
-     * Format text into three columns with default widths (50% | 20% | 30%)
+     * Formats text into three columns with default widths (50% | 20% | 30%).
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatThreeColumns("Es Teh Manis", "x1", "Rp 5.000,00");
+     * printama.printTextln(line);
+     * }</pre>
      */
     public String formatThreeColumns(String col1, String col2, String col3) {
         return formatThreeColumns(col1, col2, col3, 0.5, 0.2, 0.3);
     }
 
     /**
-     * Format text into four columns with specified width percentages
-     * @param col1 First column text
-     * @param col2 Second column text
-     * @param col3 Third column text
-     * @param col4 Fourth column text
-     * @param col1Percent Width percentage for first column (0.0 to 1.0)
-     * @param col2Percent Width percentage for second column (0.0 to 1.0)
-     * @param col3Percent Width percentage for third column (0.0 to 1.0)
-     * @param col4Percent Width percentage for fourth column (0.0 to 1.0)
-     * @return Formatted string with proper column alignment
+     * Formats text into four columns with specified width percentages.
+     * Behavior:
+     * - col1, col2, col3 are left-aligned; col4 is right-aligned.
+     * - Overlong text is truncated with a trailing dot (".").
+     * - Widths derive from printer max characters; integer widths may leave/steal a char due to rounding.
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatFourColumns("Kode", "Nama", "Qty", "Total", 0.25, 0.35, 0.10, 0.30);
+     * printama.printTextln(line);
+     * }</pre>
+     *
+     * @param col1         First column (left)
+     * @param col2         Second column (left)
+     * @param col3         Third column (left)
+     * @param col4         Fourth column (right)
+     * @param col1Percent  Width percentage for col1 (0.0..1.0)
+     * @param col2Percent  Width percentage for col2 (0.0..1.0)
+     * @param col3Percent  Width percentage for col3 (0.0..1.0)
+     * @param col4Percent  Width percentage for col4 (0.0..1.0)
+     * @return Formatted line ready to be printed
      */
     public String formatFourColumns(String col1, String col2, String col3, String col4, double col1Percent, double col2Percent, double col3Percent, double col4Percent) {
         int maxChars = _util.getMaxChar();
@@ -660,25 +766,45 @@ public class Printama {
     }
 
     /**
-     * Format text into four columns with default widths (40% | 20% | 20% | 20%)
+     * Formats text into four columns with default widths (40% | 20% | 20% | 20%).
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatFourColumns("Item", "Varian", "Qty", "Total");
+     * printama.printTextln(line);
+     * }</pre>
      */
     public String formatFourColumns(String col1, String col2, String col3, String col4) {
         return formatFourColumns(col1, col2, col3, col4, 0.4, 0.2, 0.2, 0.2);
     }
 
     /**
-     * Format text into five columns with specified width percentages
-     * @param col1 First column text
-     * @param col2 Second column text
-     * @param col3 Third column text
-     * @param col4 Fourth column text
-     * @param col5 Fifth column text
-     * @param col1Percent Width percentage for first column (0.0 to 1.0)
-     * @param col2Percent Width percentage for second column (0.0 to 1.0)
-     * @param col3Percent Width percentage for third column (0.0 to 1.0)
-     * @param col4Percent Width percentage for fourth column (0.0 to 1.0)
-     * @param col5Percent Width percentage for fifth column (0.0 to 1.0)
-     * @return Formatted string with proper column alignment
+     * Formats text into five columns with specified width percentages.
+     * Behavior:
+     * - col1, col2, col3, col4 are left-aligned; col5 is right-aligned.
+     * - Text overflowing its width is truncated with a trailing dot (".").
+     * - Widths are integer portions of (percent * maxChars); rounding can shift 1 char across columns.
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatFiveColumns(
+     *     "No", "Item", "Qty", "Harga", "Total",
+     *     0.10, 0.35, 0.10, 0.20, 0.25
+     * );
+     * printama.printTextln(line);
+     * }</pre>
+     *
+     * @param col1         First column (left)
+     * @param col2         Second column (left)
+     * @param col3         Third column (left)
+     * @param col4         Fourth column (left)
+     * @param col5         Fifth column (right)
+     * @param col1Percent  Width percentage for col1 (0.0..1.0)
+     * @param col2Percent  Width percentage for col2 (0.0..1.0)
+     * @param col3Percent  Width percentage for col3 (0.0..1.0)
+     * @param col4Percent  Width percentage for col4 (0.0..1.0)
+     * @param col5Percent  Width percentage for col5 (0.0..1.0)
+     * @return Formatted line ready to be printed
      */
     public String formatFiveColumns(String col1, String col2, String col3, String col4, String col5, double col1Percent, double col2Percent, double col3Percent, double col4Percent, double col5Percent) {
         int maxChars = _util.getMaxChar();
@@ -698,17 +824,28 @@ public class Printama {
     }
 
     /**
-     * Format text into five columns with default widths (30% | 15% | 15% | 20% | 20%)
+     * Formats text into five columns with default widths (30% | 15% | 15% | 20% | 20%).
+     *
+     * Example:
+     * <pre>{@code
+     * String line = printama.formatFiveColumns("No", "Item", "Qty", "Harga", "Total");
+     * printama.printTextln(line);
+     * }</pre>
      */
     public String formatFiveColumns(String col1, String col2, String col3, String col4, String col5) {
         return formatFiveColumns(col1, col2, col3, col4, col5, 0.3, 0.15, 0.15, 0.2, 0.2);
     }
 
     /**
-     * Truncate string to specified width, adding "." if truncated
-     * @param text Original text
-     * @param width Maximum width
-     * @return Truncated string
+     * Truncate string to the specified width, appending "." if truncated.
+     * If the text length is less than or equal to width, the original text is returned unchanged.
+     * Note:
+     * - width is expected to be >= 1 (derived from column width calculations).
+     * - When truncation occurs, the last character of the returned string is ".".
+     *
+     * @param text  Original text (null is treated as empty string)
+     * @param width Maximum width in characters (expected >= 1)
+     * @return Truncated (or original) string
      */
     private String truncateString(String text, int width) {
         if (text == null) text = "";
