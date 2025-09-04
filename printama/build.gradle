@@ -10,6 +10,7 @@ jacoco {
 }
 
 group = 'com.github.anggastudio'
+version = '1.0.1-SNAPSHOT'
 
 android {
     namespace 'com.anggastudio.printama'
@@ -51,7 +52,10 @@ android {
     publishing {
         // Publishes "release" build component created by
         // Android Gradle plugin
-        singleVariant("release")
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
     }
 
     testOptions {
