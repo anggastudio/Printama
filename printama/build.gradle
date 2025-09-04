@@ -92,6 +92,8 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 artifactId = 'Printama'
+                // Force attach the sources JAR so IDEs always fetch it
+                artifact tasks.named("sourcesJar")
                 pom {
                     name = 'Printama'
                     description = 'Android library for Bluetooth thermal printing'
