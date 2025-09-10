@@ -24,13 +24,14 @@ public class Util {
     }
 
     public static boolean isAllowToPrint() {
-        Integer attempCount = SharedPref.getInt(SharedPref.ATTEMP_COUNT);
-        if (attempCount != null && attempCount < 100) {
-            attempCount++;
-            SharedPref.setInt(SharedPref.ATTEMP_COUNT, attempCount);
-            return true;
-        }
-        return false;
+//        Integer attempCount = SharedPref.getInt(SharedPref.ATTEMP_COUNT);
+//        if (attempCount != null && attempCount < 100) {
+//            attempCount++;
+//            SharedPref.setInt(SharedPref.ATTEMP_COUNT, attempCount);
+//            return true;
+//        }
+//        return false;
+        return true;
     }
 
 }
