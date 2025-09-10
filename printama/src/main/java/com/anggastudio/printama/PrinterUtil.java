@@ -235,6 +235,16 @@ class PrinterUtil {
                 marginLeft = 0;
             }
 
+            // NEW: For full-width images, make sure the printer has no hardware margins
+            // and the printable area equals the full paper width.
+            if (width == PW.FULL_WIDTH) {
+                int printerWidthDots = getPrinterWidth();
+                // GS L: set left margin = 0
+                printUnicode(new byte[]{0x1D, 0x4C, 0x00, 0x00});
+                // GS W: set print area width = full width (384 for 58mm, 576 for 80mm)
+                printUnicode(new byte[]{0x1D, 0x57, (byte) (printerWidthDots & 0xFF), (byte) ((printerWidthDots >> 8) & 0xFF)});
+            }
+
             // Calculate correct width in bytes for printer command
             int widthBytes = getLineWidth();
             int lines = scaledBitmap.getHeight();
