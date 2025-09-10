@@ -222,27 +222,34 @@ class PrinterUtil {
     }
 
     boolean printImage(int alignment, Bitmap bitmap, int width) {
-        Bitmap scaledBitmap = scaledBitmap(bitmap, width);
+        Bitmap workBitmap = bitmap;
+
+        // Auto-trim borders for full-width prints to remove internal whitespace
+        if (width == PW.FULL_WIDTH && workBitmap != null) {
+            Bitmap trimmed = trimWhitespace(workBitmap, 245); // higher threshold trims more
+            if (trimmed != null) {
+                workBitmap = trimmed;
+            }
+        }
+
+        Bitmap scaledBitmap = scaledBitmap(workBitmap, width);
+
         if (scaledBitmap != null) {
             int marginLeft = 0;
-            if (alignment == PA.CENTER) {
+            if (width == PW.FULL_WIDTH || alignment == PA.LEFT) {
+                marginLeft = 0;
+            } else if (alignment == PA.CENTER) {
                 marginLeft = (getPrinterWidth() - scaledBitmap.getWidth()) / 2;
             } else if (alignment == PA.RIGHT) {
                 marginLeft = getPrinterWidth() - scaledBitmap.getWidth();
             }
-            // For left alignment or full width, use no margin
-            if (alignment == PA.LEFT || width == PW.FULL_WIDTH) {
-                marginLeft = 0;
-            }
 
-            // NEW: For full-width images, make sure the printer has no hardware margins
-            // and the printable area equals the full paper width.
+            // Reset hardware margins and set printable area for full-width
             if (width == PW.FULL_WIDTH) {
                 int printerWidthDots = getPrinterWidth();
-                // GS L: set left margin = 0
-                printUnicode(new byte[]{0x1D, 0x4C, 0x00, 0x00});
-                // GS W: set print area width = full width (384 for 58mm, 576 for 80mm)
-                printUnicode(new byte[]{0x1D, 0x57, (byte) (printerWidthDots & 0xFF), (byte) ((printerWidthDots >> 8) & 0xFF)});
+                printUnicode(new byte[]{0x1B, 0x24, 0x00, 0x00}); // ESC $: absolute position = 0
+                printUnicode(new byte[]{0x1D, 0x4C, 0x00, 0x00}); // GS L: left margin = 0
+                printUnicode(new byte[]{0x1D, 0x57, (byte) (printerWidthDots & 0xFF), (byte) ((printerWidthDots >> 8) & 0xFF)}); // GS W
             }
 
             // Calculate correct width in bytes for printer command
@@ -318,26 +325,26 @@ class PrinterUtil {
         // Second pass: Apply dithering and convert to binary
         for (int y = 0; y < bm.getHeight(); y++) {
             for (int x = 0; x < bm.getWidth(); x++) {
-                // Skip pixels that would be outside the printer width
-                if (x + bitMarginLeft >= getPrinterWidth()) {
+                // compute target bit position once
+                int bitX = bitMarginLeft + x;
+
+                // Skip pixels that would be outside the printer width, including negative shift
+                if (bitX < 0 || bitX >= getPrinterWidth()) {
                     continue;
                 }
 
                 int oldPixel = Math.max(0, Math.min(255, grayPixels[y][x]));
                 int newPixel = oldPixel > 128 ? 255 : 0;  // 128 threshold
 
-                // If dark pixel, set it in result array
                 if (newPixel == 0) {
-                    int bitX = bitMarginLeft + x;
                     int byteX = bitX / 8;
                     int byteY = y + bitMarginTop;
-                    int bitOffset = 7 - (bitX % 8);  // Bit position within byte
+                    int bitOffset = 7 - (bitX % 8);
 
                     // Ensure we don't exceed the line width
-                    if (byteX < lineWidth) {
+                    if (byteX < lineWidth && byteX >= 0) {
                         int byteIndex = offset + byteY * lineWidth + byteX;
-
-                        if (byteIndex < result.length) {
+                        if (byteIndex < result.length && byteIndex >= 0) {
                             result[byteIndex] |= (1 << bitOffset);
                         }
                     }
@@ -495,7 +502,6 @@ class PrinterUtil {
         return is3InchPrinter ? PRINTER_WIDTH_3_INCH : PRINTER_WIDTH_2_INCH;
     }
 
-
     // escpos lib
 
     public static final byte LF = 0x0A;
@@ -552,4 +558,86 @@ class PrinterUtil {
         returnedBytes[returnedBytes.length - 1] = LINE_SPACING_30;
         return returnedBytes;
     }
+
+
+/**
+ * Crops near-white (and transparent) borders from a bitmap.
+ * threshold: 0..255. Pixels with grayscale > threshold are treated as background.
+ */
+private Bitmap trimWhitespace(Bitmap src, int threshold) {
+    try {
+        if (src == null) return null;
+        int w = src.getWidth();
+        int h = src.getHeight();
+        if (w <= 2 || h <= 2) return src;
+
+        int left = 0, right = w - 1, top = 0, bottom = h - 1;
+
+        // scan top
+        topLoop:
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int c = src.getPixel(x, y);
+                int a = android.graphics.Color.alpha(c);
+                if (a < 128) continue; // transparent = background
+                int gray = (int) (android.graphics.Color.red(c) * 0.299
+                        + android.graphics.Color.green(c) * 0.587
+                        + android.graphics.Color.blue(c) * 0.114);
+                if (gray <= threshold) { top = y; break topLoop; }
+            }
+        }
+
+        // scan bottom
+        bottomLoop:
+        for (int y = h - 1; y >= top; y--) {
+            for (int x = 0; x < w; x++) {
+                int c = src.getPixel(x, y);
+                int a = android.graphics.Color.alpha(c);
+                if (a < 128) continue;
+                int gray = (int) (android.graphics.Color.red(c) * 0.299
+                        + android.graphics.Color.green(c) * 0.587
+                        + android.graphics.Color.blue(c) * 0.114);
+                if (gray <= threshold) { bottom = y; break bottomLoop; }
+            }
+        }
+
+        // scan left
+        leftLoop:
+        for (int x = 0; x < w; x++) {
+            for (int y = top; y <= bottom; y++) {
+                int c = src.getPixel(x, y);
+                int a = android.graphics.Color.alpha(c);
+                if (a < 128) continue;
+                int gray = (int) (android.graphics.Color.red(c) * 0.299
+                        + android.graphics.Color.green(c) * 0.587
+                        + android.graphics.Color.blue(c) * 0.114);
+                if (gray <= threshold) { left = x; break leftLoop; }
+            }
+        }
+
+        // scan right
+        rightLoop:
+        for (int x = w - 1; x >= left; x--) {
+            for (int y = top; y <= bottom; y++) {
+                int c = src.getPixel(x, y);
+                int a = android.graphics.Color.alpha(c);
+                if (a < 128) continue;
+                int gray = (int) (android.graphics.Color.red(c) * 0.299
+                        + android.graphics.Color.green(c) * 0.587
+                        + android.graphics.Color.blue(c) * 0.114);
+                if (gray <= threshold) { right = x; break rightLoop; }
+            }
+        }
+
+        int newW = Math.max(1, right - left + 1);
+        int newH = Math.max(1, bottom - top + 1);
+        if (newW <= 0 || newH <= 0 || (newW == w && newH == h)) {
+            return src; // nothing to trim or degenerate
+        }
+        return Bitmap.createBitmap(src, left, top, newW, newH);
+    } catch (Throwable t) {
+        return src; // be safe on any error
+    }
+}
+
 }
