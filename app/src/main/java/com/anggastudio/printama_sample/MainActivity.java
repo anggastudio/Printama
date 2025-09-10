@@ -280,8 +280,10 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         // Handle the multiple shared image URIs here
         // Example: display the shared images in a RecyclerView
-        ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUris.get(0));
-        printImageReceived(imageUris.get(0));
+        if (imageUris != null) {
+            ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUris.get(0));
+            printImageReceived(imageUris.get(0));
+        }
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
@@ -301,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
             // Handle the case where conversion failed
             showToast("failed to print image");
         }
-
     }
 
     // Handle the result of the permission request
