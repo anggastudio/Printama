@@ -84,6 +84,9 @@ class PrinterUtil {
     void finish() {
         if (btSocket != null) {
             try {
+                if (btOutputStream != null) {
+                    btOutputStream.flush(); // ensure buffer is drained
+                }
                 btOutputStream.close();
                 btSocket.close();
             } catch (IOException e) {
@@ -91,6 +94,10 @@ class PrinterUtil {
             }
             btSocket = null;
         }
+    }
+
+    void resetPrinter() {
+        printUnicode(new byte[]{0x1B, 0x40}); // ESC @
     }
 
     private boolean printUnicode(byte[] data) {

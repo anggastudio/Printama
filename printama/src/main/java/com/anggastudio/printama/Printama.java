@@ -313,6 +313,12 @@ public class Printama {
         new Handler().postDelayed(_util::finish, 2000);
     }
 
+    public void closeAfter(long delayMs) {
+        setNormalText();
+        _util.resetPrinter();          // ensure printer exits graphics mode
+        new Handler().postDelayed(_util::finish, Math.max(0, delayMs));
+    }
+
     //----------------------------------------------------------------------------------------------
     // PRINT TEST
     //----------------------------------------------------------------------------------------------

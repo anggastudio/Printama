@@ -290,15 +290,24 @@ public class MainActivity extends AppCompatActivity {
     private void printImageReceived(Uri imageUri) {
         Bitmap bitmap = convertUriToBitmap(imageUri);
         if (bitmap != null) {
-            if (Util.isAllowToPrint()) {
+           if (Util.isAllowToPrint()) {
                 // Print the bitmap as
                 Printama.with(this).connect(printama -> {
                     printama.printImage(bitmap, PW.FULL_WIDTH);
-                    printama.close();
+
+                    // Estimate printed height (FULL_WIDTH scaling)
+                    int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
+                    float scale = printerWidthDots / Math.max(1f, (float) bitmap.getWidth());
+                    int scaledHeightDots = (int) (bitmap.getHeight() * scale);
+
+                    // Give the printer time to finish before closing
+                    long delayMs = Math.max(3000L, scaledHeightDots * 4L);
+
+                    printama.closeAfter(delayMs);
                 }, this::showToast);
-            } else {
-                showToast("print not allowed");
-            }
+           } else {
+               showToast("print not allowed");
+           }
         } else {
             // Handle the case where conversion failed
             showToast("failed to print image");

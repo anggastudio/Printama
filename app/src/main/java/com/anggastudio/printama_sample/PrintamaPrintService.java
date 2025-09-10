@@ -156,10 +156,27 @@ public class PrintamaPrintService extends PrintService {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void printBitmap(List<Bitmap> bitmaps) {
         Printama.with(this).connect(printama -> {
+            // Estimate total printed height in dots to compute a safe close delay
+            boolean is3Inch = Printama.is3inchesPrinter();
+            int printerWidthDots = is3Inch ? 576 : 384;
+
+            long totalScaledHeightDots = 0L;
+
             for (Bitmap bitmap : bitmaps) {
                 printama.printImage(bitmap, PW.FULL_WIDTH);
+
+                // Estimate height after FULL_WIDTH scaling
+                float scale = printerWidthDots / Math.max(1f, (float) bitmap.getWidth());
+                long scaledHeightDots = (long) Math.ceil(bitmap.getHeight() * scale);
+                totalScaledHeightDots += scaledHeightDots;
             }
-            printama.close();
+
+            // Heuristic: ~4 ms per dot of height + base 3s, capped at 20s
+            long delayMs = Math.max(3000L, totalScaledHeightDots * 4L);
+            delayMs = Math.min(delayMs, 20000L);
+
+            // Close the connection after the batch to avoid truncation
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
