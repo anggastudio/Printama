@@ -24,10 +24,26 @@ public class DonationScreenActivity extends AppCompatActivity {
         });
 
         // donation provider buttons
-        findViewById(R.id.btn_paypal).setOnClickListener(v -> openPaypal());
+        // global
+
         findViewById(R.id.btn_ko_fi).setOnClickListener(v -> openKofi());
+        findViewById(R.id.btn_buy_me_a_coffee).setOnClickListener(v -> openBuyMeACoffee());
+        findViewById(R.id.btn_paypal).setOnClickListener(v -> openPaypal());
+        findViewById(R.id.btn_usdt).setOnClickListener(v -> openTrustWallet());
+
+        // Indonesian
         findViewById(R.id.btn_trakteer).setOnClickListener(v -> openTrakteer());
         findViewById(R.id.btn_saweria).setOnClickListener(v -> openSaweria());
+    }
+
+    private void openTrustWallet() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://link.trustwallet.com/send?coin=20000714&address=0x7A65cc9d8031f67847662cC92Fa93b71dCc95605&token_id=0x55d398326f99059fF775485246999027B3197955"));
+        startActivity(browserIntent);
+    }
+
+    private void openBuyMeACoffee() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://buymeacoffee.com/anggastudio"));
+        startActivity(browserIntent);
     }
 
     private void openPaypal() {
