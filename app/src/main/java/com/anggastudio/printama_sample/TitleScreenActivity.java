@@ -31,9 +31,12 @@ public class TitleScreenActivity extends AppCompatActivity {
         findViewById(R.id.btn_donate).setOnClickListener(v -> gotoDonatePage());
 
         String appVersion = BuildConfig.VERSION_NAME;
-        String appVersionDisplay = "Version " + appVersion;
+        String appVersionDisplay = "App version " + appVersion;
         TextView tvAppVersion = findViewById(R.id.tv_app_version);
         tvAppVersion.setText(appVersionDisplay);
+        String libVersionDisplay = "Lib version 1.0.6";
+        TextView tvLibVersion = findViewById(R.id.tv_lib_version);
+        tvLibVersion.setText(libVersionDisplay);
     }
 
     private void gotoGithubPage() {
