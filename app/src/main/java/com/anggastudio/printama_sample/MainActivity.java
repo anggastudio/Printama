@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_printer_advance_test).setOnClickListener(v -> gotoTestActivity());
         findViewById(R.id.btn_printer_width).setOnClickListener(v -> choosePrinterWidth());
         findViewById(R.id.btn_reset).setOnClickListener(v -> resetPrinterConnection());
+
+        displayPrinterWidthInfo();
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
