@@ -179,6 +179,31 @@
 
             </androidx.cardview.widget.CardView>
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_reset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/colorGray5"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:drawableStart="@drawable/tabler_rotate_clockwise"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/colorGrayE"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Reset Printer Config"
+                    android:textColor="@color/colorGrayE"
+                    android:textSize="12sp" />
+
+            </androidx.cardview.widget.CardView>
+
             <LinearLayout
                 android:id="@+id/test_printer_layout"
                 android:layout_width="match_parent"
@@ -231,31 +256,6 @@
                 </androidx.cardview.widget.CardView>
 
             </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btn_reset"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                app:cardBackgroundColor="@color/colorGray5"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:drawableStart="@drawable/tabler_rotate_clockwise"
-                    android:drawablePadding="8dp"
-                    android:drawableTint="@color/colorGrayE"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="Reset Printer Config"
-                    android:textColor="@color/colorGrayE"
-                    android:textSize="12sp" />
-
-            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
