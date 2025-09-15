@@ -3,10 +3,8 @@ package com.anggastudio.printama_sample;
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.pdf.PdfRenderer;
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.print.PrintAttributes;
 import android.print.PrinterCapabilitiesInfo;
@@ -20,12 +18,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.annotation.RequiresPermission;
 
-
-import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama.Printama;
+import com.anggastudio.printama.constants.PW;
 import com.anggastudio.printama_sample.util.SharedPref;
 import com.anggastudio.printama_sample.util.Util;
 
@@ -40,6 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrintamaPrintService extends PrintService {
+    private static final String PRINTER_LOCAL_ID = "printama"; // stable ID across callbacks
+    private PrinterId myPrinterId;
+    private PrinterInfo cachedPrinter;
 
     @Override
     protected PrinterDiscoverySession onCreatePrinterDiscoverySession() {
@@ -50,39 +49,41 @@ public class PrintamaPrintService extends PrintService {
             public void onStartPrinterDiscovery(@NonNull List<PrinterId> priorityList) {
                 Log.d("Print Service", "PrinterDiscoverySession#onStartPrinterDiscovery(priorityList: " + priorityList + ") called");
 
-                List<PrinterInfo> printers = new ArrayList<>();
-
-                PrinterId printerId = generatePrinterId("1312");
-                boolean isExist = false;
-                if (!printers.isEmpty()) {
-                    for (PrinterInfo printer : printers) {
-                        isExist = printer.getId().equals(printerId.getLocalId());
-                    }
+                // Use a stable PrinterId for this service (do NOT generate a new one each time)
+                if (myPrinterId == null) {
+                    myPrinterId = generatePrinterId(PRINTER_LOCAL_ID);
                 }
-
-                if (isExist) return;
+                PrinterId printerId = myPrinterId;
 
                 PrinterInfo.Builder builder = new PrinterInfo.Builder(printerId, "Printama", PrinterInfo.STATUS_IDLE);
                 builder.setDescription("Print with Printama App");
 
                 PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(printerId);
 
-                // Paper sizes updated earlier (80mm/58mm)
+                // Paper sizes (keep your current defaults)
                 capBuilder.addMediaSize(new PrintAttributes.MediaSize("80mm", "80 mm roll (3 1/8\")", 3125, 10000), false);
                 capBuilder.addMediaSize(new PrintAttributes.MediaSize("58mm", "58 mm roll (2 1/4\")", 2280, 10000), true);
 
-                // Resolutions: typical thermal printers are 203 dpi (most) or 300 dpi (some)
+                // Resolutions: 203 dpi default, 300 dpi optional
                 capBuilder.addResolution(new PrintAttributes.Resolution("203dpi", "203 dpi", 203, 203), true);
                 capBuilder.addResolution(new PrintAttributes.Resolution("300dpi", "300 dpi", 300, 300), false);
 
+                // REQUIRED: specify color modes
                 capBuilder.setColorModes(
                         PrintAttributes.COLOR_MODE_MONOCHROME,
                         PrintAttributes.COLOR_MODE_MONOCHROME
                 );
 
+                // Optional: explicit zero margins
+                capBuilder.setMinMargins(PrintAttributes.Margins.NO_MARGINS);
+
                 builder.setCapabilities(capBuilder.build());
-                printers.add(builder.build());
-                addPrinters(printers);
+
+                // Cache and announce the same printer
+                cachedPrinter = builder.build();
+                List<PrinterInfo> list = new ArrayList<>();
+                list.add(cachedPrinter);
+                addPrinters(list);
             }
 
             @Override
@@ -93,16 +94,32 @@ public class PrintamaPrintService extends PrintService {
             @Override
             public void onValidatePrinters(@NonNull List<PrinterId> printerIds) {
                 Log.d("Printama Print Service", "MyPrintService#onValidatePrinters(printerIds: " + printerIds + ") called");
+                // Re-announce during validation to keep it available
+                if (cachedPrinter != null && myPrinterId != null && printerIds.contains(myPrinterId)) {
+                    List<PrinterInfo> list = new ArrayList<>();
+                    list.add(cachedPrinter);
+                    addPrinters(list);
+                }
             }
 
             @Override
             public void onStartPrinterStateTracking(@NonNull PrinterId printerId) {
                 Log.d("Printama Print Service", "MyPrintService#onStartPrinterStateTracking(printerId: " + printerId + ") called");
+                // Ensure it remains IDLE (available) when selected
+                if (cachedPrinter != null && printerId.equals(myPrinterId)) {
+                    PrinterInfo.Builder b = new PrinterInfo.Builder(cachedPrinter);
+                    b.setStatus(PrinterInfo.STATUS_IDLE);
+                    cachedPrinter = b.build();
+                    List<PrinterInfo> list = new ArrayList<>();
+                    list.add(cachedPrinter);
+                    addPrinters(list);
+                }
             }
 
             @Override
             public void onStopPrinterStateTracking(@NonNull PrinterId printerId) {
                 Log.d("Printama Print Service", "MyPrintService#onStopPrinterStateTracking(printerId: " + printerId + ") called");
+                // no-op: keep it discoverable/available
             }
 
             @Override
@@ -152,20 +169,20 @@ public class PrintamaPrintService extends PrintService {
                     if (!bitmaps.isEmpty()) {
                         printBitmap(bitmaps, printJob);
                     } else {
-                        showToast("Failed to convert PDF to Bitmap");
+                        Log.w("PrintService", "Failed to convert PDF to Bitmap");
                         printJob.fail("No printable content found");
                     }
                 } else {
-                    showToast("No print data");
+                    Log.w("PrintService", "No print data");
                     printJob.fail("No data to print");
                 }
             } else {
-                showToast("Print not allowed");
+                Log.w("PrintService", "Print not allowed");
                 printJob.cancel();
             }
         } catch (Exception e) {
             Log.e("PrintService", "Error processing print job", e);
-            showToast("Error processing print job: " + e.getMessage());
+            // Avoid toast here to prevent SystemUI asset path error
             printJob.cancel();
         }
     }
@@ -202,8 +219,10 @@ public class PrintamaPrintService extends PrintService {
         });
     }
 
+    // Helper inside PrintamaPrintService
     private void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        // Suppressed in service to avoid SystemUI toast asset path errors on some OEMs
+        Log.d("PrintService", "Toast suppressed: " + message);
     }
 
     public Bitmap convertInputStreamToBitmap(FileInputStream inputStream) throws IOException {
@@ -285,7 +304,10 @@ public class PrintamaPrintService extends PrintService {
                     return renderPdfToBitmaps(tmpPfd, targetWidthPx);
                 } finally {
                     if (tmpPfd != null) {
-                        try { tmpPfd.close(); } catch (Exception ignored) {}
+                        try {
+                            tmpPfd.close();
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
@@ -298,7 +320,10 @@ public class PrintamaPrintService extends PrintService {
                 return renderPdfToBitmaps(tmpPfd, targetWidthPx);
             } finally {
                 if (tmpPfd != null) {
-                    try { tmpPfd.close(); } catch (Exception ignored) {}
+                    try {
+                        tmpPfd.close();
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
@@ -337,10 +362,16 @@ public class PrintamaPrintService extends PrintService {
             }
         } finally {
             if (renderer != null) {
-                try { renderer.close(); } catch (Exception ignored) {}
+                try {
+                    renderer.close();
+                } catch (Exception ignored) {
+                }
             }
             if (dupPfd != null) {
-                try { dupPfd.close(); } catch (Exception ignored) {}
+                try {
+                    dupPfd.close();
+                } catch (Exception ignored) {
+                }
             }
         }
         return bitmaps;
