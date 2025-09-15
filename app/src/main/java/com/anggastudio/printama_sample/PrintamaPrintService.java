@@ -67,10 +67,13 @@ public class PrintamaPrintService extends PrintService {
 
                 PrinterCapabilitiesInfo.Builder capBuilder = new PrinterCapabilitiesInfo.Builder(printerId);
 
-                capBuilder.addMediaSize(new PrintAttributes.MediaSize("3inch", "3\" roll", 3800, 10000), false);
-                capBuilder.addMediaSize(new PrintAttributes.MediaSize("2inch", "2\" roll", 2800, 10000), true);
+                // Paper sizes updated earlier (80mm/58mm)
+                capBuilder.addMediaSize(new PrintAttributes.MediaSize("80mm", "80 mm roll (3 1/8\")", 3125, 10000), false);
+                capBuilder.addMediaSize(new PrintAttributes.MediaSize("58mm", "58 mm roll (2 1/4\")", 2280, 10000), true);
 
-                capBuilder.addResolution(new PrintAttributes.Resolution("resolutionId", "default resolution", 609, 609), true);
+                // Resolutions: typical thermal printers are 203 dpi (most) or 300 dpi (some)
+                capBuilder.addResolution(new PrintAttributes.Resolution("203dpi", "203 dpi", 203, 203), true);
+                capBuilder.addResolution(new PrintAttributes.Resolution("300dpi", "300 dpi", 300, 300), false);
 
                 capBuilder.setColorModes(
                         PrintAttributes.COLOR_MODE_MONOCHROME,
@@ -124,28 +127,42 @@ public class PrintamaPrintService extends PrintService {
         try {
             if (Util.isAllowToPrint()) {
                 PrintDocument printDocument = printJob.getDocument();
-                if (printDocument.getData() != null && printDocument.getData().getFileDescriptor() != null) {
-                    FileInputStream inputStream = new FileInputStream(printDocument.getData().getFileDescriptor());
+                ParcelFileDescriptor pfd = printDocument.getData();
+                if (pfd != null) {
+                    PrintAttributes attrs = (printJob.getInfo() != null) ? printJob.getInfo().getAttributes() : null;
 
-                    // Convert the PDF data to a list of bitmaps
-                    List<Bitmap> bitmaps = convertPdfToBitmaps(inputStream);
+                    // Prefer the job's resolution if provided; otherwise default to 203 dpi
+                    int chosenDpi = 203;
+                    PrintAttributes.Resolution res = (attrs != null) ? attrs.getResolution() : null;
+                    if (res != null) {
+                        chosenDpi = res.getHorizontalDpi();
+                    }
+                    Log.d("PrintService", "Chosen DPI: " + chosenDpi);
 
-                    // Check if bitmaps list is not empty
+                    PrintAttributes.MediaSize media = (attrs != null) ? attrs.getMediaSize() : null;
+                    boolean is80mm = (media != null) ? media.getWidthMils() >= 3000 : true;
+
+                    int targetWidthPx = is80mm
+                            ? ((chosenDpi >= 300) ? 832 : 576)
+                            : ((chosenDpi >= 300) ? 576 : 384);
+
+                    // Convert with fallback for non-seekable descriptors
+                    List<Bitmap> bitmaps = convertPdfToBitmaps(pfd, targetWidthPx);
+
                     if (!bitmaps.isEmpty()) {
-                        // Print each bitmap
-                        printBitmap(bitmaps);
+                        printBitmap(bitmaps, printJob);
                     } else {
                         showToast("Failed to convert PDF to Bitmap");
+                        printJob.fail("No printable content found");
                     }
-
-                    // Close the input stream
-                    inputStream.close();
+                } else {
+                    showToast("No print data");
+                    printJob.fail("No data to print");
                 }
-                showToast("Print success");
             } else {
                 showToast("Print not allowed");
+                printJob.cancel();
             }
-            printJob.complete();
         } catch (Exception e) {
             Log.e("PrintService", "Error processing print job", e);
             showToast("Error processing print job: " + e.getMessage());
@@ -154,9 +171,8 @@ public class PrintamaPrintService extends PrintService {
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printBitmap(List<Bitmap> bitmaps) {
+    private void printBitmap(List<Bitmap> bitmaps, PrintJob printJob) {
         Printama.with(this).connect(printama -> {
-            // Estimate total printed height in dots to compute a safe close delay
             boolean is3Inch = Printama.is3inchesPrinter();
             int printerWidthDots = is3Inch ? 576 : 384;
 
@@ -171,13 +187,19 @@ public class PrintamaPrintService extends PrintService {
                 totalScaledHeightDots += scaledHeightDots;
             }
 
-            // Heuristic: ~4 ms per dot of height + base 3s, capped at 20s
+            // Heuristic delay: ~4 ms per dot + base 3s, capped at 20s
             long delayMs = Math.max(3000L, totalScaledHeightDots * 4L);
             delayMs = Math.min(delayMs, 20000L);
 
-            // Close the connection after the batch to avoid truncation
+            printama.addNewLine();
             printama.closeAfter(delayMs);
-        }, this::showToast);
+
+            // Mark job complete once submitted and close scheduled
+            printJob.complete();
+        }, errorMsg -> {
+            showToast(errorMsg);
+            printJob.fail(errorMsg);
+        });
     }
 
     private void showToast(String message) {
@@ -249,103 +271,108 @@ public class PrintamaPrintService extends PrintService {
         }
     }
 
-    private List<Bitmap> convertPdfToBitmaps(InputStream inputStream) {
+    // Try to render directly from PFD; if it isn't seekable, copy to a temp file and render from there.
+    private List<Bitmap> convertPdfToBitmaps(ParcelFileDescriptor pfd, int targetWidthPx) throws IOException {
+        try {
+            return renderPdfToBitmaps(pfd, targetWidthPx);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            String msg = String.valueOf(e.getMessage()).toLowerCase();
+            if (msg.contains("seekable")) {
+                // Fall back to a temp file for non-seekable descriptors
+                ParcelFileDescriptor tmpPfd = null;
+                try {
+                    tmpPfd = writePfdToTempFile(pfd);
+                    return renderPdfToBitmaps(tmpPfd, targetWidthPx);
+                } finally {
+                    if (tmpPfd != null) {
+                        try { tmpPfd.close(); } catch (Exception ignored) {}
+                    }
+                }
+            }
+            throw e;
+        } catch (IOException e) {
+            // Some devices throw IOException instead; also fall back
+            ParcelFileDescriptor tmpPfd = null;
+            try {
+                tmpPfd = writePfdToTempFile(pfd);
+                return renderPdfToBitmaps(tmpPfd, targetWidthPx);
+            } finally {
+                if (tmpPfd != null) {
+                    try { tmpPfd.close(); } catch (Exception ignored) {}
+                }
+            }
+        }
+    }
+
+    // Render pages at target width with print-quality mode, and trim near-white side margins.
+    private List<Bitmap> renderPdfToBitmaps(ParcelFileDescriptor sourcePfd, int targetWidthPx) throws IOException {
         List<Bitmap> bitmaps = new ArrayList<>();
         PdfRenderer renderer = null;
-        FileOutputStream outputStream = null;
-        ParcelFileDescriptor fileDescriptor = null;
+        ParcelFileDescriptor dupPfd = null;
         try {
-            // Create a temporary file to store the PDF data
-            File tempFile = File.createTempFile("temp_pdf", null);
-            outputStream = new FileOutputStream(tempFile);
+            dupPfd = ParcelFileDescriptor.dup(sourcePfd.getFileDescriptor());
+            renderer = new PdfRenderer(dupPfd);
 
-            // Copy the contents of the InputStream to the temporary file
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            // Close the OutputStream
-            outputStream.close();
-
-            // Get a ParcelFileDescriptor for the temporary file
-            fileDescriptor = ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY);
-
-            // Open the PDF document using PdfRenderer
-            renderer = new PdfRenderer(fileDescriptor);
-
-            // Iterate through each page of the PDF document
             for (int pageIndex = 0; pageIndex < renderer.getPageCount(); pageIndex++) {
-                // Get the page at the specified index
                 PdfRenderer.Page page = renderer.openPage(pageIndex);
 
-                // Create a bitmap to render the PDF page
-                Bitmap bitmap = Bitmap.createBitmap(page.getWidth(), page.getHeight(), Bitmap.Config.ARGB_8888);
+                int srcW = Math.max(1, page.getWidth());
+                int srcH = Math.max(1, page.getHeight());
+                int targetHeightPx = Math.max(1, Math.round((srcH / (float) srcW) * targetWidthPx));
 
-                // Render the PDF page onto the bitmap
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                Bitmap bitmap = Bitmap.createBitmap(targetWidthPx, targetHeightPx, Bitmap.Config.ARGB_8888);
+                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT);
 
-                // Find the visible content bounds by scanning the bitmap
                 Rect visibleBounds = findVisibleContentBounds(bitmap);
+                Bitmap croppedBitmap = (visibleBounds.width() > 0 && visibleBounds.height() > 0)
+                        ? cropAndEnlargeBitmap(bitmap, visibleBounds)
+                        : bitmap;
 
-// Crop the bitmap to include only the visible content
-                Bitmap croppedBitmap = cropAndEnlargeBitmap(bitmap, visibleBounds);
+                bitmaps.add(croppedBitmap);
+                if (croppedBitmap != bitmap) {
+                    bitmap.recycle();
+                }
 
-                // Add the bitmap to the list
-                bitmaps.add(bitmap);
-
-                // Close the PDF page
                 page.close();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
-            // Close the PdfRenderer to release resources
             if (renderer != null) {
-                renderer.close();
+                try { renderer.close(); } catch (Exception ignored) {}
             }
-            // Close the ParcelFileDescriptor
-            if (fileDescriptor != null) {
-                try {
-                    fileDescriptor.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            // Delete the temporary file
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if (dupPfd != null) {
+                try { dupPfd.close(); } catch (Exception ignored) {}
             }
         }
         return bitmaps;
     }
 
+    // Copy PDF bytes from the (possibly non-seekable) PFD into a temp file, then return a readable PFD.
+    private ParcelFileDescriptor writePfdToTempFile(ParcelFileDescriptor src) throws IOException {
+        File tmp = File.createTempFile("printama_spool_", ".pdf", getCacheDir());
+        // Best-effort cleanup if the process terminates
+        tmp.deleteOnExit();
+
+        try (FileInputStream in = new FileInputStream(src.getFileDescriptor());
+             FileOutputStream out = new FileOutputStream(tmp)) {
+            byte[] buffer = new byte[8192];
+            int n;
+            while ((n = in.read(buffer)) != -1) {
+                out.write(buffer, 0, n);
+            }
+            out.flush();
+        }
+        return ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_ONLY);
+    }
+
     private Bitmap cropAndEnlargeBitmap(Bitmap originalBitmap, Rect visibleBounds) {
-        int originalWidth = originalBitmap.getWidth();
-        int originalHeight = originalBitmap.getHeight();
-
-        // Calculate the width of the visible content
-        int visibleWidth = visibleBounds.width();
-
-        // Create a new bitmap with the original width and the height of the visible content
-        Bitmap enlargedBitmap = Bitmap.createBitmap(originalWidth, visibleBounds.height(), Bitmap.Config.ARGB_8888);
-
-        // Create a canvas with the new bitmap
-        Canvas canvas = new Canvas(enlargedBitmap);
-
-        // Calculate the horizontal offset to align the visible content to the left
-        int xOffset = (originalWidth - visibleWidth) / 2;
-
-        // Draw the visible content onto the new bitmap, aligning it to the left
-        canvas.drawBitmap(originalBitmap, new Rect(visibleBounds.left, visibleBounds.top, visibleBounds.right, visibleBounds.bottom),
-                new Rect(xOffset, 0, xOffset + visibleWidth, visibleBounds.height()), null);
-
-        return enlargedBitmap;
+        // Return the cropped content only; scaling to full width is handled by PW.FULL_WIDTH
+        return Bitmap.createBitmap(
+                originalBitmap,
+                visibleBounds.left,
+                visibleBounds.top,
+                visibleBounds.width(),
+                visibleBounds.height()
+        );
     }
 
     private Rect findVisibleContentBounds(Bitmap bitmap) {
@@ -355,25 +382,39 @@ public class PrintamaPrintService extends PrintService {
         int left = 0;
         int right = width - 1;
 
+        // Threshold for considering a column as "blank" (near-white)
+        // 0..255 where higher = stricter (closer to pure white)
+        final int whiteThreshold = 245;
+
         // Scan from left to find the left visible column
-        while (left < width && isBlankColumn(bitmap, left)) {
+        while (left < width && isBlankColumn(bitmap, left, whiteThreshold)) {
             left++;
         }
 
         // Scan from right to find the right visible column
-        while (right > left && isBlankColumn(bitmap, right)) {
+        while (right > left && isBlankColumn(bitmap, right, whiteThreshold)) {
             right--;
         }
 
-        // Return the visible content bounds
         return new Rect(left, 0, right + 1, height);
     }
 
-    private boolean isBlankColumn(Bitmap bitmap, int x) {
+    private boolean isBlankColumn(Bitmap bitmap, int x, int whiteThreshold) {
         int height = bitmap.getHeight();
         for (int y = 0; y < height; y++) {
-            if ((bitmap.getPixel(x, y) & 0xff000000) != 0) {
-                return false;
+            int color = bitmap.getPixel(x, y);
+            int a = (color >>> 24) & 0xFF;
+            int r = (color >> 16) & 0xFF;
+            int g = (color >> 8) & 0xFF;
+            int b = color & 0xFF;
+
+            // Transparent pixels are blank; opaque pixels must be near-white to be considered blank
+            if (a > 10) {
+                // Perceptual luminance
+                int luminance = (int) (0.299f * r + 0.587f * g + 0.114f * b);
+                if (luminance < whiteThreshold) {
+                    return false; // Found "ink"
+                }
             }
         }
         return true;
