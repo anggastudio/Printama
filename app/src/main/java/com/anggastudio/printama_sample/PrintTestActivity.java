@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Toast;
 
@@ -259,7 +258,8 @@ public class PrintTestActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, PW.FULL_WIDTH);
             printama.feedPaper();
-            printama.close();
+            long delayMs = estimateDelayForBitmapFullWidth(bitmap);
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -319,7 +319,8 @@ public class PrintTestActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printImage(bitmap, PW.FULL_WIDTH);
             printama.feedPaper();
-            printama.close();
+            long delayMs = estimateDelayForBitmapFullWidth(bitmap);
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -329,7 +330,9 @@ public class PrintTestActivity extends AppCompatActivity {
         Printama.with(this).connect(printama -> {
             printama.printFromView(view);
             printama.feedPaper();
-            new Handler().postDelayed(printama::close, 2000);
+            // Estimate delay based on view size
+            long delayMs = estimateDelayForView(view.getWidth(), view.getHeight());
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -371,7 +374,8 @@ public class PrintTestActivity extends AppCompatActivity {
             if (footer.getEnvironment() != null)
                 printama.printTextln(footer.getEnvironment(), PA.CENTER);
             printama.addNewLine(4); // same as feed paper
-            printama.close();
+            long delayMs = 4000L; // conservative delay for long text + small images
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -462,7 +466,8 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.setNormalText();
 
             printama.addNewLine(3);
-            printama.close();
+            long delayMs = 4000L; // conservative delay for long receipt
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -493,7 +498,8 @@ public class PrintTestActivity extends AppCompatActivity {
             printama.printTextln(printama.formatThreeColumns("TOTAL", "28", "$98.00"), PA.LEFT);
             printama.setNormalText();
             printama.addNewLine(2);
-            printama.close();
+            long delayMs = 3000L;
+            printama.closeAfter(delayMs);
         }, this::showToast);
     }
 
@@ -568,9 +574,11 @@ public class PrintTestActivity extends AppCompatActivity {
                 print.printTextln("", PA.LEFT);
                 print.printTextln("", PA.LEFT);
                 print.printTextln("", PA.LEFT);
-                print.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
+            } finally {
+                long delayMs = 4000L;
+                print.closeAfter(delayMs);
             }
         });
     }
@@ -597,5 +605,34 @@ public class PrintTestActivity extends AppCompatActivity {
         return bmp;
     }
 
+    private long delayFromScaledHeight(long scaledHeightDots) {
+        long baseMs = 3000L;
+        long perDotMs = 4L; // heuristic
+        long capMs = 20000L;
+        long raw = baseMs + scaledHeightDots * perDotMs;
+        return Math.min(capMs, Math.max(baseMs, raw));
+    }
+
+    private long estimateDelayForBitmapFullWidth(Bitmap bitmap) {
+        int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
+        float scale = printerWidthDots / Math.max(1f, (float) bitmap.getWidth());
+        long scaledHeightDots = (long) Math.ceil(bitmap.getHeight() * scale);
+        return delayFromScaledHeight(scaledHeightDots);
+    }
+
+    private long estimateDelayForBitmapScaled(Bitmap bitmap, int targetWidthDots) {
+        int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
+        int widthDots = Math.min(printerWidthDots, Math.max(1, targetWidthDots));
+        float scale = widthDots / Math.max(1f, (float) bitmap.getWidth());
+        long scaledHeightDots = (long) Math.ceil(bitmap.getHeight() * scale);
+        return delayFromScaledHeight(scaledHeightDots);
+    }
+
+    private long estimateDelayForView(int viewWidthPx, int viewHeightPx) {
+        int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
+        float scale = printerWidthDots / Math.max(1f, (float) viewWidthPx);
+        long scaledHeightDots = (long) Math.ceil(viewHeightPx * scale);
+        return delayFromScaledHeight(scaledHeightDots);
+    }
 
 }
