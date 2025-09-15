@@ -141,8 +141,19 @@
         android:id="@+id/tv_app_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="App version 1.0.0"
+        android:textColor="@color/black"
+        android:textSize="8sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_lib_version"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_lib_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Version 1.0.0"
+        android:text="Lib version 1.0.0"
         android:textColor="@color/black"
         android:textSize="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
