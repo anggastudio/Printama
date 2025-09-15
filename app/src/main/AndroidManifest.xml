@@ -37,10 +37,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PrintamaLib">
         <activity
-            android:name=".DonationScreenActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".MainServiceActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -57,6 +54,12 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DonationScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"/>
         <activity
             android:name=".TitleScreenActivity"
             android:exported="true">

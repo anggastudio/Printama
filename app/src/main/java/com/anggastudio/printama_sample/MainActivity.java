@@ -67,22 +67,11 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         // Check if the activity was started by a share intent
         checkBluetoothPermission();
-        checkSharedImageIntent();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void checkSharedImageIntent() {
-        Intent intent = getIntent();
-        if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
-            handleSharedImage(intent);
-        } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
-            handleSharedImages(intent);
-        }
     }
 
     private void connectToPrinter(boolean isTriggered) {
@@ -252,68 +241,6 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        if (intent != null) {
-            // Check if the activity was started by a share intent
-            if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
-                handleSharedImage(intent);
-            } else if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction()) && intent.getType().startsWith("image/")) {
-                handleSharedImages(intent);
-            }
-        }
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void handleSharedImage(Intent intent) {
-        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        // Handle the single shared image URI here
-        // Example: display the shared image in an ImageView
-        ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUri);
-        printImageReceived(imageUri);
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void handleSharedImages(Intent intent) {
-        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        // Handle the multiple shared image URIs here
-        // Example: display the shared images in a RecyclerView
-        if (imageUris != null) {
-            ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUris.get(0));
-            printImageReceived(imageUris.get(0));
-        }
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printImageReceived(Uri imageUri) {
-        Bitmap bitmap = convertUriToBitmap(imageUri);
-        if (bitmap != null) {
-           if (Util.isAllowToPrint()) {
-                // Print the bitmap as
-                Printama.with(this).connect(printama -> {
-                    printama.printImage(bitmap, PW.FULL_WIDTH);
-
-                    // Estimate printed height (FULL_WIDTH scaling)
-                    int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
-                    float scale = printerWidthDots / Math.max(1f, (float) bitmap.getWidth());
-                    int scaledHeightDots = (int) (bitmap.getHeight() * scale);
-
-                    // Give the printer time to finish before closing
-                    long delayMs = Math.max(3000L, scaledHeightDots * 4L);
-
-                    printama.closeAfter(delayMs);
-                }, this::showToast);
-           } else {
-               showToast("print not allowed");
-           }
-        } else {
-            // Handle the case where conversion failed
-            showToast("failed to print image");
-        }
-    }
-
     // Handle the result of the permission request
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
@@ -333,19 +260,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Bitmap convertUriToBitmap(Uri uri) {
-        try {
-            // Use content resolver to open input stream from the URI
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-            if (inputStream != null) {
-                // Decode the input stream into a Bitmap using BitmapFactory
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close(); // Close the input stream
-                return bitmap;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null; // Return null if conversion fails
-    }
 }
