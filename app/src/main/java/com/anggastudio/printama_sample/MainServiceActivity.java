@@ -5,13 +5,23 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -29,8 +39,18 @@ import java.util.ArrayList;
 
 public class MainServiceActivity extends AppCompatActivity {
 
+    private static final int PICK_IMAGE_REQUEST = 1001;
+    
     private Uri imageUri = null;
     private ArrayList<Uri> imageUris = new ArrayList<>();
+    private Bitmap originalBitmap = null;
+    private ImageView imageView;
+    private Switch trimWhitespaceSwitch;
+    private SeekBar heightSeekBar;
+    private TextView heightPercentageText;
+    private Button printButton;
+
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     @Override
@@ -44,27 +64,71 @@ public class MainServiceActivity extends AppCompatActivity {
             return insets;
         });
 
-        ((Button) findViewById(R.id.btn_print_again)).setOnClickListener(view -> {
-            printAgain();
-        });
+        initializeImagePicker();
+        initializeViews();
+        setupListeners();
+    }
+
+    private void initializeImagePicker() {
+        imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImageUri = result.getData().getData();
+                    if (selectedImageUri != null) {
+                        loadImageFromUri(selectedImageUri);
+                    }
+                }
+            }
+        );
+    }
+
+    private void initializeViews() {
+        imageView = findViewById(R.id.iv_image_will_be_printed);
+        trimWhitespaceSwitch = findViewById(R.id.switch_trim_whitespace);
+        heightSeekBar = findViewById(R.id.seekbar_height);
+        heightPercentageText = findViewById(R.id.tv_height_percentage);
+        printButton = findViewById(R.id.btn_print);
     }
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printAgain() {
-        if (imageUri != null) {
-            printImageReceived(imageUri);
-        } else if (imageUris != null) {
-            ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUris.get(0));
-            printImageReceived(imageUris.get(0));
-        } else {
-            showToast("Nothing can be printed!");
-        }
+    private void setupListeners() {
+        printButton.setOnClickListener(view -> printCurrentImage());
+        imageView.setOnClickListener(view -> openImagePicker());
+        
+        trimWhitespaceSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> updatePreview());
+        
+        heightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    updateHeightPercentageText(progress);
+                    updatePreview();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        imagePickerLauncher.launch(intent);
+    }
+
+    private void updateHeightPercentageText(int progress) {
+        int percentage = progress - 50; // Convert 0-200 to -50 to 150
+        heightPercentageText.setText(percentage + "%");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Check if the activity was started by a share intent
         checkBluetoothPermission();
         checkSharedImageIntent();
     }
@@ -80,7 +144,6 @@ public class MainServiceActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void checkSharedImageIntent() {
         Intent intent = getIntent();
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.getType() != null && intent.getType().startsWith("image/")) {
@@ -90,69 +153,172 @@ public class MainServiceActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void handleSharedImage(Intent intent) {
         imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        // Handle the single shared image URI here
-        // Example: display the shared image in an ImageView
-        ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUri);
-        printImageReceived(imageUri);
-    }
-
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void handleSharedImages(Intent intent) {
-        imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        // Handle the multiple shared image URIs here
-        // Example: display the shared images in a RecyclerView
-        if (imageUris != null) {
-            ((ImageView) findViewById(R.id.iv_image_will_be_printed)).setImageURI(imageUris.get(0));
-            printImageReceived(imageUris.get(0));
+        if (imageUri != null) {
+            loadImageFromUri(imageUri);
         }
     }
 
-    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
-    private void printImageReceived(Uri imageUri) {
-        Bitmap bitmap = convertUriToBitmap(imageUri);
-        if (bitmap != null) {
-            if (Util.isAllowToPrint()) {
-                // Print the bitmap as
-                Printama.with(this).connect(printama -> {
-                    printama.printImage(bitmap, PW.FULL_WIDTH);
+    private void handleSharedImages(Intent intent) {
+        imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUris != null && !imageUris.isEmpty()) {
+            loadImageFromUri(imageUris.get(0));
+        }
+    }
 
-                    // Estimate printed height (FULL_WIDTH scaling)
-                    int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
-                    float scale = printerWidthDots / Math.max(1f, (float) bitmap.getWidth());
-                    int scaledHeightDots = (int) (bitmap.getHeight() * scale);
-
-                    // Give the printer time to finish before closing
-                    long delayMs = Math.max(3000L, scaledHeightDots * 4L);
-
-                    printama.addNewLine();
-                    printama.closeAfter(delayMs);
-                }, this::showToast);
-            } else {
-                showToast("print not allowed");
-            }
+    private void loadImageFromUri(Uri uri) {
+        originalBitmap = convertUriToBitmap(uri);
+        if (originalBitmap != null) {
+            updatePreview();
         } else {
-            // Handle the case where conversion failed
-            showToast("failed to print image");
+            showToast("Failed to load image");
+        }
+    }
+
+    private void updatePreview() {
+        if (originalBitmap == null) return;
+
+        Bitmap processedBitmap = originalBitmap;
+        
+        // Apply whitespace trimming if enabled
+        if (trimWhitespaceSwitch.isChecked()) {
+            processedBitmap = trimWhitespace(processedBitmap);
+        }
+        
+        // Apply height scaling
+        int progress = heightSeekBar.getProgress();
+        float scale = (progress - 50) / 100f + 1f; // Convert 0-200 to 0.5-2.5
+        if (scale != 1f) {
+            int newHeight = Math.max(1, (int) (processedBitmap.getHeight() * scale));
+            processedBitmap = Bitmap.createScaledBitmap(processedBitmap, processedBitmap.getWidth(), newHeight, true);
+        }
+        
+        imageView.setImageBitmap(processedBitmap);
+    }
+
+    private Bitmap trimWhitespace(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        
+        int top = 0, bottom = height - 1, left = 0, right = width - 1;
+        
+        // Find top boundary
+        outerTop:
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                if (bitmap.getPixel(x, y) != Color.WHITE && (bitmap.getPixel(x, y) & 0xFF000000) != 0) {
+                    top = y;
+                    break outerTop;
+                }
+            }
+        }
+        
+        // Find bottom boundary
+        outerBottom:
+        for (int y = height - 1; y >= top; y--) {
+            for (int x = 0; x < width; x++) {
+                if (bitmap.getPixel(x, y) != Color.WHITE && (bitmap.getPixel(x, y) & 0xFF000000) != 0) {
+                    bottom = y;
+                    break outerBottom;
+                }
+            }
+        }
+        
+        // Find left boundary
+        outerLeft:
+        for (int x = 0; x < width; x++) {
+            for (int y = top; y <= bottom; y++) {
+                if (bitmap.getPixel(x, y) != Color.WHITE && (bitmap.getPixel(x, y) & 0xFF000000) != 0) {
+                    left = x;
+                    break outerLeft;
+                }
+            }
+        }
+        
+        // Find right boundary
+        outerRight:
+        for (int x = width - 1; x >= left; x--) {
+            for (int y = top; y <= bottom; y++) {
+                if (bitmap.getPixel(x, y) != Color.WHITE && (bitmap.getPixel(x, y) & 0xFF000000) != 0) {
+                    right = x;
+                    break outerRight;
+                }
+            }
+        }
+        
+        // Create cropped bitmap
+        if (top < bottom && left < right) {
+            return Bitmap.createBitmap(bitmap, left, top, right - left + 1, bottom - top + 1);
+        }
+        
+        return bitmap; // Return original if no content found
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void printCurrentImage() {
+        if (originalBitmap == null) {
+            showToast("No image to print!");
+            return;
+        }
+
+        // Get the processed bitmap (same as preview)
+        Bitmap processedBitmap = originalBitmap;
+        
+        if (trimWhitespaceSwitch.isChecked()) {
+            processedBitmap = trimWhitespace(processedBitmap);
+        }
+        
+        int progress = heightSeekBar.getProgress();
+        float scale = (progress - 50) / 100f + 1f;
+        if (scale != 1f) {
+            int newHeight = Math.max(1, (int) (processedBitmap.getHeight() * scale));
+            processedBitmap = Bitmap.createScaledBitmap(processedBitmap, processedBitmap.getWidth(), newHeight, true);
+        }
+
+        // Make the bitmap final for use in lambda
+        final Bitmap finalProcessedBitmap = processedBitmap;
+
+        if (Util.isAllowToPrint()) {
+            Printama.with(this).connect(printama -> {
+                // Use FULL_WIDTH only if trimming is enabled, otherwise use ORIGINAL_WIDTH to prevent auto-trimming
+                int printWidth = trimWhitespaceSwitch.isChecked() ? PW.FULL_WIDTH : PW.ORIGINAL_WIDTH;
+                printama.printImage(finalProcessedBitmap, printWidth);
+
+                // Estimate printed height based on the print width used
+                int printerWidthDots = Printama.is3inchesPrinter() ? 576 : 384;
+                float printScale;
+                if (printWidth == PW.FULL_WIDTH) {
+                    printScale = printerWidthDots / Math.max(1f, (float) finalProcessedBitmap.getWidth());
+                } else {
+                    // For ORIGINAL_WIDTH, no scaling is applied
+                    printScale = 1f;
+                }
+                int scaledHeightDots = (int) (finalProcessedBitmap.getHeight() * printScale);
+
+                // Give the printer time to finish before closing
+                long delayMs = Math.max(3000L, scaledHeightDots * 4L);
+
+                printama.addNewLine();
+                printama.closeAfter(delayMs);
+            }, this::showToast);
+        } else {
+            showToast("Print not allowed");
         }
     }
 
     public Bitmap convertUriToBitmap(Uri uri) {
         try {
-            // Use content resolver to open input stream from the URI
             InputStream inputStream = getContentResolver().openInputStream(uri);
             if (inputStream != null) {
-                // Decode the input stream into a Bitmap using BitmapFactory
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                inputStream.close(); // Close the input stream
+                inputStream.close();
                 return bitmap;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null; // Return null if conversion fails
+        return null;
     }
 
     private void showToast(String message) {
