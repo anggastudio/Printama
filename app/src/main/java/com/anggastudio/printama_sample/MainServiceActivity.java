@@ -122,7 +122,7 @@ public class MainServiceActivity extends AppCompatActivity {
     }
 
     private void updateHeightPercentageText(int progress) {
-        int percentage = progress - 50; // Convert 0-200 to -50 to 150
+        int percentage = (int) (progress * 0.5f + 50); // Convert 0-200 to 50-150
         heightPercentageText.setText(percentage + "%");
     }
 
@@ -188,7 +188,7 @@ public class MainServiceActivity extends AppCompatActivity {
         
         // Apply height scaling
         int progress = heightSeekBar.getProgress();
-        float scale = (progress - 50) / 100f + 1f; // Convert 0-200 to 0.5-2.5
+        float scale = progress * 0.005f + 0.5f; // Convert 0-200 to 0.5-1.5 (50%-150%)
         if (scale != 1f) {
             int newHeight = Math.max(1, (int) (processedBitmap.getHeight() * scale));
             processedBitmap = Bitmap.createScaledBitmap(processedBitmap, processedBitmap.getWidth(), newHeight, true);
@@ -270,7 +270,7 @@ public class MainServiceActivity extends AppCompatActivity {
         }
         
         int progress = heightSeekBar.getProgress();
-        float scale = (progress - 50) / 100f + 1f;
+        float scale = progress * 0.005f + 0.5f; // Convert 0-200 to 0.5-1.5 (50%-150%)
         if (scale != 1f) {
             int newHeight = Math.max(1, (int) (processedBitmap.getHeight() * scale));
             processedBitmap = Bitmap.createScaledBitmap(processedBitmap, processedBitmap.getWidth(), newHeight, true);
