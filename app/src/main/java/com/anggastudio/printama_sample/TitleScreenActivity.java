@@ -28,7 +28,6 @@ public class TitleScreenActivity extends AppCompatActivity {
         // print test buttons
         findViewById(R.id.btn_settings_page).setOnClickListener(v -> gotoSettingsPage());
         findViewById(R.id.btn_github).setOnClickListener(v -> gotoGithubPage());
-        findViewById(R.id.btn_donate).setOnClickListener(v -> gotoDonatePage());
 
         String appVersion = BuildConfig.VERSION_NAME;
         String appVersionDisplay = "App version " + appVersion;
@@ -42,11 +41,6 @@ public class TitleScreenActivity extends AppCompatActivity {
     private void gotoGithubPage() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/anggastudio/Printama"));
         startActivity(browserIntent);
-    }
-
-    private void gotoDonatePage() {
-        Intent intent = new Intent(TitleScreenActivity.this, DonationScreenActivity.class);
-        ContextCompat.startActivity(this, intent, new Bundle());
     }
 
     private void gotoSettingsPage() {

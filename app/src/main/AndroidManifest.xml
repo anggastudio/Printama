@@ -55,9 +55,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DonationScreenActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="false"/>
         <activity

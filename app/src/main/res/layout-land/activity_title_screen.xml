@@ -109,33 +109,6 @@
 
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/btn_donate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            app:cardBackgroundColor="@color/colorGray5"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="0dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawableStart="@drawable/tabler_coin"
-                android:drawablePadding="8dp"
-                android:drawableTint="@color/colorYellow"
-                android:gravity="center"
-                android:padding="8dp"
-                android:text="Donate"
-                android:textColor="@color/colorYellow"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-        </androidx.cardview.widget.CardView>
-
     </LinearLayout>
 
     <TextView
