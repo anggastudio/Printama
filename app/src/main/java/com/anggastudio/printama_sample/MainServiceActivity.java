@@ -7,12 +7,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -44,6 +47,7 @@ public class MainServiceActivity extends AppCompatActivity {
     private Uri imageUri = null;
     private ArrayList<Uri> imageUris = new ArrayList<>();
     private Bitmap originalBitmap = null;
+    private FrameLayout imageViewContainer;
     private ImageView imageView;
     private Switch trimWhitespaceSwitch;
     private SeekBar heightSeekBar;
@@ -84,6 +88,7 @@ public class MainServiceActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        imageViewContainer = findViewById(R.id.iv_image_will_be_printed_container);
         imageView = findViewById(R.id.iv_image_will_be_printed);
         trimWhitespaceSwitch = findViewById(R.id.switch_trim_whitespace);
         heightSeekBar = findViewById(R.id.seekbar_height);
@@ -94,8 +99,9 @@ public class MainServiceActivity extends AppCompatActivity {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void setupListeners() {
         printButton.setOnClickListener(view -> printCurrentImage());
+        imageViewContainer.setOnClickListener(view -> openImagePicker());
         imageView.setOnClickListener(view -> openImagePicker());
-        
+
         trimWhitespaceSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> updatePreview());
         
         heightSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -170,6 +176,8 @@ public class MainServiceActivity extends AppCompatActivity {
     private void loadImageFromUri(Uri uri) {
         originalBitmap = convertUriToBitmap(uri);
         if (originalBitmap != null) {
+            // Apply orientation correction based on EXIF data
+            originalBitmap = correctImageOrientation(originalBitmap, uri);
             updatePreview();
         } else {
             showToast("Failed to load image");
@@ -323,5 +331,50 @@ public class MainServiceActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private Bitmap correctImageOrientation(Bitmap bitmap, Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                ExifInterface exif = new ExifInterface(inputStream);
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                inputStream.close();
+                
+                Matrix matrix = new Matrix();
+                switch (orientation) {
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        matrix.postRotate(90);
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        matrix.postRotate(180);
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        matrix.postRotate(270);
+                        break;
+                    case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                        matrix.postScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                        matrix.postScale(1, -1);
+                        break;
+                    case ExifInterface.ORIENTATION_TRANSPOSE:
+                        matrix.postRotate(90);
+                        matrix.postScale(-1, 1);
+                        break;
+                    case ExifInterface.ORIENTATION_TRANSVERSE:
+                        matrix.postRotate(270);
+                        matrix.postScale(-1, 1);
+                        break;
+                    default:
+                        return bitmap; // No rotation needed
+                }
+                
+                return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap; // Return original if error occurs
     }
 }
