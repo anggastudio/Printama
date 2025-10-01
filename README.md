@@ -1,9 +1,6 @@
 <div style="background-color: maroon; border-left: 12px solid #ffa500; padding: 10px; border-radius: 8px;">
-    <p><strong>🚀 Latest:</strong> Version 1.0.0 is now available with enhanced stability, new constant classes, and comprehensive API improvements!</p>
-    <p><strong>✅ Recommended:</strong> Use 1.0.0 for the best experience across all Android versions.</p>
+    <p><strong>🚀 Latest:</strong> Version 1.0.5 is now available with enhanced stability, new constant classes, and comprehensive API improvements!</p>
     <p><strong>✅ Recommended:</strong> Now support 3 Inches printer.</p>
-    <p><strong>📱 Compatibility:</strong> Supports Android 13+ with optimized Bluetooth permissions.</p>
-    <p><strong>⚠️ Deprecated:</strong> Versions 0.9.x are now legacy. Please migrate to 1.0.0.</p>
 </div>
 
 <p align="center">
