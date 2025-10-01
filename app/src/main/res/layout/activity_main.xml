@@ -257,6 +257,32 @@
 
             </LinearLayout>
 
+            <!-- Image Service Button -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_image_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableStart="@drawable/tabler_photo"
+                    android:drawablePadding="8dp"
+                    android:drawableTint="@color/colorWhite"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="Image Print Service"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_printer_advance_test).setOnClickListener(v -> gotoTestActivity());
         findViewById(R.id.btn_printer_width).setOnClickListener(v -> choosePrinterWidth());
         findViewById(R.id.btn_reset).setOnClickListener(v -> resetPrinterConnection());
+        findViewById(R.id.btn_image_service).setOnClickListener(v -> gotoImageServiceActivity());
 
         displayPrinterWidthInfo();
     }
@@ -216,6 +217,12 @@ public class MainActivity extends AppCompatActivity {
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     private void gotoTestActivity() {
         Intent intent = new Intent(MainActivity.this, PrintTestActivity.class);
+        ContextCompat.startActivity(this, intent, new Bundle());
+    }
+
+    @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
+    private void gotoImageServiceActivity() {
+        Intent intent = new Intent(MainActivity.this, MainServiceActivity.class);
         ContextCompat.startActivity(this, intent, new Bundle());
     }
 
